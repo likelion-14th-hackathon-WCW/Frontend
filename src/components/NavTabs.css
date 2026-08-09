@@ -15,6 +15,11 @@
   white-space: nowrap;
   padding-bottom: 6px;
   border-bottom: 2px solid transparent;
+  transition: color 0.15s ease, border-bottom-color 0.15s ease;
+}
+
+.nav-tabs__link:hover {
+  color: #d48c46;
 }
 
 .nav-tabs__link--active {

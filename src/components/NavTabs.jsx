@@ -7,14 +7,16 @@ const TABS = [
   { key: 'mypage', label: '마이페이지', href: '/mypage' },
 ]
 
-export default function NavTabs({ current = 'home' }) {
+export default function NavTabs() {
+  const currentPath = typeof window !== 'undefined' ? window.location.pathname : '/'
+
   return (
     <nav className="nav-tabs">
       {TABS.map((tab) => (
         <a
           key={tab.key}
           href={tab.href}
-          className={`nav-tabs__link${tab.key === current ? ' nav-tabs__link--active' : ''}`}
+          className={`nav-tabs__link${tab.href === currentPath ? ' nav-tabs__link--active' : ''}`}
         >
           {tab.label}
         </a>
