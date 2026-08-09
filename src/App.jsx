@@ -1,10 +1,10 @@
 import './App.css'
-import NavTabs from './components/NavTabs.jsx'
+import Header from './components/Header.jsx'
 
 function App() {
   return (
     <div>
-      <NavTabs />
+      <Header />
     </div>
   )
 }

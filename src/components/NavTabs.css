@@ -2,27 +2,27 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 33.5px;
+  gap: var(--nav-gap);
 }
 
 .nav-tabs__link {
-  font-family: 'Noto Sans', sans-serif;
+  font-family: var(--font-body);
   font-weight: 500;
-  font-size: 14px;
+  font-size: var(--text-sm);
   letter-spacing: -0.28px;
-  color: #969696;
+  color: var(--color-text-secondary);
   text-decoration: none;
   white-space: nowrap;
   padding-bottom: 6px;
   border-bottom: 2px solid transparent;
-  transition: color 0.15s ease, border-bottom-color 0.15s ease;
+  transition: color var(--transition-fast), border-bottom-color var(--transition-fast);
 }
 
 .nav-tabs__link:hover {
-  color: #d48c46;
+  color: var(--color-accent);
 }
 
 .nav-tabs__link--active {
-  color: #d48c46;
-  border-bottom-color: #d48c46;
+  color: var(--color-accent);
+  border-bottom-color: var(--color-accent);
 }

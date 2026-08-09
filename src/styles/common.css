@@ -1,0 +1,19 @@
+:root {
+  /* colors */
+  --color-text-primary: #111827;
+  --color-text-heading: #1f2937;
+  --color-text-muted: #6b7280;
+  --color-accent: #d48c46;
+  --color-text-secondary: #969696;
+
+  /* typography */
+  --font-display: 'Pretendard', sans-serif;
+  --font-body: 'Noto Sans', sans-serif;
+  --text-sm: 14px;
+
+  /* spacing */
+  --nav-gap: 33.5px;
+
+  /* motion */
+  --transition-fast: 0.15s ease;
+}
