@@ -5,6 +5,9 @@
   --color-text-muted: #6b7280;
   --color-accent: #d48c46;
   --color-text-secondary: #969696;
+  --color-hero-bg: #f1f2f4;
+  --color-heading-strong: #1a1a1a;
+  --color-text-body: #4b5563;
 
   /* typography */
   --font-display: 'Pretendard', sans-serif;
