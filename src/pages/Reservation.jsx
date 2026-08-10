@@ -1,9 +1,28 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import lottie from 'lottie-web'
 import './Reservation.css'
 import searchIcon from '../assets/search-icon.svg'
 import clockIcon from '../assets/clock-icon.svg'
 import chevronLeft from '../assets/chevron-left.svg'
 import chevronRight from '../assets/chevron-right.svg'
+import successCheckAnimation from '../assets/success-check.json'
+
+function SuccessCheckIcon() {
+  const containerRef = useRef(null)
+
+  useEffect(() => {
+    const anim = lottie.loadAnimation({
+      container: containerRef.current,
+      renderer: 'svg',
+      loop: false,
+      autoplay: true,
+      animationData: successCheckAnimation,
+    })
+    return () => anim.destroy()
+  }, [])
+
+  return <div className="consent-success__icon" ref={containerRef} />
+}
 
 // 출처: MCM 공식 매장 찾기(kr.mcmworldwide.com) 서울 기준 검색 결과 중 대한민국 매장
 const STORES = [
@@ -31,6 +50,19 @@ const STORES = [
     address: '대구광역시 북구 태평로 161, 롯데백화점 대구점 B1',
     hours: '월-목 10:30-20:00 · 금-일 10:30-20:30',
   },
+]
+
+// ponytail: static mock — real data would come from the 나만의 노리개 만들기 flow
+const SHARED_INFO = [
+  { title: '노리개 조합', description: '구성 요소(매듭, 주체, 술) 및 색상 조합' },
+  { title: '핵심 상징 및 의미', description: '선택한 상징의 이름과 전통 의미' },
+  { title: '연결 상품 정보', description: '제안된 MCM 상품(가격, 구성, 재고 여부)' },
+]
+
+const INFO_USAGE = [
+  '매장 직원이 고객님의 스타일링 상담을 제공하는 데만 사용됩니다.',
+  '다른 목적으로 저장되거나 제3자에게 공유되지 않습니다.',
+  '예약 이후 정보는 자동으로 삭제됩니다.',
 ]
 
 const TIME_SLOTS = ['오전 11:00', '오후 12:30', '오후 2:00', '오후 3:30', '오후 5:00', '오후 6:30']
@@ -88,6 +120,9 @@ export default function Reservation() {
   const [viewMonth, setViewMonth] = useState(today.getMonth())
   const [selectedDate, setSelectedDate] = useState(today)
   const [selectedTime, setSelectedTime] = useState(null)
+  const [isConsentOpen, setIsConsentOpen] = useState(false)
+  const [hasAgreed, setHasAgreed] = useState(false)
+  const [isConfirmed, setIsConfirmed] = useState(false)
 
   const filteredStores = STORES.filter(
     (store) => store.name.includes(query) || store.address.includes(query),
@@ -105,6 +140,20 @@ export default function Reservation() {
     const next = new Date(viewYear, viewMonth + 1, 1)
     setViewYear(next.getFullYear())
     setViewMonth(next.getMonth())
+  }
+
+  const openConsent = () => {
+    setHasAgreed(false)
+    setIsConfirmed(false)
+    setIsConsentOpen(true)
+  }
+
+  const closeConsent = () => {
+    setIsConsentOpen(false)
+  }
+
+  const confirmReservation = () => {
+    setIsConfirmed(true)
   }
 
   return (
@@ -249,11 +298,102 @@ export default function Reservation() {
             </div>
           </div>
 
-          <button type="button" className="summary__cta" disabled={!selectedTime}>
-            예약 확정하기
+          <button type="button" className="summary__cta" disabled={!selectedTime} onClick={openConsent}>
+            정보 전달 동의 및 예약 확정
           </button>
         </aside>
       </div>
+
+      {isConsentOpen && (
+        <div className="consent-overlay" onClick={closeConsent}>
+          <div className="consent-modal" onClick={(event) => event.stopPropagation()}>
+            {isConfirmed ? (
+              <div className="consent-success">
+                <SuccessCheckIcon />
+                <p className="consent-success__title">예약이 완료되었습니다</p>
+                <p className="consent-success__subtitle">예약 내역은 마이페이지에서 확인하실 수 있어요.</p>
+
+                <div className="receipt-card">
+                  <span className="receipt-card__title">예약 내역</span>
+                  <div className="receipt-card__rows">
+                    <div className="summary__row">
+                      <span className="summary__label">매장</span>
+                      <span className="summary__value">{selectedStore?.name}</span>
+                    </div>
+                    <div className="summary__row">
+                      <span className="summary__label">방문일시</span>
+                      <span className="summary__value">
+                        {selectedDate.getFullYear()}년 {selectedDate.getMonth() + 1}월{' '}
+                        {selectedDate.getDate()}일 {selectedTime}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <a href="/mypage" className="consent-success__primary">
+                  마이페이지에서 예약 내역 확인하기
+                </a>
+              </div>
+            ) : (
+              <>
+                <h3 className="consent-modal__title">정보 전달 동의</h3>
+                <p className="consent-modal__subtitle">
+                  매장 방문 예약을 완료하기 위해 아래 정보 전달에 동의해주세요.
+                </p>
+
+                <div className="consent-modal__section">
+                  <h4 className="consent-modal__section-title">전달될 정보</h4>
+                  <ul className="consent-info-list">
+                    {SHARED_INFO.map((item) => (
+                      <li key={item.title} className="consent-info-list__item">
+                        <span className="consent-info-list__check">✓</span>
+                        <div>
+                          <p className="consent-info-list__title">{item.title}</p>
+                          <p className="consent-info-list__description">{item.description}</p>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="consent-modal__section">
+                  <h4 className="consent-modal__section-title">정보 활용 범위</h4>
+                  <ul className="consent-usage-list">
+                    {INFO_USAGE.map((line) => (
+                      <li key={line} className="consent-usage-list__item">
+                        {line}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <label className="consent-agree">
+                  <input
+                    type="checkbox"
+                    checked={hasAgreed}
+                    onChange={(event) => setHasAgreed(event.target.checked)}
+                  />
+                  위 정보 전달에 동의합니다.
+                </label>
+
+                <div className="consent-modal__actions">
+                  <button type="button" className="consent-modal__secondary" onClick={closeConsent}>
+                    돌아가기
+                  </button>
+                  <button
+                    type="button"
+                    className="consent-modal__primary"
+                    disabled={!hasAgreed}
+                    onClick={confirmReservation}
+                  >
+                    동의 후 예약 확정
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </main>
   )
 }
