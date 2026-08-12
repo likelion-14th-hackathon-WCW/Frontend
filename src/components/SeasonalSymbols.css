@@ -1,0 +1,136 @@
+.seasonal-symbols {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  width: 1152px;
+  padding: 96px 64px 97px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.seasonal-symbols__heading {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.seasonal-symbols__title {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 32px;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.seasonal-symbols__description {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 16px;
+  color: var(--color-text-body);
+  margin: 0;
+}
+
+.seasonal-symbols__grid {
+  display: flex;
+  gap: 37px;
+  align-items: center;
+}
+
+.seasonal-symbols__feature {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  box-sizing: border-box;
+  width: 925px;
+  height: 494px;
+  padding: 32px 32px 32px 33px;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+  animation: seasonal-symbols-feature-fade 4s ease-in-out;
+}
+
+.seasonal-symbols__feature-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(235, 235, 235, 0) 39%, rgba(24, 24, 24, 0.8) 100%);
+}
+
+.seasonal-symbols__feature-text {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+@keyframes seasonal-symbols-feature-fade {
+  0% {
+    opacity: 0.25;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.25;
+  }
+}
+
+.seasonal-symbols__feature-title {
+  font-family: 'Noto Serif KR', serif;
+  font-weight: 600;
+  font-size: 24px;
+  color: #f9f8f6;
+  margin: 0;
+}
+
+.seasonal-symbols__feature-description {
+  font-family: var(--font-display);
+  font-size: 16px;
+  line-height: 25.6px;
+  color: #f9f8f6;
+  max-width: 448px;
+  margin: 0;
+}
+
+.seasonal-symbols__thumbs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 190px;
+}
+
+.seasonal-symbols__thumb {
+  position: relative;
+  box-sizing: border-box;
+  width: 190px;
+  height: 116px;
+  padding: 0;
+  border: none;
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
+  transition: opacity var(--transition-fast);
+}
+
+.seasonal-symbols__thumb::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: #1a1a1a;
+  opacity: 0.4;
+  transition: opacity var(--transition-fast);
+}
+
+.seasonal-symbols__thumb:hover::after {
+  opacity: 0.15;
+}
+
+.seasonal-symbols__thumb--active {
+  border: 3px solid var(--color-accent);
+}
+
+.seasonal-symbols__thumb--active::after {
+  content: none;
+}
