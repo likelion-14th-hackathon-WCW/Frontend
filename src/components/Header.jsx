@@ -13,7 +13,7 @@ export default function Header() {
       </nav>
 
       <a href="/login" className="header__login">
-        로그인
+        로그인/회원가입
       </a>
     </header>
   )

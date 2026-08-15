@@ -1,3 +1,7 @@
+body {
+  margin: 0;
+}
+
 :root {
   /* colors */
   --color-text-primary: #111827;
@@ -5,6 +9,8 @@
   --color-text-muted: #6b7280;
   --color-accent: #d48c46;
   --color-text-secondary: #969696;
+  --color-text-login: #666;
+  --color-background: #fbf9f5;
 
   /* typography */
   --font-display: 'Pretendard', sans-serif;
