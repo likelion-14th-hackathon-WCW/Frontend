@@ -23,6 +23,18 @@ body {
   --color-text-disabled: #9ca3af;
   --color-cream: #fbf9f5;
   --color-accent-dark: #c17f40;
+  --color-page-bg: #fbf9f5;
+  --color-brown-50: #fbf4ed;
+  --color-brown-200: #ebcaaa;
+  --color-grey-50: #e8e8e8;
+  --color-grey-100: #b8b8b8;
+  --color-grey-300: #666;
+  --color-grey-400: #484848;
+  --color-grey-600: #181818;
+  --color-yellow-400: #f4d27d;
+  --color-brown-100: #f5e9da;
+  --color-green-400: #419a9a;
+  --color-label-muted: #5a544c;
 
   /* typography */
   --font-display: 'Pretendard', sans-serif;
