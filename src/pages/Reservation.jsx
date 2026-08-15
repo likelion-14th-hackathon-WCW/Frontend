@@ -4,6 +4,8 @@ import searchIcon from '../assets/search-icon.svg'
 import clockIcon from '../assets/clock-icon.svg'
 import chevronLeft from '../assets/chevron-left.svg'
 import chevronRight from '../assets/chevron-right.svg'
+import { useAuth } from '../hooks/useAuth.js'
+import { saveReservationDraft } from '../utils/reservationDraft.js'
 
 // 출처: MCM 공식 매장 찾기(kr.mcmworldwide.com) 서울 기준 검색 결과 중 대한민국 매장
 const STORES = [
@@ -81,6 +83,7 @@ function buildCalendarDays(viewYear, viewMonth) {
 
 export default function Reservation() {
   const today = useMemo(() => new Date(), [])
+  const { user } = useAuth()
 
   const [query, setQuery] = useState('')
   const [selectedStoreId, setSelectedStoreId] = useState(STORES[0].id)
@@ -105,6 +108,15 @@ export default function Reservation() {
     const next = new Date(viewYear, viewMonth + 1, 1)
     setViewYear(next.getFullYear())
     setViewMonth(next.getMonth())
+  }
+
+  const confirmReservation = () => {
+    saveReservationDraft({
+      storeName: selectedStore?.name,
+      dateLabel: `${selectedDate.getFullYear()}년 ${selectedDate.getMonth() + 1}월 ${selectedDate.getDate()}일`,
+      timeLabel: selectedTime,
+    })
+    window.location.href = user ? '/reservation/complete-member' : '/reservation/guest-info'
   }
 
   return (
@@ -249,7 +261,7 @@ export default function Reservation() {
             </div>
           </div>
 
-          <button type="button" className="summary__cta" disabled={!selectedTime}>
+          <button type="button" className="summary__cta" disabled={!selectedTime} onClick={confirmReservation}>
             예약 확정하기
           </button>
         </aside>

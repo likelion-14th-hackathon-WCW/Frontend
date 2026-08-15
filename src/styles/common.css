@@ -26,6 +26,9 @@
   --color-grey-400: #484848;
   --color-grey-600: #181818;
   --color-yellow-400: #f4d27d;
+  --color-brown-100: #f5e9da;
+  --color-green-400: #419a9a;
+  --color-label-muted: #5a544c;
 
   /* typography */
   --font-display: 'Pretendard', sans-serif;
