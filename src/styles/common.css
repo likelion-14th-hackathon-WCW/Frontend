@@ -9,6 +9,11 @@
   --color-hero-bg: #f1f2f4;
   --color-heading-strong: #1a1a1a;
   --color-text-body: #4b5563;
+  --color-border: #e5e7eb;
+  --color-border-strong: #d1d5db;
+  --color-surface-muted: #f3f4f6;
+  --color-cream: #fbf9f5;
+  --color-accent-dark: #c17f40;
 
   /* typography */
   --font-display: 'Pretendard', sans-serif;
