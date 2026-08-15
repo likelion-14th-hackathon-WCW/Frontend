@@ -3,6 +3,7 @@
   --color-text-primary: #111827;
   --color-text-heading: #1f2937;
   --color-text-muted: #6b7280;
+  --color-text-body: #4b5563;
   --color-accent: #d48c46;
   --color-text-secondary: #969696;
   --color-hero-bg: #f1f2f4;
@@ -14,6 +15,8 @@
   --color-surface-muted: #f3f4f6;
   --color-surface-disabled: #f9fafb;
   --color-text-disabled: #9ca3af;
+  --color-cream: #fbf9f5;
+  --color-accent-dark: #c17f40;
 
   /* typography */
   --font-display: 'Pretendard', sans-serif;
