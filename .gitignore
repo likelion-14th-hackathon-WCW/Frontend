@@ -20,6 +20,9 @@ dist-ssr
 # OMC
 .omc
 
+# Claude
+CLAUDE.md
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
