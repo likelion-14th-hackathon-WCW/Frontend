@@ -20,7 +20,7 @@ export default function Header() {
         </a>
       ) : (
         <a href="/login" className="header__login">
-          로그인
+          로그인/회원가입
         </a>
       )}
     </header>
