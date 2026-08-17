@@ -93,8 +93,10 @@ export default function EditorPage() {
           <div className="input-group">
             <label>소망 또는 키워드 입력</label>
             <div className="input-with-icon">
-              {/* 키워드 입력 전에는 스파클 아이콘을 인풋 왼쪽 안내 아이콘으로, 입력 중에는 오른쪽 제출 버튼으로 표시 */}
-              {!keyword && <img src={aiSparkleIcon} alt="" className="btn-icon input-leading-icon" />}
+              {/* 스파클 아이콘은 입력 전/후 관계없이 항상 왼쪽 고정, 클릭하면 AI 추천 제출 */}
+              <button type="button" className="btn-ai" aria-label="AI 추천 받기" onClick={requestAiRecommendation}>
+                <img src={aiSparkleIcon} alt="" className="btn-icon" />
+              </button>
               <input
                 type="text"
                 value={keyword}
@@ -102,11 +104,6 @@ export default function EditorPage() {
                 onKeyDown={(event) => event.key === 'Enter' && requestAiRecommendation()}
                 placeholder="예: 번영, 건강..."
               />
-              {keyword && (
-                <button type="button" className="btn-ai" aria-label="AI 추천 받기" onClick={requestAiRecommendation}>
-                  <img src={aiSparkleIcon} alt="" className="btn-icon" />
-                </button>
-              )}
             </div>
             <p className="hint">소망을 입력하면 AI 추천을 받을 수 있습니다.</p>
             <button
