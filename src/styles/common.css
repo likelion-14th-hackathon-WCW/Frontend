@@ -38,7 +38,7 @@ body {
 
   /* typography */
   --font-display: 'Pretendard', sans-serif;
-  --font-body: 'Noto Sans', sans-serif;
+  --font-body: 'Noto Sans KR', 'Noto Sans', sans-serif;
   --text-sm: 14px;
 
   /* spacing */
