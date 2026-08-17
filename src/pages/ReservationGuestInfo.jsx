@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import './ReservationGuestInfo.css'
 import mailIcon from '../assets/mail-icon.svg'
-import eyeToggleIcon from '../assets/eye-toggle-icon.svg'
+import eyeOffIcon from '../assets/eye-toggle-icon.svg'
+import eyeOpenIcon from '../assets/eye-open-icon.svg'
 import hintCheckDefault from '../assets/hint-check-default.svg'
 import hintCheckValid from '../assets/hint-check-valid.svg'
 
@@ -68,7 +69,7 @@ export default function ReservationGuestInfo() {
                   onClick={() => setShowPassword((v) => !v)}
                   aria-label="비밀번호 표시 전환"
                 >
-                  <img src={eyeToggleIcon} alt="" />
+                  <img src={showPassword ? eyeOpenIcon : eyeOffIcon} alt="" />
                 </button>
               </div>
               <span className={`text-box__hint${isPasswordValid ? ' text-box__hint--valid' : ''}`}>
@@ -93,7 +94,7 @@ export default function ReservationGuestInfo() {
                   onClick={() => setShowConfirmPassword((v) => !v)}
                   aria-label="비밀번호 확인 표시 전환"
                 >
-                  <img src={eyeToggleIcon} alt="" />
+                  <img src={showConfirmPassword ? eyeOpenIcon : eyeOffIcon} alt="" />
                 </button>
               </div>
               <span className={`text-box__hint${isConfirmValid ? ' text-box__hint--valid' : ''}`}>
