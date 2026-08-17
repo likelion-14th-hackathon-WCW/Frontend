@@ -8,12 +8,17 @@ import eyeOpenIcon from '../assets/eye-open-icon.svg'
 import hintCheckDefault from '../assets/hint-check-default.svg'
 import hintCheckValid from '../assets/hint-check-valid.svg'
 
+const ALLOWED_SPECIAL_CHARS = '!@#$%^&*'
+const DISALLOWED_PASSWORD_CHARS = /[^a-zA-Z0-9!@#$%^&*]/g
+
 const PASSWORD_RULES = [
   { key: 'length', label: '최소 8자 이상', test: (v) => v.length >= 8 },
   { key: 'case', label: '영문 대문자 최소 1개 및 소문자 최소 1개 이상', test: (v) => /[a-z]/.test(v) && /[A-Z]/.test(v) },
-  { key: 'special', label: '특수 문자 최소 1개 이상', test: (v) => /[^a-zA-Z0-9]/.test(v) },
+  { key: 'special', label: `특수 문자 최소 1개 이상 (${ALLOWED_SPECIAL_CHARS})`, test: (v) => /[!@#$%^&*]/.test(v) },
   { key: 'digit', label: '숫자 최소 1개 이상', test: (v) => /\d/.test(v) },
 ]
+
+const sanitizePassword = (value) => value.replace(DISALLOWED_PASSWORD_CHARS, '')
 
 const REQUIRED_AGREEMENTS = [
   { key: 'collect', label: '[필수] 수집하는 개인정보의 항목, 목적 및 보유기간' },
@@ -137,7 +142,7 @@ export default function SignUp() {
                   type={showPassword ? 'text' : 'password'}
                   className="text-box__input"
                   value={password}
-                  onChange={(event) => setPassword(event.target.value)}
+                  onChange={(event) => setPassword(sanitizePassword(event.target.value))}
                 />
                 <button
                   type="button"
@@ -168,7 +173,7 @@ export default function SignUp() {
                   type={showConfirmPassword ? 'text' : 'password'}
                   className="text-box__input"
                   value={confirmPassword}
-                  onChange={(event) => setConfirmPassword(event.target.value)}
+                  onChange={(event) => setConfirmPassword(sanitizePassword(event.target.value))}
                 />
                 <button
                   type="button"
