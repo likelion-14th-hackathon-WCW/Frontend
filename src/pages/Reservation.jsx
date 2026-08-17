@@ -107,7 +107,7 @@ export default function Reservation() {
   const [selectedTime, setSelectedTime] = useState(null)
 
   const filteredStores = STORES.filter(
-    (store) => store.name.includes(query) || store.address.includes(query),
+    (store) => store.name.includes(query) || store.address.includes(query) || store.postalCode.includes(query),
   )
   const selectedStore = STORES.find((store) => store.id === selectedStoreId)
   const calendarDays = useMemo(() => buildCalendarDays(viewYear, viewMonth), [viewYear, viewMonth])
