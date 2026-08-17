@@ -6,32 +6,38 @@ import chevronLeft from '../assets/chevron-left.svg'
 import chevronRight from '../assets/chevron-right.svg'
 import { useAuth } from '../hooks/useAuth.js'
 import { saveReservationDraft } from '../utils/reservationDraft.js'
+import StoreMap from '../components/StoreMap.jsx'
 
 // 출처: MCM 공식 매장 찾기(kr.mcmworldwide.com) 서울 기준 검색 결과 중 대한민국 매장
+// kakaoUrl: 카카오맵 장소 상세 페이지 — 지도 마커 클릭 시 새 탭으로 연결
 const STORES = [
   {
     id: 'lotte-main',
     name: 'MCM 롯데백화점 본점',
     address: '서울 중구 남대문로 81, 롯데백화점 본점 1F',
     hours: '월-목 10:30-20:00 · 금-일 10:30-20:30',
+    kakaoUrl: 'https://place.map.kakao.com/1377183359',
   },
   {
     id: 'haus-flagship',
     name: 'MCM 하우스 플래그십스토어',
     address: '서울 강남구 압구정로 412',
     hours: '매일 11:00-20:00',
+    kakaoUrl: 'https://place.map.kakao.com/8048352',
   },
   {
     id: 'lotte-jamsil',
     name: 'MCM 롯데백화점 잠실점',
     address: '서울 송파구 올림픽로 240, 롯데백화점 잠실점 1F',
     hours: '월-목 10:30-20:00 · 금-일 10:30-20:30',
+    kakaoUrl: 'https://place.map.kakao.com/1034672903',
   },
   {
     id: 'lotte-daegu',
     name: 'MCM 롯데백화점 대구점',
     address: '대구광역시 북구 태평로 161, 롯데백화점 대구점 B1',
     hours: '월-목 10:30-20:00 · 금-일 10:30-20:30',
+    kakaoUrl: 'https://place.map.kakao.com/950172435',
   },
 ]
 
@@ -242,28 +248,33 @@ export default function Reservation() {
         </div>
 
         <aside className="summary">
-          <h3 className="summary__title">예약 내역 확인</h3>
+          <div className="summary__card">
+            <h3 className="summary__title">예약 내역 확인</h3>
 
-          <div className="summary__rows">
-            <div className="summary__row">
-              <span className="summary__label">매장</span>
-              <span className="summary__value">{selectedStore?.name}</span>
+            <div className="summary__rows">
+              <div className="summary__row">
+                <span className="summary__label">매장</span>
+                <span className="summary__value">{selectedStore?.name}</span>
+              </div>
+              <div className="summary__row">
+                <span className="summary__label">날짜</span>
+                <span className="summary__value">
+                  {selectedDate.getFullYear()}년 {selectedDate.getMonth() + 1}월 {selectedDate.getDate()}일
+                </span>
+              </div>
+              <div className="summary__row">
+                <span className="summary__label">시간</span>
+                <span className="summary__value">{selectedTime ?? '시간을 선택해주세요'}</span>
+              </div>
             </div>
-            <div className="summary__row">
-              <span className="summary__label">날짜</span>
-              <span className="summary__value">
-                {selectedDate.getFullYear()}년 {selectedDate.getMonth() + 1}월 {selectedDate.getDate()}일
-              </span>
-            </div>
-            <div className="summary__row">
-              <span className="summary__label">시간</span>
-              <span className="summary__value">{selectedTime ?? '시간을 선택해주세요'}</span>
-            </div>
+
+            <button type="button" className="summary__cta" disabled={!selectedTime} onClick={confirmReservation}>
+              예약 확정하기
+            </button>
           </div>
 
-          <button type="button" className="summary__cta" disabled={!selectedTime} onClick={confirmReservation}>
-            예약 확정하기
-          </button>
+          {/* 선택한 매장 위치를 카카오맵으로 표시. 매장 선택 시 해당 위치로 자동 포커스 */}
+          <StoreMap stores={STORES} selectedStoreId={selectedStoreId} />
         </aside>
       </div>
     </main>
