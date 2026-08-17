@@ -4,13 +4,16 @@ import heartIcon from '../assets/heart-icon.svg'
 import heartIconFilled from '../assets/heart-icon-filled.svg'
 import CombinationDetailModal from './CombinationDetailModal.jsx'
 
-// 하드코딩: 카드 목록 + 상세 모달용 확장 정보(price, components). 추후 인기 조합 API 데이터로 대체 예정
+// 하드코딩: 카드 목록 + 상세 모달용 확장 정보. 추후 인기 조합 API 데이터로 대체 예정
+// description: 카드 목록용 한 줄 요약 / modalDescription: 상세 모달용 전체 설명(Figma 시안 328:8700 문구 기준)
 const combinations = [
   {
     rank: 1,
     badge: '인기',
     title: '미드나잇 앰버 앙상블',
     description: '호박 펜던트가 돋보이는 네이비 비단 매듭.',
+    modalDescription:
+      '호박 펜던트와 네이비 비단 매듭이 조화를 이루는 프리미엄 조합입니다. 전통의 깊은 색감과 현대적인 세련미를 동시에 느낄 수 있습니다.',
     author: '@ARTISAN_LEE 님 제작',
     price: '₩320,000',
     components: {
@@ -23,6 +26,8 @@ const combinations = [
     rank: 2,
     title: '미니멀리스트 비취 링',
     description: '순백의 비취를 돋보이게 하는 연한 골드 실.',
+    modalDescription:
+      '순백의 비취 장식과 연한 골드 실이 어우러진 미니멀 조합입니다. 과하지 않은 절제된 디자인으로 어떤 가방에도 자연스럽게 어울립니다.',
     author: '@SEOUL_CRAFTS 님 제작',
     price: '₩280,000',
     components: {
@@ -35,6 +40,8 @@ const combinations = [
     rank: 3,
     title: '봄의 궁궐 모티브',
     description: '산호 장식이 있는 에메랄드와 마젠타 끈.',
+    modalDescription:
+      '산호 장식과 에메랄드, 마젠타 끈이 어우러져 봄 궁궐의 화려함을 표현한 조합입니다. 화사한 색 대비로 포인트 아이템을 찾는 분께 추천합니다.',
     author: '@HERITAGE_WEAVER 님 제작',
     price: '₩350,000',
     components: {

@@ -19,7 +19,7 @@ export default function CombinationDetailModal({ combination, liked, onToggleLik
 
   if (!combination) return null
 
-  const { title, author, description, price, components } = combination
+  const { title, author, modalDescription, components } = combination
 
   return (
     <div className="combination-modal-overlay" onClick={onClose}>
@@ -29,8 +29,10 @@ export default function CombinationDetailModal({ combination, liked, onToggleLik
         </button>
 
         <div className="combination-modal__image">
-          {/* 제작 사진 자리 표시자: 실제 조합 이미지는 아직 붙이지 않음, 추후 이미지 데이터 연동 시 <img>로 교체 */}
-          <img src={optionPlaceholderIcon} alt="" className="combination-modal__image-icon" />
+          {/* 제작 사진 자리 표시자: 실제 조합 이미지는 아직 붙이지 않음, 추후 이미지 데이터 연동 시 이 박스를 <img>로 교체 */}
+          <div className="combination-modal__image-placeholder">
+            <img src={optionPlaceholderIcon} alt="" className="combination-modal__image-icon" />
+          </div>
         </div>
 
         <div className="combination-modal__details">
@@ -39,7 +41,7 @@ export default function CombinationDetailModal({ combination, liked, onToggleLik
             <p className="combination-modal__author">{author}</p>
           </div>
 
-          <p className="combination-modal__description">{description}</p>
+          <p className="combination-modal__description">{modalDescription}</p>
 
           <div className="combination-modal__components">
             <h3 className="combination-modal__components-title">구성 조합</h3>
@@ -63,7 +65,6 @@ export default function CombinationDetailModal({ combination, liked, onToggleLik
           </div>
 
           <div className="combination-modal__footer">
-            <p className="combination-modal__price">{price}</p>
             <div className="combination-modal__actions">
               <button type="button" className="combination-modal__reserve">
                 이 조합으로 매장 예약하기
@@ -75,7 +76,7 @@ export default function CombinationDetailModal({ combination, liked, onToggleLik
                 onClick={onToggleLike}
               >
                 <img src={liked ? heartIconFilled : heartIcon} alt="" />
-                위시리스트 담기
+                위시리스트
               </button>
             </div>
           </div>

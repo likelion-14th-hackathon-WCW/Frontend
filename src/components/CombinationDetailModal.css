@@ -9,11 +9,10 @@
   padding: 24px;
 }
 
-/* 하드코딩: Figma 토큰(grey-300, grey-100, yellow-200) — 이 브랜치의 common.css에는 아직 없어 로컬 변수로 사용 */
+/* 하드코딩: Figma 토큰(grey-300, grey-100) — 이 브랜치의 common.css에는 아직 없어 로컬 변수로 사용 */
 .combination-modal {
   --modal-grey-300: #666;
   --modal-grey-100: #b8b8b8;
-  --modal-yellow-200: #f9e5b4;
 
   position: relative;
   display: flex;
@@ -49,9 +48,22 @@
   justify-content: center;
   flex: 1 0 0;
   min-width: 0;
-  min-height: 400px;
   padding: 32px;
   background: #f4f2ee;
+  box-sizing: border-box;
+}
+
+/* 제작 사진이 붙기 전까지의 자리 표시자 박스(예: 예약 페이지 지도 자리와 동일한 패턴) */
+.combination-modal__image-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 353px;
+  max-width: 100%;
+  height: 289px;
+  background: #e5e5e5;
+  border-bottom: 1px solid rgba(17, 17, 17, 0.1);
+  box-sizing: border-box;
 }
 
 .combination-modal__image-icon {
@@ -101,14 +113,18 @@
 }
 
 .combination-modal__components {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   background: #f9f8f6;
   border: 1px solid rgba(26, 26, 26, 0.05);
   border-radius: 12px;
   padding: 25px;
+  box-sizing: border-box;
 }
 
 .combination-modal__components-title {
-  margin: 0 0 9px;
+  margin: 0;
   padding-bottom: 9px;
   border-bottom: 1px solid rgba(26, 26, 26, 0.1);
   font-family: var(--font-body);
@@ -160,17 +176,6 @@
 .combination-modal__footer {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  padding-top: 1px;
-  border-top: 1px solid var(--modal-yellow-200);
-}
-
-.combination-modal__price {
-  margin: 0;
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 24px;
-  color: var(--color-heading-strong);
 }
 
 .combination-modal__actions {
@@ -181,7 +186,8 @@
 }
 
 .combination-modal__reserve {
-  flex: 1 0 0;
+  width: 232px;
+  max-width: 100%;
   padding: 16px;
   background: var(--color-accent);
   border: none;
@@ -191,12 +197,15 @@
   letter-spacing: -0.28px;
   color: white;
   cursor: pointer;
+  box-sizing: border-box;
 }
 
 .combination-modal__wishlist {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
+  width: 159px;
   padding: 15px 25px;
   background: none;
   border: 1px solid var(--modal-grey-100);
@@ -206,6 +215,7 @@
   color: var(--color-heading-strong);
   white-space: nowrap;
   cursor: pointer;
+  box-sizing: border-box;
 }
 
 .combination-modal__wishlist img {
@@ -218,5 +228,17 @@
   .combination-modal {
     flex-direction: column;
     max-height: 95vh;
+  }
+}
+
+@media (max-width: 480px) {
+  .combination-modal__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .combination-modal__reserve,
+  .combination-modal__wishlist {
+    width: 100%;
   }
 }
