@@ -1,0 +1,221 @@
+.combination-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 24px;
+}
+
+/* 하드코딩: Figma 토큰(grey-300, grey-100, yellow-200) — 이 브랜치의 common.css에는 아직 없어 로컬 변수로 사용 */
+.combination-modal {
+  --modal-grey-300: #666;
+  --modal-grey-100: #b8b8b8;
+  --modal-yellow-200: #f9e5b4;
+
+  position: relative;
+  display: flex;
+  width: 100%;
+  max-width: 1024px;
+  max-height: 90vh;
+  overflow: auto;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.combination-modal__close {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  z-index: 3;
+  display: flex;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.combination-modal__close img {
+  width: 24px;
+  height: 24px;
+}
+
+.combination-modal__image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 0 0;
+  min-width: 0;
+  min-height: 400px;
+  padding: 32px;
+  background: #f4f2ee;
+}
+
+.combination-modal__image-icon {
+  width: 27px;
+  height: 27px;
+  opacity: 0.5;
+}
+
+.combination-modal__details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 24px;
+  flex: 1 0 0;
+  min-width: 0;
+  padding: 48px;
+}
+
+.combination-modal__header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.combination-modal__title {
+  margin: 0;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 32px;
+  color: var(--color-heading-strong);
+}
+
+.combination-modal__author {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 14px;
+  letter-spacing: -0.28px;
+  color: var(--modal-grey-300);
+}
+
+.combination-modal__description {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--modal-grey-300);
+}
+
+.combination-modal__components {
+  background: #f9f8f6;
+  border: 1px solid rgba(26, 26, 26, 0.05);
+  border-radius: 12px;
+  padding: 25px;
+}
+
+.combination-modal__components-title {
+  margin: 0 0 9px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid rgba(26, 26, 26, 0.1);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: -0.28px;
+  color: var(--color-heading-strong);
+}
+
+.combination-modal__components-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.combination-modal__components-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.combination-modal__components-list img {
+  width: 20px;
+  height: 20px;
+}
+
+.combination-modal__tassel-icon {
+  transform: rotate(180deg);
+}
+
+.combination-modal__component-label {
+  width: 58px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  letter-spacing: -0.28px;
+  color: var(--modal-grey-300);
+}
+
+.combination-modal__component-value {
+  font-family: var(--font-body);
+  font-size: 14px;
+  letter-spacing: -0.28px;
+  color: var(--color-heading-strong);
+}
+
+.combination-modal__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-top: 1px;
+  border-top: 1px solid var(--modal-yellow-200);
+}
+
+.combination-modal__price {
+  margin: 0;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 24px;
+  color: var(--color-heading-strong);
+}
+
+.combination-modal__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.combination-modal__reserve {
+  flex: 1 0 0;
+  padding: 16px;
+  background: var(--color-accent);
+  border: none;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: -0.28px;
+  color: white;
+  cursor: pointer;
+}
+
+.combination-modal__wishlist {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 15px 25px;
+  background: none;
+  border: 1px solid var(--modal-grey-100);
+  font-family: var(--font-body);
+  font-size: 14px;
+  letter-spacing: -0.28px;
+  color: var(--color-heading-strong);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.combination-modal__wishlist img {
+  width: 20px;
+  height: 20px;
+}
+
+@media (max-width: 720px) {
+  .combination-modal {
+    flex-direction: column;
+    max-height: 95vh;
+  }
+}
