@@ -310,7 +310,7 @@
 
 /* Summary */
 
-.summary {
+.summary-col {
   display: flex;
   flex-direction: column;
   gap: 40px;
@@ -318,10 +318,11 @@
   margin-top: 16px;
 }
 
-.summary__card {
+.summary {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  width: 100%;
   box-sizing: border-box;
   background: var(--color-brown-50);
   padding: 32px;
@@ -354,6 +355,10 @@
   font-family: var(--font-body);
   font-size: 14px;
   letter-spacing: -0.28px;
+  color: var(--color-grey-100);
+}
+
+.summary__label--filled {
   color: var(--color-heading-strong);
 }
 

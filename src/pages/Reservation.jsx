@@ -16,6 +16,8 @@ const STORES = [
     name: 'MCM 롯데백화점 본점',
     address: '서울 중구 남대문로 81, 롯데백화점 본점 1F',
     hours: '월-목 10:30-20:00 · 금-일 10:30-20:30',
+    tel: '+82-2-772-3198',
+    postalCode: '04533',
     kakaoUrl: 'https://place.map.kakao.com/1377183359',
   },
   {
@@ -23,6 +25,8 @@ const STORES = [
     name: 'MCM 하우스 플래그십스토어',
     address: '서울 강남구 압구정로 412',
     hours: '매일 11:00-20:00',
+    tel: '+82-2-540-1404',
+    postalCode: '06014',
     kakaoUrl: 'https://place.map.kakao.com/8048352',
   },
   {
@@ -30,6 +34,8 @@ const STORES = [
     name: 'MCM 롯데백화점 잠실점',
     address: '서울 송파구 올림픽로 240, 롯데백화점 잠실점 1F',
     hours: '월-목 10:30-20:00 · 금-일 10:30-20:30',
+    tel: '+82-2-2143-7205',
+    postalCode: '05554',
     kakaoUrl: 'https://place.map.kakao.com/1034672903',
   },
   {
@@ -37,6 +43,8 @@ const STORES = [
     name: 'MCM 롯데백화점 대구점',
     address: '대구광역시 북구 태평로 161, 롯데백화점 대구점 B1',
     hours: '월-목 10:30-20:00 · 금-일 10:30-20:30',
+    tel: '+82-5-3660-3169',
+    postalCode: '41581',
     kakaoUrl: 'https://place.map.kakao.com/950172435',
   },
 ]
@@ -92,14 +100,14 @@ export default function Reservation() {
   const { user } = useAuth()
 
   const [query, setQuery] = useState('')
-  const [selectedStoreId, setSelectedStoreId] = useState(STORES[0].id)
+  const [selectedStoreId, setSelectedStoreId] = useState(null)
   const [viewYear, setViewYear] = useState(today.getFullYear())
   const [viewMonth, setViewMonth] = useState(today.getMonth())
-  const [selectedDate, setSelectedDate] = useState(today)
+  const [selectedDate, setSelectedDate] = useState(null)
   const [selectedTime, setSelectedTime] = useState(null)
 
   const filteredStores = STORES.filter(
-    (store) => store.name.includes(query) || store.address.includes(query),
+    (store) => store.name.includes(query) || store.address.includes(query) || store.postalCode.includes(query),
   )
   const selectedStore = STORES.find((store) => store.id === selectedStoreId)
   const calendarDays = useMemo(() => buildCalendarDays(viewYear, viewMonth), [viewYear, viewMonth])
@@ -156,7 +164,11 @@ export default function Reservation() {
                   key={store.id}
                   type="button"
                   className={`store-card${store.id === selectedStoreId ? ' store-card--selected' : ''}`}
-                  onClick={() => setSelectedStoreId(store.id)}
+                  onClick={() => {
+                    setSelectedStoreId(store.id)
+                    setSelectedDate(today)
+                    setSelectedTime(null)
+                  }}
                 >
                   <div className="store-card__top">
                     <span className="store-card__name">{store.name}</span>
@@ -174,97 +186,102 @@ export default function Reservation() {
             </div>
           </section>
 
-          <section className="reservation__date-section">
-            <div className="reservation__calendar-col">
-              <h2 className="reservation__section-title">2. 날짜 및 시간 선택</h2>
+          {selectedStore && (
+            <section className="reservation__date-section">
+              <div className="reservation__calendar-col">
+                <h2 className="reservation__section-title">2. 날짜 및 시간 선택</h2>
 
-              <div className="calendar">
-                <div className="calendar__header">
-                  <button type="button" className="calendar__nav" onClick={goToPrevMonth} aria-label="이전 달">
-                    <img src={chevronLeft} alt="" />
-                  </button>
-                  <span className="calendar__month">
-                    {viewYear}년 {viewMonth + 1}월
-                  </span>
-                  <button type="button" className="calendar__nav" onClick={goToNextMonth} aria-label="다음 달">
-                    <img src={chevronRight} alt="" />
-                  </button>
-                </div>
-
-                <div className="calendar__weekdays">
-                  {WEEKDAYS.map((day) => (
-                    <span key={day} className="calendar__weekday">
-                      {day}
-                    </span>
-                  ))}
-                </div>
-
-                <div className="calendar__grid">
-                  {calendarDays.map(({ date, inMonth }) => {
-                    const isSelected = inMonth && isSameDay(date, selectedDate)
-                    const isPast = inMonth && isPastDay(date, today)
-                    const disabled = !inMonth || isPast
-                    return (
-                      <button
-                        key={date.toISOString()}
-                        type="button"
-                        disabled={disabled}
-                        className={`calendar__day${isSelected ? ' calendar__day--selected' : ''}${disabled ? ' calendar__day--muted' : ''}`}
-                        onClick={() => {
-                          setSelectedDate(date)
-                          setSelectedTime(null)
-                        }}
-                      >
-                        {date.getDate()}
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
-            </div>
-
-            <div className="reservation__time-col">
-              <span className="reservation__time-heading">
-                {selectedDate.getMonth() + 1}월 {selectedDate.getDate()}일 예약 가능 시간
-              </span>
-              <div className="time-slots">
-                {TIME_SLOTS.map((time) => {
-                  const unavailable = isPastTimeSlot(time, selectedDate, today)
-                  return (
-                    <button
-                      key={time}
-                      type="button"
-                      disabled={unavailable}
-                      className={`time-slot${time === selectedTime ? ' time-slot--selected' : ''}${unavailable ? ' time-slot--disabled' : ''}`}
-                      onClick={() => setSelectedTime(time)}
-                    >
-                      {time}
+                <div className="calendar">
+                  <div className="calendar__header">
+                    <button type="button" className="calendar__nav" onClick={goToPrevMonth} aria-label="이전 달">
+                      <img src={chevronLeft} alt="" />
                     </button>
-                  )
-                })}
+                    <span className="calendar__month">
+                      {viewYear}년 {viewMonth + 1}월
+                    </span>
+                    <button type="button" className="calendar__nav" onClick={goToNextMonth} aria-label="다음 달">
+                      <img src={chevronRight} alt="" />
+                    </button>
+                  </div>
+
+                  <div className="calendar__weekdays">
+                    {WEEKDAYS.map((day) => (
+                      <span key={day} className="calendar__weekday">
+                        {day}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="calendar__grid">
+                    {calendarDays.map(({ date, inMonth }) => {
+                      const isSelected = inMonth && selectedDate && isSameDay(date, selectedDate)
+                      const isPast = inMonth && isPastDay(date, today)
+                      const disabled = !inMonth || isPast
+                      return (
+                        <button
+                          key={date.toISOString()}
+                          type="button"
+                          disabled={disabled}
+                          className={`calendar__day${isSelected ? ' calendar__day--selected' : ''}${disabled ? ' calendar__day--muted' : ''}`}
+                          onClick={() => {
+                            setSelectedDate(date)
+                            setSelectedTime(null)
+                          }}
+                        >
+                          {date.getDate()}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
               </div>
-            </div>
-          </section>
+
+              {selectedDate && (
+                <div className="reservation__time-col">
+                  <span className="reservation__time-heading">
+                    {selectedDate.getMonth() + 1}월 {selectedDate.getDate()}일 예약 가능 시간
+                  </span>
+                  <div className="time-slots">
+                    {TIME_SLOTS.map((time) => {
+                      const unavailable = isPastTimeSlot(time, selectedDate, today)
+                      return (
+                        <button
+                          key={time}
+                          type="button"
+                          disabled={unavailable}
+                          className={`time-slot${time === selectedTime ? ' time-slot--selected' : ''}${unavailable ? ' time-slot--disabled' : ''}`}
+                          onClick={() => setSelectedTime(time)}
+                        >
+                          {time}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+            </section>
+          )}
         </div>
 
-        <aside className="summary">
-          <div className="summary__card">
+        <aside className="summary-col">
+          <div className="summary">
             <h3 className="summary__title">예약 내역 확인</h3>
 
             <div className="summary__rows">
               <div className="summary__row">
-                <span className="summary__label">매장</span>
+                <span className={`summary__label${selectedStore ? ' summary__label--filled' : ''}`}>매장</span>
                 <span className="summary__value">{selectedStore?.name}</span>
               </div>
               <div className="summary__row">
-                <span className="summary__label">날짜</span>
+                <span className={`summary__label${selectedDate ? ' summary__label--filled' : ''}`}>날짜</span>
                 <span className="summary__value">
-                  {selectedDate.getFullYear()}년 {selectedDate.getMonth() + 1}월 {selectedDate.getDate()}일
+                  {selectedDate &&
+                    `${selectedDate.getFullYear()}년 ${selectedDate.getMonth() + 1}월 ${selectedDate.getDate()}일`}
                 </span>
               </div>
               <div className="summary__row">
-                <span className="summary__label">시간</span>
-                <span className="summary__value">{selectedTime ?? '시간을 선택해주세요'}</span>
+                <span className={`summary__label${selectedTime ? ' summary__label--filled' : ''}`}>시간</span>
+                <span className="summary__value">{selectedTime}</span>
               </div>
             </div>
 
@@ -273,7 +290,6 @@ export default function Reservation() {
             </button>
           </div>
 
-          {/* 선택한 매장 위치를 카카오맵으로 표시. 매장 선택 시 해당 위치로 자동 포커스 */}
           <StoreMap stores={STORES} selectedStoreId={selectedStoreId} />
         </aside>
       </div>
