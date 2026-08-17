@@ -209,8 +209,9 @@
 }
 
 .combination-modal__wishlist img {
+  /* 하트 아이콘은 정사각형이 아니라서(20x18.35) height는 고정하지 않고 비율대로 자동 계산 */
   width: 20px;
-  height: 20px;
+  height: auto;
 }
 
 @media (max-width: 720px) {
