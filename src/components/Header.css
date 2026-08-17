@@ -5,6 +5,7 @@
   padding: 8px 64px;
   height: 80px;
   background: #fff;
+  border-bottom: 1.5px solid #EBCAAA;
 }
 
 .header__logo {
