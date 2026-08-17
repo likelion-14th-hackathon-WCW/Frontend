@@ -6,6 +6,8 @@ import Reservation from './pages/Reservation.jsx'
 import ReservationGuestInfo from './pages/ReservationGuestInfo.jsx'
 import ReservationCompleteGuest from './pages/ReservationCompleteGuest.jsx'
 import ReservationCompleteMember from './pages/ReservationCompleteMember.jsx'
+import SignUp from './pages/SignUp.jsx'
+import SignUpComplete from './pages/SignUpComplete.jsx'
 import EditorPage from './pages/EditorPage.jsx'
 
 function App() {
@@ -19,6 +21,8 @@ function App() {
       {path === '/reservation/guest-info' && <ReservationGuestInfo />}
       {path === '/reservation/complete-guest' && <ReservationCompleteGuest />}
       {path === '/reservation/complete-member' && <ReservationCompleteMember />}
+      {path === '/signup' && <SignUp />}
+      {path === '/signup/complete' && <SignUpComplete />}
       {(path === '/editor' || path === '/make') && <EditorPage />}
       <Footer />
     </div>
