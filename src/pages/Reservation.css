@@ -3,7 +3,6 @@
   flex-direction: column;
   gap: 40px;
   padding: 47px 64px 48px;
-  border-top: 1px solid var(--color-yellow-400);
   background: #FFF;
 }
 
