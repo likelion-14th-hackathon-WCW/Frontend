@@ -1,186 +1,590 @@
-.editor-layout {
-  display: grid;
-  grid-template-columns: 320px 1fr 300px;
-  gap: 24px;
-  max-width: 1400px;
+/* 하드코딩: Figma 디자인 토큰 중 common.css에 아직 등록되지 않은 값.
+   추후 디자인 시스템 정리 시 :root 공용 토큰으로 승격 필요 */
+.editor-main-container {
+  --editor-brown-300: #e2b283;
+  --editor-brown-700: #976332;
+  --editor-red-500: #bf3341;
+
+  display: flex;
+  width: 100%;
+  max-width: 1280px;
+  min-height: 800px;
   margin: 0 auto;
-  padding: 24px 20px;
   box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  color: #333;
-}
-
-.panel-section {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.panel-title {
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.panel-subtitle {
-  font-size: 12px;
-  color: #888;
-  margin-top: -12px;
-}
-
-.keyword-box {
-  border: 1px solid #f59e0b;
-  border-radius: 8px;
-  padding: 12px;
-  background-color: #fffdf5;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.keyword-input-wrapper {
-  display: flex;
-  gap: 8px;
-}
-
-.keyword-input {
-  flex: 1;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  padding: 8px 12px;
-  font-size: 13px;
-  outline: none;
-}
-
-.btn-ai {
-  background-color: #d97706;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.btn-ai:disabled {
-  background-color: #d1d5db;
-}
-
-.limit-text {
-  font-size: 11px;
-  color: #9ca3af;
-}
-
-.section-label {
-  font-size: 13px;
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-
-.color-list {
-  display: flex;
-  gap: 8px;
-}
-
-.color-circle {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  cursor: pointer;
-  border: 2px solid transparent;
-}
-
-.color-circle.selected {
-  border-color: #d97706;
-  transform: scale(1.1);
-}
-
-.option-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-}
-
-.option-card {
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  padding: 10px;
-  text-align: center;
-  font-size: 12px;
-  cursor: pointer;
   background: #fff;
-  transition: all 0.2s;
 }
 
-.option-card.selected {
-  border-color: #d97706;
-  background-color: #fffdf5;
-  font-weight: bold;
+/* ---------- Left Sidebar: Customization Tools ---------- */
+.sidebar-left {
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--color-yellow-400);
+  box-sizing: border-box;
 }
 
-.canvas-container {
-  border: 1px solid #f3f4f6;
-  border-radius: 12px;
-  background-color: #fafafa;
-  min-height: 500px;
+.sidebar-left__header {
+  padding: 20px 24px 21px;
+  border-bottom: 1px solid var(--color-yellow-400);
+}
+
+.sidebar-left__header h2 {
+  margin: 0 0 8px;
+  font-size: 24px;
+  font-weight: 400;
+  color: var(--color-heading-strong);
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-grey-300);
+  line-height: 1.4;
+  letter-spacing: -0.28px;
+}
+
+.sidebar-left__scroll {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 20px 24px;
+}
+
+.hint {
+  font-size: 12px;
+  color: var(--color-grey-300);
+  margin: 8px 0 0;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: var(--color-heading-strong);
+  letter-spacing: -0.28px;
+}
+
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--editor-brown-300);
+  background: var(--color-background);
+}
+
+.input-with-icon input {
+  flex: 1;
+  padding: 14px 17px 13px 40px;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  color: var(--color-heading-strong);
+}
+
+/* 스파클 아이콘: 입력 전/후 관계없이 항상 인풋 왼쪽 고정, 클릭 시 AI 추천 제출 */
+.btn-ai {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
+  padding: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
-.canvas-placeholder {
-  color: #9ca3af;
-  font-size: 14px;
-  text-align: center;
+.btn-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 12px;
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--editor-brown-700);
+  font-size: 12px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  cursor: pointer;
 }
 
-.symbol-box {
-  border: 1px solid #fde68a;
-  background-color: #fffbeb;
-  border-radius: 8px;
-  padding: 16px;
+.btn-text:disabled {
+  color: var(--color-text-secondary);
+  cursor: not-allowed;
 }
 
-.symbol-box h4 {
-  margin: 0 0 8px 0;
-  color: #92400e;
-  font-size: 14px;
-}
-
-.symbol-box p {
+.divider {
+  border: none;
+  border-top: 1px solid var(--color-yellow-400);
   margin: 0;
-  font-size: 13px;
-  color: #78350f;
-  line-height: 1.5;
 }
 
-.save-action-group {
-  margin-top: auto;
+.option-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-heading-strong);
+  letter-spacing: -0.28px;
+}
+
+.color-palette {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.color-chip {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  border-radius: 12px;
+  border: 2px solid #fff;
+  padding: 0;
+  cursor: pointer;
+  box-sizing: content-box;
+}
+
+.color-chip--selected {
+  border-color: transparent;
+  box-shadow: 0 0 0 2px var(--color-accent);
+}
+
+.color-chip--limited::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--editor-red-500);
+  border: 1px solid var(--color-background);
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  width: 100%;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  width: 100%;
+}
+
+.square-item,
+.card-item {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-}
-
-.title-input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  box-sizing: border-box;
-  font-size: 13px;
-}
-
-.btn-save-primary {
-  width: 100%;
-  padding: 12px;
-  background-color: #d97706;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 700;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 21px;
+  background-color: #f5f5f5;
+  border: 1px solid var(--color-grey-50);
   cursor: pointer;
+  box-sizing: border-box;
+}
+
+.square-item.selected,
+.card-item.selected {
+  border: 2px solid var(--color-accent);
+  padding: 20px;
+}
+
+.square-item__icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+.card-item span {
+  font-size: 11px;
+  color: #000;
+}
+
+.limited-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--editor-red-500);
+  border: 1px solid var(--color-background);
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--color-grey-300);
+}
+
+.legend__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--editor-red-500);
+}
+
+/* ---------- Center Panel: Real-time Preview ---------- */
+.editor-canvas {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  padding: 32px;
+  box-sizing: border-box;
+}
+
+.preview-canvas {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  max-width: 420px;
+  aspect-ratio: 3 / 4;
+  background: rgba(251, 249, 244, 0.5);
+  border: 1px solid rgba(27, 28, 25, 0.05);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.02);
+  backdrop-filter: blur(2px);
+  box-sizing: border-box;
+}
+
+/* AI 추천 로딩 상태: 백엔드 연동 전까지 MOCK_AI_DELAY_MS(EditorPage.jsx) 동안 표시 */
+.editor-canvas-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--color-grey-300);
+  font-size: 16px;
+  text-align: center;
+  max-width: 320px;
+}
+
+.editor-canvas-loading__spinner {
+  width: 24px;
+  height: 24px;
+  animation: editor-spin 1s linear infinite;
+}
+
+@keyframes editor-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 노리개 미리보기 파츠: 실 색상(매듭/연결선/구슬/술)은 --thread-* 변수로 렌더링.
+   미선택 기본값은 #999999(진한 톤)/#e5e5e5(옅은 톤), 실 색상 선택 시 JS에서 해당 색으로 override */
+.norigae-preview {
+  --thread-solid: #999999;
+  --thread-faint: #e5e5e5;
+  --thread-edge: #e5e5e5;
+
+  position: relative;
+  width: 96px;
+  height: 532px;
+}
+
+.norigae-preview__loop {
+  position: absolute;
+  top: 0;
+  left: 44px;
+  width: 8px;
+  height: 64px;
+  border-radius: 12px;
+  background: var(--thread-faint);
+}
+
+.norigae-preview__knot {
+  position: absolute;
+  top: 54.75px;
+  left: 50%;
+  width: 64px;
+  height: 64px;
+  margin-left: -32px;
+  background: var(--thread-solid);
+  transform: rotate(45deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.norigae-preview__knot-border {
+  width: 48px;
+  height: 48px;
+  border: 2px solid #fff;
+}
+
+.norigae-preview__connection {
+  position: absolute;
+  top: 132px;
+  left: 46px;
+  width: 4px;
+  height: 40px;
+  background: var(--thread-solid);
+}
+
+.norigae-preview__ornament {
+  position: absolute;
+  top: 172px;
+  left: 0;
+  width: 96px;
+  height: 96px;
+  border-radius: 12px;
+  background: #e4e2dd;
+  border: 1px solid #837467;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.norigae-preview__knot2 {
+  position: absolute;
+  top: 276px;
+  left: 46px;
+  width: 4px;
+  height: 40px;
+  background: var(--thread-solid);
+}
+
+.norigae-preview__bead {
+  position: absolute;
+  top: 316px;
+  left: 50%;
+  width: 48px;
+  height: 48px;
+  margin-left: -24px;
+  border-radius: 12px;
+  background: var(--thread-solid);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.norigae-preview__bead-border {
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  border: 2px solid #fff;
+}
+
+.norigae-preview__tassels {
+  position: absolute;
+  top: 364px;
+  left: 30px;
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.norigae-preview__tassel {
+  display: block;
+  width: 4px;
+  height: 144px;
+  background: var(--thread-solid);
+}
+
+.norigae-preview__tassel--edge {
+  height: 128px;
+  background: var(--thread-edge);
+}
+
+.norigae-preview__tassel--center {
+  height: 160px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* ---------- Right Sidebar ---------- */
+.sidebar-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 383px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.sidebar-right__scroll {
+  overflow-y: auto;
+}
+
+.info-box {
+  padding: 24px 24px 25px;
+  background: var(--color-background);
+  border-bottom: 1px solid var(--color-yellow-400);
+}
+
+.info-box h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px;
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--color-heading-strong);
+}
+
+.info-desc {
+  margin: 0 0 16px;
+  font-size: 14px;
+  color: var(--color-grey-300);
+  line-height: 1.5;
+  letter-spacing: -0.28px;
+}
+
+.info-desc .highlight {
+  color: var(--editor-brown-300);
+  font-weight: 600;
+}
+
+.quote-box {
+  margin: 0 0 16px;
+  padding: 17px;
+  background: var(--color-background);
+  border: 1px solid #e8e8e8;
+  font-size: 14px;
+  color: var(--color-heading-strong);
+  line-height: 20px;
+}
+
+.quote-box--empty {
+  min-height: 20px;
+}
+
+.product-recommendation {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+}
+
+.product-recommendation__title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  color: var(--color-heading-strong);
+}
+
+.product-card {
+  display: flex;
+  gap: 16px;
+  padding: 13px;
+  background: #fff;
+  border: 1px solid var(--color-grey-50);
+}
+
+.product-img {
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  background-color: var(--color-grey-50);
+  /* MCM 상품 이미지가 붙기 전까지의 자리 표시자 */
+}
+
+.product-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+}
+
+.product-info .badge {
+  font-size: 12px;
+  color: var(--editor-brown-300);
+  letter-spacing: -0.24px;
+}
+
+.product-info .name {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-heading-strong);
+  letter-spacing: -0.28px;
+}
+
+.product-info .price {
+  margin: 0;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  letter-spacing: -0.24px;
+}
+
+.editor-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 25px 24px 24px;
+  background: var(--color-background);
+  border-top: 1px solid var(--color-yellow-400);
+}
+
+.btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  background: var(--color-accent);
+  color: var(--color-background);
+  border: none;
+  font-size: 14px;
+  letter-spacing: -0.28px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.btn-row {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-secondary {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 4px;
+  background: transparent;
+  border: 1px solid var(--editor-brown-300);
+  color: var(--color-heading-strong);
+  font-size: 12px;
+  letter-spacing: -0.24px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.btn-icon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  display: inline-block;
+}
+
+.btn-icon--small {
+  width: 10px;
+  height: 10px;
 }
