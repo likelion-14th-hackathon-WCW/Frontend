@@ -7,6 +7,7 @@ import ReservationGuestInfo from './pages/ReservationGuestInfo.jsx'
 import ReservationCompleteGuest from './pages/ReservationCompleteGuest.jsx'
 import ReservationCompleteMember from './pages/ReservationCompleteMember.jsx'
 import EditorPage from './pages/EditorPage.jsx'
+import MyPage from "./pages/MyPage";
 
 function App() {
   const path = typeof window !== 'undefined' ? window.location.pathname : '/'
@@ -20,6 +21,7 @@ function App() {
       {path === '/reservation/complete-guest' && <ReservationCompleteGuest />}
       {path === '/reservation/complete-member' && <ReservationCompleteMember />}
       {(path === '/editor' || path === '/make') && <EditorPage />}
+      {path === '/mypage' && <MyPage />}
       <Footer />
     </div>
   )
