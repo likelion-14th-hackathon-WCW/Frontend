@@ -1,8 +1,8 @@
 import './LegalSideNav.css'
 
 export const LEGAL_LINKS = [
+  { label: '개인정보 처리방침', href: '/privacy' },
   { label: '온라인 서비스 이용 약관', href: '/terms' },
-  { label: '개인정보 처리방침', href: '#' },
   { label: '장인정신', href: '/craftsmanship' },
   { label: '고객센터', href: '#' },
 ]

@@ -3,6 +3,7 @@ import Header from './components/Header.jsx'
 import Footer from './components/Footer.jsx'
 import Craftsmanship from './pages/Craftsmanship.jsx'
 import Terms from './pages/Terms.jsx'
+import PrivacyPolicy from './pages/PrivacyPolicy.jsx'
 import Home from './pages/Home.jsx'
 import Reservation from './pages/Reservation.jsx'
 import ReservationGuestInfo from './pages/ReservationGuestInfo.jsx'
@@ -17,6 +18,7 @@ import MyPage from './pages/MyPage.jsx'
 const PAGES = {
   '/craftsmanship': Craftsmanship,
   '/terms': Terms,
+  '/privacy': PrivacyPolicy,
 }
 
 function App() {

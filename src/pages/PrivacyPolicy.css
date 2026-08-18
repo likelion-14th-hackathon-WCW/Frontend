@@ -1,0 +1,147 @@
+.privacy {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  max-width: 1286px;
+  margin: 0 auto;
+  padding: 48px 64px;
+}
+
+.privacy__content {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  flex: 1;
+  min-width: 0;
+}
+
+.privacy__header {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.privacy__title {
+  margin: 0;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 32px;
+  color: #1a1a1a;
+}
+
+.privacy__revision {
+  margin: 0;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 18px;
+  color: #666;
+}
+
+.privacy__intro {
+  margin: 0;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: -0.28px;
+  color: #666;
+}
+
+.privacy__toc {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.privacy__toc-title {
+  margin: 0;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 18px;
+  color: #1a1a1a;
+}
+
+.privacy__toc ol {
+  margin: 0;
+  padding-left: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.privacy__toc a {
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: #000;
+  text-decoration: underline;
+}
+
+.privacy__articles {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.privacy__article {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  background: #e8e8e8;
+  padding: 30px 24px;
+  scroll-margin-top: 24px;
+}
+
+.privacy__article-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.privacy__article-header h3 {
+  margin: 0;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: -0.28px;
+  color: #1a1a1a;
+}
+
+.privacy__article-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.privacy__article-body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: -0.24px;
+  color: #1a1a1a;
+}
+
+.privacy__article-body p {
+  margin: 0 0 16px;
+}
+
+.privacy__article-body p:last-child {
+  margin-bottom: 0;
+}
+
+.privacy__article-body .privacy-strong {
+  font-weight: 600;
+}
+
+.privacy__article-body ol,
+.privacy__article-body ul {
+  margin: 0 0 16px;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.privacy__article-body ul {
+  padding-left: 36px;
+  margin-top: 4px;
+}
