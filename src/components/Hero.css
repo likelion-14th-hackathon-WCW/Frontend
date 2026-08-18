@@ -24,19 +24,15 @@
   text-align: center;
   white-space: nowrap;
   margin: 0;
+  animation: hero-rise 0.7s ease-out both;
 }
 
 .hero__heading-ghost-wrap {
   position: relative;
   display: inline-block;
-  vertical-align: baseline;
-}
-
-.hero__heading-ghost {
-  font-family: 'Noto Serif KR', serif;
-  font-weight: 600;
-  font-size: 80px;
-  color: var(--color-cream);
+  width: 75.28px;
+  height: 74.72px;
+  vertical-align: -14px;
 }
 
 .hero__heading-flourish {
@@ -49,11 +45,35 @@
   pointer-events: none;
 }
 
+.hero__flourish-layer {
+  opacity: 0;
+  animation: flourish-in 0.5s ease-out both;
+}
+
+.hero__flourish-layer--red {
+  animation-delay: 0s;
+}
+
+.hero__flourish-layer--yellow {
+  animation-delay: 0.4s;
+}
+
+.hero__flourish-layer--teal {
+  animation-delay: 0.8s;
+}
+
 .hero__heading-accent {
   font-family: 'Qwigley', cursive;
   font-weight: 500;
   font-size: 96px;
   color: var(--color-accent);
+  background: linear-gradient(110deg, var(--color-accent) 35%, #fff3d0 50%, var(--color-accent) 65%);
+  background-size: 250% 100%;
+  background-position: 200% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: hero-shimmer 1.6s ease-in-out 0.9s 1 both;
 }
 
 .hero__description {
@@ -64,6 +84,7 @@
   text-align: center;
   max-width: 672px;
   margin: 0;
+  animation: hero-rise 0.7s ease-out 0.15s both;
 }
 
 .hero__cta {
@@ -76,4 +97,49 @@
   padding: 16px 32px;
   text-decoration: none;
   white-space: nowrap;
+  animation: hero-rise 0.7s ease-out 0.3s both;
+}
+
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -50% 0;
+  }
+}
+
+@keyframes flourish-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__heading,
+  .hero__heading-accent,
+  .hero__description,
+  .hero__cta {
+    animation: none;
+    background-position: 0 0;
+  }
+
+  .hero__flourish-layer {
+    animation: none;
+    opacity: 1;
+  }
 }
