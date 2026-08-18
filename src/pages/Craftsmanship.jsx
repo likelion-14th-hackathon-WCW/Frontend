@@ -1,16 +1,10 @@
 import './Craftsmanship.css'
+import LegalSideNav from '../components/LegalSideNav.jsx'
 import heroImg from '../assets/craftsmanship/hero.png'
 import philosophyImg from '../assets/craftsmanship/philosophy.png'
 import step1Img from '../assets/craftsmanship/step1.png'
 import step2Img from '../assets/craftsmanship/step2.png'
 import step3Img from '../assets/craftsmanship/step3.png'
-
-const SIDE_LINKS = [
-  { label: '온라인 서비스 이용 약관', href: '#' },
-  { label: '개인정보 처리방침', href: '#' },
-  { label: '장인정신', href: '/craftsmanship' },
-  { label: '고객센터', href: '#' },
-]
 
 const STEPS = [
   {
@@ -40,17 +34,7 @@ const STEPS = [
 export default function Craftsmanship() {
   return (
     <div className="craftsmanship">
-      <aside className="craftsmanship__sidebar">
-        {SIDE_LINKS.map((link) => (
-          <a
-            key={link.label}
-            href={link.href}
-            className={`craftsmanship__side-link${link.label === '장인정신' ? ' craftsmanship__side-link--active' : ''}`}
-          >
-            {link.label}
-          </a>
-        ))}
-      </aside>
+      <LegalSideNav active="장인정신" />
 
       <main className="craftsmanship__content">
         <section className="craftsmanship__hero">

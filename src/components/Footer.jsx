@@ -2,7 +2,7 @@ import './Footer.css'
 
 const FOOTER_LINKS = [
   { label: '개인정보 처리방침', href: '#' },
-  { label: '이용약관', href: '#' },
+  { label: '이용약관', href: '/terms' },
   { label: '장인정신', href: '/craftsmanship' },
   { label: '고객센터', href: '#' },
 ]
