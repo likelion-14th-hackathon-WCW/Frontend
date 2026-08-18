@@ -4,7 +4,6 @@ import './MyPage.css';
 export default function MyPage() {
   return (
     <div className="mypage-wrapper">
-      {/* 1. 좌측 사이드바 */}
       <aside className="mypage-sidebar">
         <ul className="sidebar-menu">
           <li className="menu-item active">
@@ -28,15 +27,12 @@ export default function MyPage() {
         </ul>
       </aside>
 
-      {/* 2. 우측 메인 콘텐츠 영역 */}
       <main className="mypage-content">
-        {/* 상단 타이틀 */}
         <div className="content-header">
           <h2>마이페이지</h2>
           <p>프로필, 예약 및 맞춤형 제작물을 관리하세요.</p>
         </div>
 
-        {/* 프로필 카드 */}
         <div className="profile-card">
           <div className="profile-left">
             <div className="avatar-box">
@@ -50,7 +46,6 @@ export default function MyPage() {
           <button className="btn-edit-profile">프로필 수정</button>
         </div>
 
-        {/* 나의 노리개 타임라인 */}
         <section className="section-block">
           <div className="section-header">
             <h3>나의 노리개 타임라인</h3>
@@ -72,9 +67,7 @@ export default function MyPage() {
           </div>
         </section>
 
-        {/* 하단 2열 그리드 (최근 예약 내역 & 소유권 레지스트리) */}
         <div className="two-column-grid">
-          {/* 최근 예약 내역 */}
           <div className="info-card">
             <div className="card-header">
               <h3>최근 예약 내역</h3>
@@ -98,7 +91,6 @@ export default function MyPage() {
             </ul>
           </div>
 
-          {/* 소유권 레지스트리 */}
           <div className="info-card highlight-card">
             <div className="card-header">
               <h3>소유권 레지스트리</h3>
