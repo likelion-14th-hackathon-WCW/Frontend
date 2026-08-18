@@ -19,7 +19,8 @@ export default function CombinationDetailModal({ combination, liked, onToggleLik
 
   if (!combination) return null
 
-  const { title, author, modalDescription, components } = combination
+  const { title, creator, description, decoration_name: decorationName, knot_name: knotName, tassel_name: tasselName } =
+    combination
 
   return (
     <div className="combination-modal-overlay" onClick={onClose}>
@@ -38,10 +39,10 @@ export default function CombinationDetailModal({ combination, liked, onToggleLik
         <div className="combination-modal__details">
           <div className="combination-modal__header">
             <h2 className="combination-modal__title">{title}</h2>
-            <p className="combination-modal__author">{author}</p>
+            <p className="combination-modal__author">@{creator} 님 제작</p>
           </div>
 
-          <p className="combination-modal__description">{modalDescription}</p>
+          <p className="combination-modal__description">{description}</p>
 
           <div className="combination-modal__components">
             <h3 className="combination-modal__components-title">구성 조합</h3>
@@ -49,17 +50,17 @@ export default function CombinationDetailModal({ combination, liked, onToggleLik
               <li>
                 <img src={ornamentIcon} alt="" />
                 <span className="combination-modal__component-label">메인 장식:</span>
-                <span className="combination-modal__component-value">{components.ornament}</span>
+                <span className="combination-modal__component-value">{decorationName}</span>
               </li>
               <li>
                 <img src={knotIcon} alt="" />
                 <span className="combination-modal__component-label">매듭:</span>
-                <span className="combination-modal__component-value">{components.knot}</span>
+                <span className="combination-modal__component-value">{knotName}</span>
               </li>
               <li>
                 <img src={tasselIcon} alt="" className="combination-modal__tassel-icon" />
                 <span className="combination-modal__component-label">술:</span>
-                <span className="combination-modal__component-value">{components.tassel}</span>
+                <span className="combination-modal__component-value">{tasselName}</span>
               </li>
             </ul>
           </div>
