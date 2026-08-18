@@ -2,7 +2,7 @@ import { apiClient } from './client.js';
 
 export const getAiRecommendation = async (keyword, excludeCombinations = []) => {
   try {
-    const response = await apiClient.post('/api/recommendations/', {
+    const response = await apiClient.post('/api/recommend/', {
       keyword,
       exclude_combinations: excludeCombinations,
     });
@@ -44,7 +44,7 @@ export const getRecommendProducts = async (itemId) => {
 export const saveNorigaeDesign = async (designData) => {
   
   try {
-    const response = await apiClient.post('/api/norigaes/', designData);
+    const response = await apiClient.post('/api/items/', designData);
     return { success: true, data: response.data };
   } catch (error) {
     if (error.response) {
