@@ -1,6 +1,14 @@
 import './App.css'
 import Header from './components/Header.jsx'
 import Footer from './components/Footer.jsx'
+import Craftsmanship from './pages/Craftsmanship.jsx'
+
+const PAGES = {
+  '/craftsmanship': Craftsmanship,
+}
+
+function App() {
+  const Page = PAGES[window.location.pathname]
 import Home from './pages/Home.jsx'
 import Reservation from './pages/Reservation.jsx'
 import ReservationGuestInfo from './pages/ReservationGuestInfo.jsx'
@@ -18,6 +26,7 @@ function App() {
   return (
     <div>
       <Header />
+      {Page && <Page />}
       {path === '/' && <Home />}
       {path === '/reservation' && <Reservation />}
       {path === '/reservation/guest-info' && <ReservationGuestInfo />}
