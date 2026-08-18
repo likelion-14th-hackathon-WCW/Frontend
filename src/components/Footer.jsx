@@ -1,6 +1,11 @@
 import './Footer.css'
 
-const FOOTER_LINKS = ['개인정보 처리방침', '이용약관', '장인정신', '고객센터']
+const FOOTER_LINKS = [
+  { label: '개인정보 처리방침', href: '#' },
+  { label: '이용약관', href: '#' },
+  { label: '장인정신', href: '/craftsmanship' },
+  { label: '고객센터', href: '#' },
+]
 
 export default function Footer() {
   return (
@@ -8,8 +13,8 @@ export default function Footer() {
       <div className="footer__brand">로고영역</div>
 
       <nav className="footer__nav">
-        {FOOTER_LINKS.map((label) => (
-          <a key={label} href="#" className="footer__link">
+        {FOOTER_LINKS.map(({ label, href }) => (
+          <a key={label} href={href} className="footer__link">
             {label}
           </a>
         ))}
