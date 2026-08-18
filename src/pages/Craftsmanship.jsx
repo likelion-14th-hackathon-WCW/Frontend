@@ -1,5 +1,6 @@
 import './Craftsmanship.css'
 import LegalSideNav from '../components/LegalSideNav.jsx'
+import { useScrollReveal } from '../hooks/useScrollReveal.js'
 import heroImg from '../assets/craftsmanship/hero.png'
 import philosophyImg from '../assets/craftsmanship/philosophy.png'
 import step1Img from '../assets/craftsmanship/step1.png'
@@ -31,24 +32,40 @@ const STEPS = [
   },
 ]
 
+// reveal ref order: hero title, hero image, philosophy image, philosophy text, process heading, steps[0..2]
+const REVEAL_COUNT = 5 + STEPS.length
+const REVEAL_DELAYS = { 5: 0, 6: 150, 7: 300 }
+
 export default function Craftsmanship() {
+  const reveal = useScrollReveal(REVEAL_COUNT, REVEAL_DELAYS)
+
   return (
     <div className="craftsmanship">
       <LegalSideNav active="장인정신" />
 
       <main className="craftsmanship__content">
         <section className="craftsmanship__hero">
-          <h1 className="craftsmanship__hero-title">
+          <h1 className="craftsmanship__hero-title reveal" ref={(el) => (reveal[0] = el)}>
             MCM의 장인정신,
             <br />
             노리개로 피어나다
           </h1>
-          <img className="craftsmanship__hero-image" src={heroImg} alt="장인이 노리개를 만드는 모습" />
+          <img
+            className="craftsmanship__hero-image reveal"
+            ref={(el) => (reveal[1] = el)}
+            src={heroImg}
+            alt="장인이 노리개를 만드는 모습"
+          />
         </section>
 
         <section className="craftsmanship__philosophy">
-          <img className="craftsmanship__philosophy-image" src={philosophyImg} alt="완성된 노리개" />
-          <div className="craftsmanship__philosophy-text">
+          <img
+            className="craftsmanship__philosophy-image reveal reveal--left"
+            ref={(el) => (reveal[2] = el)}
+            src={philosophyImg}
+            alt="완성된 노리개"
+          />
+          <div className="craftsmanship__philosophy-text reveal reveal--right" ref={(el) => (reveal[3] = el)}>
             <h2 className="craftsmanship__philosophy-title">'짓다' 철학</h2>
             <p>
               MCM의 모던 럭셔리는 한국의 전통적인 수공예 기술과 만나 새로운 예술 작품으로 탄생합니다. 우리는 단순한 장식품을 넘어서,
@@ -62,16 +79,17 @@ export default function Craftsmanship() {
         </section>
 
         <section className="craftsmanship__process">
-          <div className="craftsmanship__process-heading">
+          <div className="craftsmanship__process-heading reveal" ref={(el) => (reveal[4] = el)}>
             <h2>제작 과정</h2>
             <p>완벽을 향한 세 가지 여정</p>
           </div>
 
           <div className="craftsmanship__steps">
-            {STEPS.map((step) => (
+            {STEPS.map((step, i) => (
               <div
                 key={step.number}
-                className={`craftsmanship__step${step.offset ? ' craftsmanship__step--offset' : ''}`}
+                className={`craftsmanship__step reveal${step.offset ? ' craftsmanship__step--offset' : ''}`}
+                ref={(el) => (reveal[5 + i] = el)}
               >
                 <div className="craftsmanship__step-image-wrap">
                   <img src={step.image} alt={step.title} />
