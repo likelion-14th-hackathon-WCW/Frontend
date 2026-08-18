@@ -10,7 +10,7 @@ import SignUp from './pages/SignUp.jsx'
 import SignUpComplete from './pages/SignUpComplete.jsx'
 import Login from './pages/Login.jsx'
 import EditorPage from './pages/EditorPage.jsx'
-import MyPage from "./pages/MyPage";
+import MyPage from "./pages/MyPage.jsx"
 
 function App() {
   const path = typeof window !== 'undefined' ? window.location.pathname : '/'
