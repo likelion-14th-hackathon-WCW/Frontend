@@ -1,25 +1,8 @@
-import axios from 'axios';
-
-const BASE_URL = process.env.REACT_APP_API_BASE_URL || '';
-
-const api = axios.create({
-  baseURL: BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+import { apiClient } from './client.js';
 
 export const getAiRecommendation = async (keyword, excludeCombinations = []) => {
   try {
-    const response = await api.post('/api/recommendations/', {
+    const response = await apiClient.post('/api/recommendations/', {
       keyword,
       exclude_combinations: excludeCombinations,
     });
@@ -39,7 +22,7 @@ export const getAiRecommendation = async (keyword, excludeCombinations = []) => 
 
 export const getProductDetail = async (productId) => {
   try {
-    const response = await api.get(`/api/products/${productId}/`);
+    const response = await apiClient.get(`/api/products/${productId}/`);
     return { success: true, data: response.data };
   } catch (error) {
     return { success: false, message: '상품 정보를 가져오는 데 실패했습니다.' };
@@ -48,7 +31,7 @@ export const getProductDetail = async (productId) => {
 
 export const getRecommendProducts = async (itemId) => {
   try {
-    const response = await api.get(`/api/items/${itemId}/recommend-products/`);
+    const response = await apiClient.get(`/api/items/${itemId}/recommend-products/`);
     return { success: true, data: response.data };
   } catch (error) {
     if (error.response && error.response.status === 503) {
@@ -61,7 +44,7 @@ export const getRecommendProducts = async (itemId) => {
 export const saveNorigaeDesign = async (designData) => {
   
   try {
-    const response = await api.post('/api/norigaes/', designData);
+    const response = await apiClient.post('/api/norigaes/', designData);
     return { success: true, data: response.data };
   } catch (error) {
     if (error.response) {
