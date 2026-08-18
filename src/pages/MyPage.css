@@ -1,0 +1,318 @@
+.mypage-wrapper {
+  display: flex;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  gap: 40px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #333;
+}
+
+.mypage-sidebar {
+  width: 200px;
+  flex-shrink: 0;
+}
+
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: #666;
+  cursor: pointer;
+  border-radius: 6px;
+  margin-bottom: 4px;
+}
+
+.menu-item:hover {
+  background-color: #f5f5f5;
+  color: #111;
+}
+
+.menu-item.active {
+  color: #d97706; 
+  font-weight: 600;
+}
+
+.menu-gap {
+  margin-top: 20px;
+}
+
+.mypage-content {
+  flex: 1;
+}
+
+.content-header {
+  margin-bottom: 24px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 16px;
+}
+
+.content-header h2 {
+  font-size: 24px;
+  margin: 0 0 6px 0;
+  font-weight: 700;
+}
+
+.content-header p {
+  margin: 0;
+  color: #777;
+  font-size: 14px;
+}
+
+.profile-card {
+  border: 1px solid #fef3c7;
+  background-color: #fffbeb;
+  border-radius: 8px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+}
+
+.profile-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.avatar-box {
+  width: 56px;
+  height: 56px;
+  background-color: #e5e7eb;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.user-info h3 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.user-info p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.btn-edit-profile {
+  background-color: #fff;
+  border: 1px solid #d1d5db;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  color: #374151;
+}
+
+.section-block {
+  margin-bottom: 32px;
+}
+
+.section-header, .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.section-header h3, .card-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.btn-more {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.timeline-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.timeline-card {
+  height: 140px;
+  background-color: #e5e7eb;
+  border-radius: 8px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.badge-season {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: #f59e0b;
+  color: #fff;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.add-card {
+  background-color: #f9fafb;
+  border: 1px dashed #d1d5db;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+}
+
+.add-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #d97706;
+  color: #d97706;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  margin-bottom: 6px;
+}
+
+.add-card h4 {
+  margin: 0 0 2px 0;
+  font-size: 13px;
+  color: #d97706;
+}
+
+.add-card p {
+  margin: 0;
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.two-column-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.info-card {
+  border: 1px solid #f3f4f6;
+  border-radius: 8px;
+  padding: 20px;
+  background-color: #fff;
+}
+
+.highlight-card {
+  border-color: #fef3c7;
+}
+
+.card-desc {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 0 0 16px 0;
+  line-height: 1.4;
+}
+
+/* 예약 내역 */
+.reservation-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.reservation-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.reservation-item:last-child {
+  border-bottom: none;
+}
+
+.reservation-item strong {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 2px;
+}
+
+.reservation-item p {
+  margin: 0;
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.status-tag {
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.status-tag.active {
+  background-color: #f59e0b;
+  color: #fff;
+}
+
+.status-tag.done {
+  background-color: #e5e7eb;
+  color: #6b7280;
+}
+
+/* 소유권 레지스트리 박스 */
+.registry-box {
+  background-color: #fef3c7;
+  padding: 12px 16px;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.registry-info strong {
+  display: block;
+  font-size: 13px;
+}
+
+.registry-info p {
+  margin: 2px 0 0 0;
+  font-size: 11px;
+  color: #78350f;
+}
+
+.btn-text-link {
+  background: none;
+  border: none;
+  color: #78350f;
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.btn-accent-full {
+  width: 100%;
+  padding: 10px;
+  background-color: #d97706;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+}

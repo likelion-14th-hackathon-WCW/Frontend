@@ -1,0 +1,33 @@
+.store-map {
+  position: relative;
+  width: 100%;
+  height: 289px;
+  background: #e5e5e5;
+  border-bottom: 1px solid rgba(17, 17, 17, 0.1);
+  box-sizing: border-box;
+}
+
+.store-map__canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.store-map__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 16px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--color-grey-300);
+  background: #e5e5e5;
+  pointer-events: none;
+}
+
+/* 하드코딩: 에러 상태 강조색 — common.css에 아직 등록되지 않은 red 계열 */
+.store-map__overlay--error {
+  color: #bf3341;
+}
