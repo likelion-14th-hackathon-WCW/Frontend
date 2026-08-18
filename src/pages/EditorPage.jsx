@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import { getAiRecommendation, saveNorigaeDesign } from '../api/norigaeApi';
+import './EditorPage.css';
 
 export default function EditorPage() {
-  const [keyword, setKeyword] = useState('행복');
+  const [keyword, setKeyword] = useState('성장');
   
   const [recommendation, setRecommendation] = useState(null);
   const [excludeCombinations, setExcludeCombinations] = useState([]);
   
-  const [selectedKnot, setSelectedKnot] = useState(null);
-  const [selectedDecoration, setSelectedDecoration] = useState(null);
+  const [selectedKnot, setSelectedKnot] = useState(1);
+  const [selectedDecoration, setSelectedDecoration] = useState(1);
   const [selectedTassel, setSelectedTassel] = useState(13);
-  const [selectedColor, setSelectedColor] = useState('#D4AF37');
+  const [selectedColor, setSelectedColor] = useState('#1E293B');
   const [title, setTitle] = useState('');
 
   const [loading, setLoading] = useState(false);
@@ -63,7 +64,7 @@ export default function EditorPage() {
 
   const handleSave = async () => {
     if (!title.trim()) {
-      alert('제목을 입력해야 저장할 수 있습니다.');
+      alert('작품 제목을 입력해 주세요.');
       return;
     }
 
@@ -85,7 +86,6 @@ export default function EditorPage() {
       if (result.status === 401) {
         alert('로그인이 필요한 서비스입니다.');
       } else if (result.status === 400) {
-        // 서버 필드 에러 처리
         const errors = result.errors;
         if (errors.knot) alert(`매듭 오류: ${errors.knot[0]}`);
         else if (errors.title) alert(`제목 오류: ${errors.title[0]}`);
@@ -97,63 +97,156 @@ export default function EditorPage() {
   };
 
   return (
-    <div className="editor-container" style={{ padding: '20px' }}>
-      <h2>🎨 노리개 커스텀 에디터</h2>
+    <div className="editor-wrapper">
+      <div className="editor-grid">
+        
+        <div className="panel-left">
+          <h2 className="section-head-title">나만의 노리개 만들기</h2>
+          <p className="section-head-desc">
+            전통 한국 장신구를 현대적인 감각으로 직접 디자인해보세요.
+          </p>
 
-      <div style={{ marginBottom: '20px' }}>
-        <input
-          type="text"
-          value={keyword}
-          onChange={(e) => setKeyword(e.target.value)}
-          placeholder="키워드 입력 (예: 행복, 번영)"
-        />
-        <button onClick={handleGetRecommendation} disabled={loading}>
-          {excludeCombinations.length === 0 ? 'AI 조합 추천받기' : '추천 다시 받기'}
-        </button>
-        <span> ({excludeCombinations.length}/3회 사용)</span>
-      </div>
+          <div className="divider-line" />
 
-      {errorMsg && <p style={{ color: 'red' }}>{errorMsg}</p>}
+          <div className="input-label">소망 또는 키워드 입력</div>
+          <div className="keyword-input-card">
+            <span className="sparkle-icon">✨</span>
+            <input
+              type="text"
+              className="keyword-field"
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+              placeholder="소망 입력"
+            />
+          </div>
 
-      {recommendation && (
-        <div style={{ background: '#f9f9f9', padding: '15px', borderRadius: '8px', marginBottom: '20px' }}>
-          <h4>💡 상징적 의미 (고정)</h4>
-          <p>{recommendation.reason}</p>
+          <div className="sub-text-group">
+            <p className="helper-text">소망을 입력하면 AI 추천을 받을 수 있습니다.</p>
+            <button className="action-link" onClick={handleGetRecommendation} disabled={loading}>
+              ↻ 추천 다시 받기
+            </button>
+          </div>
+
+          <div className="input-label">실 색상 선택</div>
+          <div className="color-selector">
+            {['#1E293B', '#F472B6', '#F59E0B', '#10B981', '#EF4444'].map((col, idx) => (
+              <div
+                key={col}
+                className={`color-dot ${selectedColor === col ? 'active' : ''}`}
+                style={{ backgroundColor: col }}
+                onClick={() => setSelectedColor(col)}
+              >
+                {idx === 4 && <div className="badge-dot" />}
+              </div>
+            ))}
+          </div>
+
+          <div className="input-label">매듭 선택</div>
+          <div className="option-cards-grid">
+            {[1, 2, 3].map((id, idx) => (
+              <div
+                key={id}
+                className={`item-thumb-card ${selectedKnot === id ? 'active' : ''}`}
+                onClick={() => setSelectedKnot(id)}
+              >
+                <div className="img-placeholder" />
+                {idx === 2 && <div className="badge-dot" />}
+              </div>
+            ))}
+          </div>
+
+          <div className="input-label" style={{ marginTop: '16px' }}>메인 장식</div>
+          <div className="option-cards-grid">
+            {[1, 2].map((id, idx) => (
+              <div
+                key={id}
+                className={`item-thumb-card ${selectedDecoration === id ? 'active' : ''}`}
+                onClick={() => setSelectedDecoration(id)}
+              >
+                <div className="img-placeholder" />
+                <span>text</span>
+                {idx === 1 && <div className="badge-dot" />}
+              </div>
+            ))}
+          </div>
+
+          <div className="input-label" style={{ marginTop: '16px' }}>술 선택</div>
+          <div className="option-cards-grid">
+            {[1, 2, 3].map((id, idx) => (
+              <div
+                key={id}
+                className={`item-thumb-card ${selectedTassel === id ? 'active' : ''}`}
+                onClick={() => setSelectedTassel(id)}
+              >
+                <div className="img-placeholder" />
+                {idx === 2 && <div className="badge-dot" />}
+              </div>
+            ))}
+          </div>
+          <div className="limited-season-tag">• 시즌 한정판</div>
         </div>
-      )}
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxWidth: '400px' }}>
-        <label>
-          작품 제목:
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="제목을 입력하세요"
-          />
-        </label>
+        <div className="panel-center">
+          <div className="loading-spinner">🔆</div>
+          <p className="canvas-loading-text">
+            AI가 입력한 소망과 어울리는 노리개 조합을 생각하고 있어요.
+          </p>
+        </div>
 
-        <label>
-          매듭 ID (Knot):
-          <input
-            type="number"
-            value={selectedKnot || ''}
-            onChange={(e) => setSelectedKnot(e.target.value)}
-          />
-        </label>
+        <div className="panel-right">
+          <div className="symbol-card-box">
+            <div className="symbol-header">
+              <span style={{ color: '#d97706' }}>✨</span> 상징적 의미
+            </div>
+            <p className="helper-text" style={{ marginBottom: '12px' }}>
+              키워드를 입력하고 만들어진 노리개에 부여된 상징적 의미를 확인해 보세요.
+            </p>
 
-        <label>
-          장식 ID (Decoration):
-          <input
-            type="number"
-            value={selectedDecoration || ''}
-            onChange={(e) => setSelectedDecoration(e.target.value)}
-          />
-        </label>
+            <div className="symbol-body">
+              {recommendation ? recommendation.reason : ''}
+            </div>
 
-        <button onClick={handleSave} style={{ marginTop: '15px', padding: '10px' }}>
-          저장하기
-        </button>
+            <button className="action-link" onClick={handleGetRecommendation}>
+              ↻ 추천 받은 노리개로 되돌리기
+            </button>
+          </div>
+
+          <div className="mcm-recommend-box">
+            <div className="mcm-title">함께 어울리는 MCM 상품</div>
+            <div className="mcm-desc">노리개를 만들어 보고 MCM 상품을 추천받아 보세요.</div>
+          </div>
+
+          <div className="bottom-action-container">
+            <input
+              type="text"
+              style={{
+                padding: '10px 12px',
+                border: '1px solid #e5e7eb',
+                borderRadius: '6px',
+                fontSize: '13px',
+                marginBottom: '4px'
+              }}
+              placeholder="작품 제목 입력"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+
+            <button className="btn-reservation">
+              🏷️ 매장 예약하기
+            </button>
+
+            <div className="btn-dual-group">
+              <button className="btn-secondary-action" onClick={handleSave}>
+                💾 디자인 저장하기
+              </button>
+              <button className="btn-secondary-action" onClick={() => alert('공유 링크가 복사되었습니다.')}>
+                🔗 공유하기
+              </button>
+            </div>
+          </div>
+
+        </div>
+
       </div>
     </div>
   );
