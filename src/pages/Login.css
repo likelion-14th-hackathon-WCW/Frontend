@@ -44,6 +44,10 @@
   margin: 0;
 }
 
+.login__subtitle-brand {
+  font-family: 'Noto Serif KR', serif;
+}
+
 .login__form {
   display: flex;
   flex-direction: column;
