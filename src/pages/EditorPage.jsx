@@ -143,14 +143,19 @@ export default function EditorPage() {
       return;
     }
 
+    // 1. 원인 1 조치: title이 없을 경우 자동 보완
+    const finalTitle = title.trim() || `${activeKnotObj?.name || '커스텀'} 노리개`;
+
+    // 2. 원인 2&3 조치: symbol_reason 기본값 및 술 PK/개수 대응 (술 PK 필드로 'tassel'도 함께 전달)
     const payload = {
       wish_keyword: keyword || '',
-      symbol_reason: recommendation?.reason || '',
+      symbol_reason: recommendation?.reason || '사용자 지정 노리개 디자인',
       knot: Number(selectedKnot),
-      tassel_count: Number(selectedTassel),
+      tassel: Number(selectedTassel),
+      tassel_count: 1, // 백엔드가 수량을 기대하는 경우 기본 1개로 전송
       decoration: Number(selectedDecoration),
       color: selectedColor,
-      title: title || '',
+      title: finalTitle,
     };
 
     const result = await saveNorigaeDesign(payload);
@@ -162,9 +167,15 @@ export default function EditorPage() {
         setIsLoginModalOpen(true);
       } else if (result.status === 400) {
         const errors = result.errors;
-        if (errors?.knot) alert(`매듭 오류: ${errors.knot[0]}`);
-        else if (errors?.title) alert(`제목 오류: ${errors.title[0]}`);
-        else alert('입력값을 확인해 주세요.');
+        console.log('Validation Errors:', errors);
+
+        if (errors && typeof errors === 'object') {
+          const firstKey = Object.keys(errors)[0];
+          const firstError = Array.isArray(errors[firstKey]) ? errors[firstKey][0] : errors[firstKey];
+          alert(`[${firstKey}] 오류: ${firstError}`);
+        } else {
+          alert('입력값을 확인해 주세요.');
+        }
       } else {
         alert(result.message || '저장에 실패했습니다.');
       }
@@ -224,7 +235,8 @@ export default function EditorPage() {
                 src={meansIcon}
                 alt=""
                 style={{ width: '18.33px', height: '18.33px' }}
-              />            </span>
+              />
+            </span>
             <input
               id="wish-keyword-input"
               name="wishKeyword"
