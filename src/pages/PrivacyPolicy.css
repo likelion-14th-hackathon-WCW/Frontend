@@ -95,6 +95,13 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+  width: 100%;
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
 }
 
 .privacy__article-header h3 {
