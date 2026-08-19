@@ -1,0 +1,218 @@
+.ownership-page-container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: #333333;
+}
+
+.ownership-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.btn-back {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #333;
+  padding: 0;
+  line-height: 1;
+}
+
+.ownership-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0;
+  color: #111111;
+}
+
+.ownership-subtitle {
+  font-size: 15px;
+  color: #666666;
+  margin-top: 0;
+  margin-bottom: 36px;
+}
+
+.ownership-grid {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+.ownership-form-card {
+  border: 1px solid #f2cfad;
+  border-radius: 4px;
+  padding: 32px;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group.full-width {
+  width: 100%;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #222222;
+}
+
+.form-input {
+  height: 48px;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  padding: 0 16px;
+  font-size: 14px;
+  color: #333333;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+.form-input:focus {
+  border-color: #d98842;
+}
+
+.input-helper {
+  font-size: 12px;
+  color: #888888;
+  margin-top: 2px;
+}
+
+.image-upload-box {
+  width: 100%;
+  height: 220px;
+  background-color: #e5e5e5;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.image-upload-label {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.upload-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.btn-submit {
+  width: 100%;
+  height: 52px;
+  background-color: #d98842;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.btn-submit:hover {
+  background-color: #c57633;
+}
+
+.btn-submit:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.benefit-info-card {
+  background-color: #fdfbf7;
+  border: 1px solid #f2cfad;
+  border-radius: 4px;
+  padding: 28px 24px;
+}
+
+.benefit-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.benefit-icon {
+  font-size: 20px;
+}
+
+.benefit-header h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #a36227;
+  margin: 0;
+}
+
+.benefit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.benefit-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.benefit-item-icon {
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+.benefit-item h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #222222;
+  margin: 0 0 4px 0;
+}
+
+.benefit-item p {
+  font-size: 13px;
+  color: #666666;
+  margin: 0;
+  line-height: 1.45;
+}
+
+@media (max-width: 768px) {
+  .ownership-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}

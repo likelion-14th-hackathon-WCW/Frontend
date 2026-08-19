@@ -22,6 +22,7 @@ import MyPage from './pages/MyPage.jsx'
 import MyPageReservations from './pages/MyPageReservations.jsx'
 import MyPageReservationDetail from './pages/MyPageReservationDetail.jsx'
 import MyPageReservationCancel from './pages/MyPageReservationCancel.jsx'
+import DigitalOwnershipPage from './pages/DigitalOwnershipPage';
 
 const AUTH_HEADER_PATHS = ['/signup', '/login', '/reservation/lookup']
 
@@ -52,6 +53,7 @@ function App() {
         <Route path="/mypage/reservations" element={<MyPageReservations />} />
         <Route path="/mypage/reservations/:id" element={<MyPageReservationDetail />} />
         <Route path="/mypage/reservations/:id/cancel" element={<MyPageReservationCancel />} />
+        <Route path="/digital-ownership" element={<DigitalOwnershipPage />} />
       </Routes>
       <Footer />
     </div>
