@@ -176,6 +176,16 @@
   justify-content: center;
   text-align: center;
   cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
+.avatar-image,
+.timeline-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
 }
 
 .add-icon {

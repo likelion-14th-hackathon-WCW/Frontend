@@ -17,7 +17,6 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// 1. AI 추천 요청 (엔드포인트 끝의 슬래시 제거 및 URL 디버깅 로그 추가)
 export const getAiRecommendation = async (keyword, excludeCombinations = []) => {
   try {
     console.log("요청 전송 Full URL:", `${BASE_URL}/api/recommendations`);
@@ -39,7 +38,6 @@ export const getAiRecommendation = async (keyword, excludeCombinations = []) => 
   }
 };
 
-// 2. 노리개 저장 (슬래시 제거)
 export const saveNorigaeDesign = async (designData) => {
   try {
     const response = await api.post('/api/norigaes', designData);
@@ -60,7 +58,6 @@ export const saveNorigaeDesign = async (designData) => {
   }
 };
 
-// 3. 내 노리개 목록 조회 (슬래시 제거)
 export const getMyNorigaes = async () => {
   try {
     const response = await api.get('/api/norigaes');
@@ -73,7 +70,6 @@ export const getMyNorigaes = async () => {
   }
 };
 
-// 4. 노리개 상세 조회
 export const getNorigaeDetail = async (id) => {
   try {
     const response = await api.get(`/api/norigaes/${id}`);
@@ -86,7 +82,6 @@ export const getNorigaeDetail = async (id) => {
   }
 };
 
-// 5. 추천 상품 목록 조회
 export const getRecommendProducts = async (itemId) => {
   try {
     const response = await api.get(`/api/items/${itemId}/recommend-products`);
@@ -99,7 +94,6 @@ export const getRecommendProducts = async (itemId) => {
   }
 };
 
-// 6. 상품 상세 조회
 export const getProductDetail = async (productId) => {
   try {
     const response = await api.get(`/api/products/${productId}`);

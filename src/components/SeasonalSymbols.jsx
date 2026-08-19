@@ -1,6 +1,19 @@
 import { useEffect, useState } from 'react'
 import './SeasonalSymbols.css'
 import { getCurrentSeason, getComponents } from '../api/season.js'
+import cicadaKnotImg from '../assets/seasonal-cicada-knot.png'
+import hibiscusImg from '../assets/seasonal-hibiscus.png'
+import craneJadeImg from '../assets/seasonal-crane-jade.png'
+import coralTasselImg from '../assets/seasonal-coral-tassel.png'
+
+// ponytail: API의 image_url은 실제 이미지가 아닌 식별자라 컴포넌트 name으로 로컬 이미지에 매핑.
+// 새 시즌 상징이 늘어나면 여기에 항목 추가.
+const SEASON_SYMBOL_IMAGES = {
+  '매미 매듭': cicadaKnotImg,
+  '무궁화 장식': hibiscusImg,
+  '학 장식': craneJadeImg,
+  '코랄 술': coralTasselImg,
+}
 
 export default function SeasonalSymbols() {
   const [symbols, setSymbols] = useState(null) // null: 로딩/시즌 없음, []: 시즌은 있으나 상징 없음
@@ -51,12 +64,12 @@ export default function SeasonalSymbols() {
           <div
             key={featured.id}
             className="seasonal-symbols__feature"
-            style={{ backgroundColor: featured.color }}
+            style={{ backgroundImage: `url(${SEASON_SYMBOL_IMAGES[featured.name]})` }}
           >
             <div className="seasonal-symbols__feature-scrim" />
             <div className="seasonal-symbols__feature-text">
               <h3 className="seasonal-symbols__feature-title">{featured.name}</h3>
-              <p className="seasonal-symbols__feature-description">{featured.meaning}</p>
+              <p className="seasonal-symbols__feature-description">{featured.feature_description}</p>
             </div>
           </div>
           <div className="seasonal-symbols__thumbs">
@@ -67,7 +80,7 @@ export default function SeasonalSymbols() {
                 className={`seasonal-symbols__thumb${
                   symbol.id === activeId ? ' seasonal-symbols__thumb--active' : ''
                 }`}
-                style={{ backgroundColor: symbol.color }}
+                style={{ backgroundImage: `url(${SEASON_SYMBOL_IMAGES[symbol.name]})` }}
                 onClick={() => setActiveId(symbol.id)}
                 aria-label={symbol.name}
               />

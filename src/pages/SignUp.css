@@ -232,3 +232,10 @@
 .signup__submit:disabled {
   cursor: not-allowed;
 }
+
+.signup__error {
+  color: #e53935;
+  font-size: 13px;
+  text-align: center;
+  margin: 0;
+}
