@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import './Reservation.css'
 import searchIcon from '../assets/search-icon.svg'
 import clockIcon from '../assets/clock-icon.svg'
@@ -6,50 +6,27 @@ import chevronLeft from '../assets/chevron-left.svg'
 import chevronRight from '../assets/chevron-right.svg'
 import { useAuth } from '../hooks/useAuth.js'
 import { saveReservationDraft } from '../utils/reservationDraft.js'
+import { getStores, getBookedTimes, createReservation } from '../api/reservations.js'
 import StoreMap from '../components/StoreMap.jsx'
 
-// 출처: MCM 공식 매장 찾기(kr.mcmworldwide.com) 서울 기준 검색 결과 중 대한민국 매장
-// kakaoUrl: 카카오맵 장소 상세 페이지 — 지도 마커 클릭 시 새 탭으로 연결
-const STORES = [
-  {
-    id: 'lotte-main',
-    name: 'MCM 롯데백화점 본점',
-    address: '서울 중구 남대문로 81, 롯데백화점 본점 1F',
-    hours: '월-목 10:30-20:00 · 금-일 10:30-20:30',
-    tel: '+82-2-772-3198',
-    postalCode: '04533',
-    kakaoUrl: 'https://place.map.kakao.com/1377183359',
-  },
-  {
-    id: 'haus-flagship',
-    name: 'MCM 하우스 플래그십스토어',
-    address: '서울 강남구 압구정로 412',
-    hours: '매일 11:00-20:00',
-    tel: '+82-2-540-1404',
-    postalCode: '06014',
-    kakaoUrl: 'https://place.map.kakao.com/8048352',
-  },
-  {
-    id: 'lotte-jamsil',
-    name: 'MCM 롯데백화점 잠실점',
-    address: '서울 송파구 올림픽로 240, 롯데백화점 잠실점 1F',
-    hours: '월-목 10:30-20:00 · 금-일 10:30-20:30',
-    tel: '+82-2-2143-7205',
-    postalCode: '05554',
-    kakaoUrl: 'https://place.map.kakao.com/1034672903',
-  },
-  {
-    id: 'lotte-daegu',
-    name: 'MCM 롯데백화점 대구점',
-    address: '대구광역시 북구 태평로 161, 롯데백화점 대구점 B1',
-    hours: '월-목 10:30-20:00 · 금-일 10:30-20:30',
-    tel: '+82-5-3660-3169',
-    postalCode: '41581',
-    kakaoUrl: 'https://place.map.kakao.com/950172435',
-  },
-]
-
 const TIME_SLOTS = ['오전 11:00', '오후 12:30', '오후 2:00', '오후 3:30', '오후 5:00', '오후 6:30']
+
+function toStoreView(store) {
+  return {
+    id: store.id,
+    name: store.name,
+    address: store.address,
+    hours: `${store.open_time.slice(0, 5)}-${store.close_time.slice(0, 5)}`,
+    postalCode: '',
+  }
+}
+
+function formatDateParam(date) {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토']
 
@@ -74,6 +51,11 @@ function isPastTimeSlot(label, selectedDate, now) {
   if (!isSameDay(selectedDate, now)) return false
   const { hour, minute } = parseTimeSlot(label)
   return hour < now.getHours() || (hour === now.getHours() && minute <= now.getMinutes())
+}
+
+function toTimeParam(label) {
+  const { hour, minute } = parseTimeSlot(label)
+  return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
 }
 
 function buildCalendarDays(viewYear, viewMonth) {
@@ -105,11 +87,29 @@ export default function Reservation() {
   const [viewMonth, setViewMonth] = useState(today.getMonth())
   const [selectedDate, setSelectedDate] = useState(null)
   const [selectedTime, setSelectedTime] = useState(null)
+  const [stores, setStores] = useState([])
+  const [bookedTimes, setBookedTimes] = useState([])
+  const [submitError, setSubmitError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const filteredStores = STORES.filter(
+  useEffect(() => {
+    getStores().then((result) => {
+      if (result.success) setStores(result.data.map(toStoreView))
+    })
+  }, [])
+
+  useEffect(() => {
+    setBookedTimes([])
+    if (!selectedStoreId || !selectedDate) return
+    getBookedTimes(selectedStoreId, formatDateParam(selectedDate)).then((result) => {
+      if (result.success) setBookedTimes(result.data)
+    })
+  }, [selectedStoreId, selectedDate])
+
+  const filteredStores = stores.filter(
     (store) => store.name.includes(query) || store.address.includes(query) || store.postalCode.includes(query),
   )
-  const selectedStore = STORES.find((store) => store.id === selectedStoreId)
+  const selectedStore = stores.find((store) => store.id === selectedStoreId)
   const calendarDays = useMemo(() => buildCalendarDays(viewYear, viewMonth), [viewYear, viewMonth])
 
   const goToPrevMonth = () => {
@@ -124,13 +124,32 @@ export default function Reservation() {
     setViewMonth(next.getMonth())
   }
 
-  const confirmReservation = () => {
-    saveReservationDraft({
-      storeName: selectedStore?.name,
+  const confirmReservation = async () => {
+    const reservedAt = `${formatDateParam(selectedDate)}T${toTimeParam(selectedTime)}:00`
+    const draft = {
+      storeId: selectedStore.id,
+      reservedAt,
+      storeName: selectedStore.name,
       dateLabel: `${selectedDate.getFullYear()}년 ${selectedDate.getMonth() + 1}월 ${selectedDate.getDate()}일`,
       timeLabel: selectedTime,
-    })
-    window.location.href = user ? '/reservation/complete-member' : '/reservation/guest-info'
+    }
+
+    if (!user) {
+      saveReservationDraft(draft)
+      window.location.href = '/reservation/guest-info'
+      return
+    }
+
+    setSubmitError('')
+    setIsSubmitting(true)
+    const result = await createReservation({ store: selectedStore.id, reservedAt })
+    setIsSubmitting(false)
+    if (!result.success) {
+      setSubmitError(result.message)
+      return
+    }
+    saveReservationDraft(draft)
+    window.location.href = '/reservation/complete-member'
   }
 
   return (
@@ -243,7 +262,8 @@ export default function Reservation() {
                   </span>
                   <div className="time-slots">
                     {TIME_SLOTS.map((time) => {
-                      const unavailable = isPastTimeSlot(time, selectedDate, today)
+                      const unavailable =
+                        isPastTimeSlot(time, selectedDate, today) || bookedTimes.includes(toTimeParam(time))
                       return (
                         <button
                           key={time}
@@ -285,12 +305,19 @@ export default function Reservation() {
               </div>
             </div>
 
-            <button type="button" className="summary__cta" disabled={!selectedTime} onClick={confirmReservation}>
-              예약 확정하기
+            {submitError && <p className="reservation__error">{submitError}</p>}
+
+            <button
+              type="button"
+              className="summary__cta"
+              disabled={!selectedTime || isSubmitting}
+              onClick={confirmReservation}
+            >
+              {isSubmitting ? '예약 중...' : '예약 확정하기'}
             </button>
           </div>
 
-          <StoreMap stores={STORES} selectedStoreId={selectedStoreId} />
+          <StoreMap stores={stores} selectedStoreId={selectedStoreId} />
         </aside>
       </div>
     </main>

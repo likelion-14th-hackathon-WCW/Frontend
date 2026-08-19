@@ -1,29 +1,53 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './ReservationGuestInfo.css'
 import mailIcon from '../assets/mail-icon.svg'
 import eyeOffIcon from '../assets/eye-toggle-icon.svg'
 import eyeOpenIcon from '../assets/eye-open-icon.svg'
 import hintCheckDefault from '../assets/hint-check-default.svg'
 import hintCheckValid from '../assets/hint-check-valid.svg'
+import { readReservationDraft } from '../utils/reservationDraft.js'
+import { createReservation } from '../api/reservations.js'
 
 const PASSWORD_RULE = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/
 
 export default function ReservationGuestInfo() {
+  const [draft] = useState(readReservationDraft)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [agreed, setAgreed] = useState(false)
+  const [submitError, setSubmitError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  useEffect(() => {
+    if (!draft) window.location.href = '/reservation'
+  }, [draft])
 
   const isEmailValid = email.trim().length > 0
   const isPasswordValid = PASSWORD_RULE.test(password)
   const isConfirmValid = confirmPassword.length > 0 && confirmPassword === password
   const canSubmit = isEmailValid && isPasswordValid && isConfirmValid
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
+    setSubmitError('')
+    setIsSubmitting(true)
+    const result = await createReservation({
+      store: draft.storeId,
+      reservedAt: draft.reservedAt,
+      guestId: email,
+      guestPassword: password,
+    })
+    setIsSubmitting(false)
+    if (!result.success) {
+      setSubmitError(result.message)
+      return
+    }
     window.location.href = '/reservation/complete-guest'
   }
+
+  if (!draft) return null
 
   return (
     <main className="guest-info">
@@ -109,11 +133,17 @@ export default function ReservationGuestInfo() {
             <span className="guest-info__agree-text">노리개 디자인 활용 및 권리 귀속 동의</span>
           </label>
 
+          {submitError && <p className="guest-info__error">{submitError}</p>}
+
           <div className="guest-info__actions">
-            <button type="button" className="guest-info__primary" disabled={!canSubmit} onClick={handleComplete}>
-              예약 완료하기
+            <button
+              type="button"
+              className="guest-info__primary"
+              disabled={!canSubmit || isSubmitting}
+              onClick={handleComplete}
+            >
+              {isSubmitting ? '예약 중...' : '예약 완료하기'}
             </button>
-            {/* ponytail: 로그인 페이지는 별도 레포 소관 — 기존 코드베이스의 스텁 링크 패턴을 따름 */}
             <a href="/login" className="guest-info__secondary">
               회원으로 예약하기
             </a>
