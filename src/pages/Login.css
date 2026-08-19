@@ -238,3 +238,18 @@
   color: black;
   text-decoration: underline;
 }
+
+.login__guest-lookup-link {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 16px;
+  color: #593b1d;
+  text-decoration: underline;
+}
+
+.login__error {
+  color: #e53935;
+  font-size: 13px;
+  text-align: center;
+  margin: 0;
+}

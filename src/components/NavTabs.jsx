@@ -2,7 +2,7 @@ import './NavTabs.css'
 
 const TABS = [
   { key: 'home', label: '홈', href: '/' },
-  { key: 'make', label: '에디터', href: '/make' },
+  { key: 'make', label: '만들기', href: '/make' },
   { key: 'reservation', label: '예약', href: '/reservation' },
   { key: 'mypage', label: '마이페이지', href: '/mypage' },
 ]

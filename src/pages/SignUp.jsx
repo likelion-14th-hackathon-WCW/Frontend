@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { signup } from '../api/auth.js'
 import './SignUp.css'
 import mailIcon from '../assets/mail-icon.svg'
 import phoneIcon from '../assets/phone-icon.svg'
@@ -47,6 +48,8 @@ export default function SignUp() {
   const [agreements, setAgreements] = useState(() =>
     Object.fromEntries(ALL_AGREEMENT_KEYS.map((key) => [key, false]))
   )
+  const [submitError, setSubmitError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const isNameValid = name.trim().length > 0
   const isEmailValid = email.trim().length > 0
@@ -68,7 +71,15 @@ export default function SignUp() {
     setAgreements(Object.fromEntries(ALL_AGREEMENT_KEYS.map((key) => [key, next])))
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    setSubmitError('')
+    setIsSubmitting(true)
+    const result = await signup({ email, name, phone, password, passwordConfirm: confirmPassword })
+    setIsSubmitting(false)
+    if (!result.success) {
+      setSubmitError(result.message)
+      return
+    }
     window.location.href = '/signup/complete'
   }
 
@@ -230,8 +241,10 @@ export default function SignUp() {
           </div>
         </div>
 
-        <button type="button" className="signup__submit" disabled={!canSubmit} onClick={handleSubmit}>
-          회원가입 하기
+        {submitError && <p className="signup__error">{submitError}</p>}
+
+        <button type="button" className="signup__submit" disabled={!canSubmit || isSubmitting} onClick={handleSubmit}>
+          {isSubmitting ? '가입 중...' : '회원가입 하기'}
         </button>
       </div>
     </main>

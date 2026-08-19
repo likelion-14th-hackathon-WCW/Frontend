@@ -1,0 +1,169 @@
+.lookup {
+  display: flex;
+  justify-content: center;
+  padding: 76px 24px 120px;
+}
+
+.lookup__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  width: 448px;
+  max-width: 100%;
+  box-sizing: border-box;
+  background: white;
+  border-radius: 2px;
+  padding: 40px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.lookup__intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.lookup__title {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 32px;
+  letter-spacing: -0.64px;
+  color: var(--color-heading-strong);
+  text-align: center;
+  margin: 0;
+}
+
+.lookup__subtitle {
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--color-grey-300);
+  text-align: center;
+  margin: 0;
+}
+
+.lookup__form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.text-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.text-box__label {
+  font-family: var(--font-body);
+  font-size: 14px;
+  letter-spacing: -0.28px;
+  color: var(--color-heading-strong);
+}
+
+.text-box__box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 49px;
+  box-sizing: border-box;
+  background: white;
+  border: 1px solid var(--color-grey-50);
+  padding: 0 12px;
+}
+
+.text-box__icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.text-box__input {
+  flex: 1 0 0;
+  min-width: 0;
+  border: none;
+  outline: none;
+  font-family: var(--font-body);
+  font-size: 14px;
+  letter-spacing: -0.28px;
+  color: var(--color-heading-strong);
+}
+
+.text-box__input::placeholder {
+  color: var(--color-grey-100);
+}
+
+.text-box__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.text-box__toggle img {
+  width: 18px;
+  height: 16.5px;
+}
+
+.lookup__error {
+  color: #e53935;
+  font-size: 13px;
+  text-align: center;
+  margin: 0;
+}
+
+.lookup__submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 16px 0;
+  font-family: var(--font-body);
+  font-size: 14px;
+  letter-spacing: -0.28px;
+  text-align: center;
+  color: white;
+  border: none;
+  cursor: pointer;
+  background: var(--color-brown-200);
+}
+
+.lookup__submit:not(:disabled) {
+  background: var(--color-accent);
+}
+
+.lookup__submit:disabled {
+  cursor: not-allowed;
+}
+
+.lookup__divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.lookup__divider-line {
+  flex: 1;
+  height: 1px;
+  background: var(--color-grey-50);
+}
+
+.lookup__login-link {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 16px;
+  color: black;
+  text-decoration: underline;
+}

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { login } from '../api/auth.js'
 import './Login.css'
 import mailIcon from '../assets/mail-icon.svg'
 import lockIcon from '../assets/lock-icon.svg'
@@ -12,8 +13,22 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
+  const [submitError, setSubmitError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const canSubmit = email.trim().length > 0 && password.length > 0
+
+  const handleSubmit = async () => {
+    setSubmitError('')
+    setIsSubmitting(true)
+    const result = await login({ email, password })
+    setIsSubmitting(false)
+    if (!result.success) {
+      setSubmitError(result.message)
+      return
+    }
+    window.location.href = '/'
+  }
 
   return (
     <main className="login">
@@ -74,9 +89,10 @@ export default function Login() {
           </div>
         </div>
 
-        {/* ponytail: 로그인 백엔드는 별도 레포 소관 — useAuth.js 참고. 폼/소셜 버튼은 UI만 구현 */}
-        <button type="button" className="login__submit" disabled={!canSubmit}>
-          로그인하기
+        {submitError && <p className="login__error">{submitError}</p>}
+
+        <button type="button" className="login__submit" disabled={!canSubmit || isSubmitting} onClick={handleSubmit}>
+          {isSubmitting ? '로그인 중...' : '로그인하기'}
         </button>
 
         <div className="login__divider">
@@ -96,6 +112,9 @@ export default function Login() {
 
         <a href="/signup" className="login__signup-link">
           회원가입
+        </a>
+        <a href="/reservation/lookup" className="login__guest-lookup-link">
+          비회원 예약 확인하기
         </a>
       </div>
     </main>
