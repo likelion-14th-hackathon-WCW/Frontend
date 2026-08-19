@@ -1,7 +1,39 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
+import { useAuth } from '../hooks/useAuth.js';
+import { getMe, getMyReservations, getMyItems, getMyOwnerships } from '../api/mypage.js';
 import './MyPage.css';
 
+function formatReservedAt(isoString) {
+  const date = new Date(isoString);
+  const hour24 = date.getHours();
+  const meridiem = hour24 < 12 ? '오전' : '오후';
+  const hour12 = hour24 % 12 || 12;
+  const minute = String(date.getMinutes()).padStart(2, '0');
+  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 • ${meridiem} ${hour12}:${minute}`;
+}
+
 export default function MyPage() {
+  const { user } = useAuth();
+  const [profile, setProfile] = useState(null);
+  const [reservations, setReservations] = useState([]);
+  const [items, setItems] = useState([]);
+  const [ownerships, setOwnerships] = useState([]);
+
+  useEffect(() => {
+    if (!user) {
+      window.location.href = '/login';
+      return;
+    }
+    getMe().then((result) => result.success && setProfile(result.data));
+    getMyReservations().then((result) => result.success && setReservations(result.data));
+    getMyItems().then((result) => result.success && setItems(result.data));
+    getMyOwnerships().then((result) => result.success && setOwnerships(result.data));
+  }, [user]);
+
+  if (!user) return null;
+
+  const registry = ownerships[0];
+
   return (
     <div className="mypage-wrapper">
       <aside className="mypage-sidebar">
@@ -36,11 +68,15 @@ export default function MyPage() {
         <div className="profile-card">
           <div className="profile-left">
             <div className="avatar-box">
-              <span className="avatar-icon">👤</span>
+              {profile?.profile_image ? (
+                <img src={profile.profile_image} alt="" className="avatar-image" />
+              ) : (
+                <span className="avatar-icon">👤</span>
+              )}
             </div>
             <div className="user-info">
-              <h3>(유저 닉네임)</h3>
-              <p>example@example.com</p>
+              <h3>{profile?.nickname || profile?.name || '고객'}</h3>
+              <p>{profile?.email}</p>
             </div>
           </div>
           <button className="btn-edit-profile">프로필 수정</button>
@@ -52,18 +88,20 @@ export default function MyPage() {
             <button className="btn-more">전체 보기</button>
           </div>
           <div className="timeline-grid">
-            <div className="timeline-card">
-              <span className="badge-season">가을 시즌</span>
-              <div className="img-placeholder">🖼️</div>
-            </div>
-            <div className="timeline-card">
-              <div className="img-placeholder">🖼️</div>
-            </div>
-            <div className="timeline-card add-card">
+            {items.slice(0, 2).map((item) => (
+              <div className="timeline-card" key={item.id}>
+                {item.image_url ? (
+                  <img src={item.image_url} alt={item.title} className="timeline-image" />
+                ) : (
+                  <div className="img-placeholder">🖼️</div>
+                )}
+              </div>
+            ))}
+            <a href="/editor" className="timeline-card add-card">
               <div className="add-icon">+</div>
               <h4>새로 만들기</h4>
               <p>나만의 노리개를 디자인하세요.</p>
-            </div>
+            </a>
           </div>
         </section>
 
@@ -74,20 +112,18 @@ export default function MyPage() {
               <button className="btn-more">전체 보기</button>
             </div>
             <ul className="reservation-list">
-              <li className="reservation-item">
-                <div>
-                  <strong>MCM 롯데백화점 본점</strong>
-                  <p>2026년 8월 13일 • 오후 4:30</p>
-                </div>
-                <span className="status-tag active">예약됨</span>
-              </li>
-              <li className="reservation-item">
-                <div>
-                  <strong>MCM 롯데백화점 본점</strong>
-                  <p>2026년 8월 9일 • 오후 12:00</p>
-                </div>
-                <span className="status-tag done">완료됨</span>
-              </li>
+              {reservations.length === 0 && <p className="card-desc">예약 내역이 없습니다.</p>}
+              {reservations.slice(0, 2).map((reservation) => (
+                <li className="reservation-item" key={reservation.id}>
+                  <div>
+                    <strong>{reservation.store_name}</strong>
+                    <p>{formatReservedAt(reservation.reserved_at)}</p>
+                  </div>
+                  <span className={`status-tag ${reservation.status === '취소' ? 'done' : 'active'}`}>
+                    {reservation.status}
+                  </span>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -98,13 +134,15 @@ export default function MyPage() {
             <p className="card-desc">
               만든 노리개 디자인의 일련번호를 등록하고 당신만의 디자인으로 등록하세요.
             </p>
-            <div className="registry-box">
-              <div className="registry-info">
-                <strong>(노리개 이름)</strong>
-                <p>상태: 자격 심사 중</p>
+            {registry && (
+              <div className="registry-box">
+                <div className="registry-info">
+                  <strong>{registry.product_name}</strong>
+                  <p>상태: {registry.has_production_right ? '제작권 보유' : '심사 중'}</p>
+                </div>
+                <button className="btn-text-link">자세히</button>
               </div>
-              <button className="btn-text-link">자세히</button>
-            </div>
+            )}
             <button className="btn-accent-full">새 노리개 등록 +</button>
           </div>
         </div>
