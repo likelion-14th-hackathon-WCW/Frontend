@@ -463,7 +463,7 @@ const ARTICLES = [
 ]
 
 export default function PrivacyPolicy() {
-  const [openStates, setOpenStates] = useState(() => ARTICLES.map(() => true))
+  const [openStates, setOpenStates] = useState(() => ARTICLES.map(() => false))
 
   const toggleArticle = (index) => {
     setOpenStates((prev) => prev.map((open, i) => (i === index ? !open : open)))
