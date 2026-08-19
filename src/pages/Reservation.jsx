@@ -7,7 +7,8 @@ import chevronRight from '../assets/chevron-right.svg'
 import { useAuth } from '../hooks/useAuth.js'
 import { saveReservationDraft } from '../utils/reservationDraft.js'
 import { getStores, getBookedTimes, createReservation } from '../api/reservations.js'
-import StoreMap from '../components/StoreMap.jsx'
+import NorigaePreview from '../components/NorigaePreview.jsx'
+// ponytail: StoreMap은 여기선 더 이상 안 쓰지만 마이페이지 예약 상세에서 재사용 예정 — 컴포넌트 삭제하지 않음
 
 const TIME_SLOTS = ['오전 11:00', '오후 12:30', '오후 2:00', '오후 3:30', '오후 5:00', '오후 6:30']
 
@@ -317,7 +318,7 @@ export default function Reservation() {
             </button>
           </div>
 
-          <StoreMap stores={stores} selectedStoreId={selectedStoreId} />
+          <NorigaePreview />
         </aside>
       </div>
     </main>
