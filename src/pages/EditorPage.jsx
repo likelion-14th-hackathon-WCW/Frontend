@@ -24,10 +24,8 @@ export default function EditorPage() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
-  // 로그인 모달 열림 상태 관리
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
-  // 예시: 로그인 여부 확인 (토큰 유무로 검증)
   const isLoggedIn = Boolean(localStorage.getItem('token'));
 
   const handleGetRecommendation = async () => {
