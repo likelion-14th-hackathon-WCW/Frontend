@@ -10,6 +10,7 @@ import CustomerCenter from './pages/CustomerCenter.jsx'
 import Home from './pages/Home.jsx'
 import Reservation from './pages/Reservation.jsx'
 import ReservationGuestInfo from './pages/ReservationGuestInfo.jsx'
+import ReservationLookup from './pages/ReservationLookup.jsx'
 import ReservationCompleteGuest from './pages/ReservationCompleteGuest.jsx'
 import ReservationCompleteMember from './pages/ReservationCompleteMember.jsx'
 import SignUp from './pages/SignUp.jsx'
@@ -30,6 +31,7 @@ function App() {
         <Route path="/support" element={<CustomerCenter />} />
         <Route path="/reservation" element={<Reservation />} />
         <Route path="/reservation/guest-info" element={<ReservationGuestInfo />} />
+        <Route path="/reservation/lookup" element={<ReservationLookup />} />
         <Route path="/reservation/complete-guest" element={<ReservationCompleteGuest />} />
         <Route path="/reservation/complete-member" element={<ReservationCompleteMember />} />
         <Route path="/signup" element={<SignUp />} />

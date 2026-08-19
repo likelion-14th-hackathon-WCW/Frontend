@@ -15,6 +15,7 @@ export default function ReservationCompleteGuest() {
     <ReservationCompleteCard
       subtitle="고객님의 예약이 성공적으로 완료되었습니다. 방문을 기다리겠습니다."
       draft={draft}
+      ctaHref="/reservation/lookup"
     />
   )
 }

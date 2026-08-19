@@ -1,10 +1,10 @@
-.login {
+.lookup {
   display: flex;
   justify-content: center;
   padding: 76px 24px 120px;
 }
 
-.login__card {
+.lookup__card {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -18,7 +18,7 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
 }
 
-.login__intro {
+.lookup__intro {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -26,7 +26,7 @@
   width: 100%;
 }
 
-.login__title {
+.lookup__title {
   font-family: var(--font-body);
   font-weight: 400;
   font-size: 32px;
@@ -36,7 +36,7 @@
   margin: 0;
 }
 
-.login__subtitle {
+.lookup__subtitle {
   font-family: var(--font-body);
   font-size: 16px;
   color: var(--color-grey-300);
@@ -44,7 +44,7 @@
   margin: 0;
 }
 
-.login__form {
+.lookup__form {
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -114,43 +114,14 @@
   height: 16.5px;
 }
 
-.login__remember-forgot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
+.lookup__error {
+  color: #e53935;
+  font-size: 13px;
+  text-align: center;
+  margin: 0;
 }
 
-.login__remember {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-}
-
-.login__remember input {
-  width: 20px;
-  height: 20px;
-  accent-color: var(--color-accent);
-  cursor: pointer;
-}
-
-.login__remember span {
-  font-family: var(--font-body);
-  font-size: 14px;
-  letter-spacing: -0.28px;
-  color: var(--color-grey-300);
-}
-
-.login__forgot {
-  font-family: var(--font-body);
-  font-size: 12px;
-  letter-spacing: -0.24px;
-  color: var(--color-grey-300);
-  text-decoration: none;
-}
-
-.login__submit {
+.lookup__submit {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -167,15 +138,15 @@
   background: var(--color-brown-200);
 }
 
-.login__submit:not(:disabled) {
+.lookup__submit:not(:disabled) {
   background: var(--color-accent);
 }
 
-.login__submit:disabled {
+.lookup__submit:disabled {
   cursor: not-allowed;
 }
 
-.login__divider {
+.lookup__divider {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -183,73 +154,16 @@
   width: 100%;
 }
 
-.login__divider-line {
+.lookup__divider-line {
   flex: 1;
   height: 1px;
   background: var(--color-grey-50);
 }
 
-.login__divider-text {
-  font-family: var(--font-body);
-  font-size: 12px;
-  letter-spacing: 0.96px;
-  text-transform: uppercase;
-  color: var(--color-grey-300);
-  white-space: nowrap;
-}
-
-.login__social {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  width: 339px;
-  max-width: 100%;
-  height: 56px;
-  box-sizing: border-box;
-  border: none;
-  border-radius: 8px;
-  font-family: 'Pretendard', var(--font-body);
-  font-weight: 600;
-  font-size: 18px;
-  letter-spacing: -0.36px;
-  cursor: pointer;
-}
-
-.login__social img {
-  width: 22px;
-  height: 22px;
-}
-
-.login__social--kakao {
-  background: #fee500;
-  color: #3c1e1e;
-}
-
-.login__social--naver {
-  background: #03c75a;
-  color: #fbfbfb;
-}
-
-.login__signup-link {
+.lookup__login-link {
   font-family: var(--font-body);
   font-weight: 500;
   font-size: 16px;
   color: black;
   text-decoration: underline;
-}
-
-.login__guest-lookup-link {
-  font-family: var(--font-body);
-  font-weight: 500;
-  font-size: 16px;
-  color: #593b1d;
-  text-decoration: underline;
-}
-
-.login__error {
-  color: #e53935;
-  font-size: 13px;
-  text-align: center;
-  margin: 0;
 }
