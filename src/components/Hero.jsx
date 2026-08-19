@@ -1,8 +1,11 @@
 import './Hero.css'
+import heroVideo from '../assets/hero-craft.mp4'
 
 export default function Hero() {
   return (
     <section className="hero">
+      <video className="hero__video" src={heroVideo} autoPlay loop muted playsInline />
+      <div className="hero__scrim" />
       <div className="hero__content">
         <h1 className="hero__heading">
           전통의{' '}

@@ -1,13 +1,30 @@
 .hero {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 818px;
+  aspect-ratio: 16 / 9;
   background-color: var(--color-hero-bg);
+  overflow: hidden;
+}
+
+.hero__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero__scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(251, 249, 245, 0.55);
 }
 
 .hero__content {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
