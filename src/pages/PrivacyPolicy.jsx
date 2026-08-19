@@ -1,6 +1,8 @@
+import { useState } from 'react'
 import './PrivacyPolicy.css'
 import LegalSideNav from '../components/LegalSideNav.jsx'
 import minusIcon from '../assets/privacy/minus.svg'
+import plusIcon from '../assets/privacy/plus.svg'
 
 const TOC = [
   '서문',
@@ -461,6 +463,12 @@ const ARTICLES = [
 ]
 
 export default function PrivacyPolicy() {
+  const [openStates, setOpenStates] = useState(() => ARTICLES.map(() => true))
+
+  const toggleArticle = (index) => {
+    setOpenStates((prev) => prev.map((open, i) => (i === index ? !open : open)))
+  }
+
   return (
     <div className="privacy">
       <LegalSideNav active="개인정보 처리방침" />
@@ -488,15 +496,27 @@ export default function PrivacyPolicy() {
         </div>
 
         <div className="privacy__articles">
-          {ARTICLES.map((article, i) => (
-            <section key={article.title} id={`privacy-article-${i + 1}`} className="privacy__article">
-              <div className="privacy__article-header">
-                <h3>{article.title}</h3>
-                <img src={minusIcon} alt="" className="privacy__article-icon" />
-              </div>
-              <div className="privacy__article-body">{article.body}</div>
-            </section>
-          ))}
+          {ARTICLES.map((article, i) => {
+            const isOpen = openStates[i]
+            return (
+              <section key={article.title} id={`privacy-article-${i + 1}`} className="privacy__article">
+                <button
+                  type="button"
+                  className="privacy__article-header"
+                  onClick={() => toggleArticle(i)}
+                  aria-expanded={isOpen}
+                >
+                  <h3>{article.title}</h3>
+                  <img
+                    src={isOpen ? minusIcon : plusIcon}
+                    alt={isOpen ? '접기' : '펼치기'}
+                    className="privacy__article-icon"
+                  />
+                </button>
+                {isOpen && <div className="privacy__article-body">{article.body}</div>}
+              </section>
+            )
+          })}
         </div>
       </main>
     </div>
