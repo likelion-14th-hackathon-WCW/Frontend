@@ -113,6 +113,9 @@ export default function Login() {
         <a href="/signup" className="login__signup-link">
           회원가입
         </a>
+        <a href="/reservation/lookup" className="login__guest-lookup-link">
+          비회원 예약 확인하기
+        </a>
       </div>
     </main>
   )
