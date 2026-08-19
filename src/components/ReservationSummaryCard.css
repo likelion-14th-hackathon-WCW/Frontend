@@ -1,0 +1,79 @@
+/* 하드코딩: main/yellow, main/brown-200 등 common.css에 아직 없는 톤 (Figma 459:6071) */
+
+.reservation-summary-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background: #fef9ef;
+  border: 1px solid var(--color-brown-200);
+  border-radius: 2px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+}
+
+.reservation-summary-card__header {
+  padding: 16px 24px 17px;
+  background: var(--color-background);
+  border-bottom: 1px solid var(--color-brown-200);
+}
+
+.reservation-summary-card__heading {
+  margin: 0;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 18px;
+  color: var(--color-heading-strong);
+}
+
+.reservation-summary-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 32px;
+}
+
+.reservation-summary-card__row {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #f9e5b4;
+}
+
+.reservation-summary-card__row--last {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.reservation-summary-card__label {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--color-grey-300);
+}
+
+.reservation-summary-card__value {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 16px;
+  color: var(--color-heading-strong);
+}
+
+/* 취소된 예약: 회색 헤더 + 취소선 값 (Figma 381:6592) */
+.reservation-summary-card--cancelled {
+  background: #fff;
+  border-color: var(--color-grey-300);
+}
+
+.reservation-summary-card--cancelled .reservation-summary-card__header {
+  background: var(--color-grey-50);
+  border-bottom: none;
+}
+
+.reservation-summary-card--cancelled .reservation-summary-card__row {
+  border-bottom-color: var(--color-grey-50);
+}
+
+.reservation-summary-card--cancelled .reservation-summary-card__value {
+  color: var(--color-grey-300);
+  text-decoration: line-through;
+}
