@@ -1,3 +1,5 @@
+import React from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './App.css'
 import Header from './components/Header.jsx'
 import Footer from './components/Footer.jsx'
@@ -10,26 +12,29 @@ import SignUp from './pages/SignUp.jsx'
 import SignUpComplete from './pages/SignUpComplete.jsx'
 import Login from './pages/Login.jsx'
 import EditorPage from './pages/EditorPage.jsx'
-import MyPage from "./pages/MyPage";
+import MyPage from "./pages/MyPage"
 
 function App() {
-  const path = typeof window !== 'undefined' ? window.location.pathname : '/'
-
   return (
-    <div>
-      <Header />
-      {path === '/' && <Home />}
-      {path === '/reservation' && <Reservation />}
-      {path === '/reservation/guest-info' && <ReservationGuestInfo />}
-      {path === '/reservation/complete-guest' && <ReservationCompleteGuest />}
-      {path === '/reservation/complete-member' && <ReservationCompleteMember />}
-      {path === '/signup' && <SignUp />}
-      {path === '/signup/complete' && <SignUpComplete />}
-      {path === '/login' && <Login />}
-      {(path === '/editor' || path === '/make') && <EditorPage />}
-      {path === '/mypage' && <MyPage />}
-      <Footer />
-    </div>
+    
+      <div>
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/reservation" element={<Reservation />} />
+          <Route path="/reservation/guest-info" element={<ReservationGuestInfo />} />
+          <Route path="/reservation/complete-guest" element={<ReservationCompleteGuest />} />
+          <Route path="/reservation/complete-member" element={<ReservationCompleteMember />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/signup/complete" element={<SignUpComplete />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/editor" element={<EditorPage />} />
+          <Route path="/make" element={<EditorPage />} />
+          <Route path="/mypage" element={<MyPage />} />
+        </Routes>
+        <Footer />
+      </div>
+   
   )
 }
 
