@@ -1,6 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
 .editor-page-container,
 .editor-page-container * {
   box-sizing: border-box;
+  font-family: 'Noto Sans KR', 'Noto Sans', sans-serif;
 }
 
 .editor-page-container {
@@ -82,14 +85,12 @@
 }
 
 .panel-right {
-  border-left: 1px solid #e0d8c8;
-  padding: 0;
-  background-color: #ffffff;
+ 
+  height: auto;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  gap: 20px;
 }
-
 .panel-right-top {
   width: 100%;
 }
@@ -117,11 +118,12 @@
 }
 
 .keyword-input-card {
-  width: 100%;
+  width: 271px;
+  height: 47px;
   display: flex;
   align-items: center;
   border: 1px solid #d9a05b;
-  background-color: #fdfbf7;
+  background-color: #FBF9F5;
   padding: 12px 14px;
   border-radius: 0;
 }
@@ -176,7 +178,7 @@
 .color-dot {
   width: 28px;
   height: 28px;
-  border-radius: 50%;
+  border-radius: 8px;
   cursor: pointer;
   position: relative;
 }
@@ -252,11 +254,14 @@
 
 .symbol-section {
   width: 100%;
-  background-color: #fcf9f2;
-  border-bottom: 1px solid #f3e5d0;
-  padding: 24px 20px;
+  height: auto;         
+  min-height: 275px;    
+  box-sizing: border-box;
+  background-color: #FAF8F5;
+  padding: 24px;
   display: flex;
   flex-direction: column;
+  gap: 12px;
 }
 
 .symbol-header {
@@ -278,11 +283,18 @@
 
 .symbol-card-box {
   width: 100%;
-  height: 52px;
+  height: auto;             
+  min-height: 52px;         
+  padding: 14px 16px;       
   background-color: #fcf9f2;
   border: 1px solid #e2d7c5;
   margin-bottom: 14px;
   box-sizing: border-box;
+  font-size: 13px;  
+  line-height: 1.6;
+  color: #333333;
+  white-space: pre-line;
+  word-break: keep-all;
 }
 
 .symbol-reset-btn {
@@ -303,6 +315,8 @@
 }
 
 .mcm-recommend-box {
+  height: 383px;
+  min-height: 383px;
   width: 100%;
   padding: 24px 20px;
 }
@@ -321,12 +335,16 @@
 
 .bottom-action-container {
   width: 100%;
+  height: 154px;                   /* 요구사항 반영: 154px 고정 높이 */
   background-color: #fcf9f2;
   border-top: 1px solid #f3e5d0;
   padding: 20px;
   display: flex;
   flex-direction: column;
+  justify-content: center;         /* 154px 높이 내부에서 버튼들 중앙 정렬 */
   gap: 12px;
+  margin-top: auto;                /* 부모 패널의 최하단 라인으로 밀착 */
+  box-sizing: border-box;
 }
 
 .btn-full-action {
@@ -343,10 +361,17 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
+  transition: all 0.2s ease;
 }
 
-.btn-full-action:hover {
-  background-color: #f5efe4;
+.btn-full-action.active {
+  background-color: #D48C46;
+  color: #ffffff;            
+  border-color: #D48C46;
+}
+
+.btn-full-action.active:hover {
+  background-color: #be7b3b; 
 }
 
 .btn-dual-group {
