@@ -1,37 +1,48 @@
-import { apiClient } from './client.js'
+import { apiClient } from './client.js';
 
 export const getMe = async () => {
-  try {
-    const response = await apiClient.get('/auth/me/')
-    return { success: true, data: response.data }
-  } catch {
-    return { success: false, message: '프로필 정보를 불러오지 못했습니다.' }
-  }
-}
+  const response = await apiClient.get('/auth/me/');
+  return { success: true, data: response.data };
+};
+
+export const updateProfile = async (formData) => {
+  const response = await apiClient.patch('/auth/me/nickname/', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return { success: true, data: response.data };
+};
 
 export const getMyReservations = async () => {
-  try {
-    const response = await apiClient.get('/auth/me/reservations/')
-    return { success: true, data: response.data }
-  } catch {
-    return { success: false, message: '예약 내역을 불러오지 못했습니다.' }
-  }
-}
+  const response = await apiClient.get('/auth/me/reservations/');
+  return { success: true, data: response.data };
+};
+
+export const cancelReservation = async (id) => {
+  const response = await apiClient.delete(`/auth/me/reservations/${id}/`);
+  return { success: true, data: response.data };
+};
 
 export const getMyItems = async () => {
-  try {
-    const response = await apiClient.get('/auth/me/items/')
-    return { success: true, data: response.data }
-  } catch {
-    return { success: false, message: '저장된 노리개 디자인을 불러오지 못했습니다.' }
-  }
-}
+  const response = await apiClient.get('/auth/me/items/');
+  return { success: true, data: response.data };
+};
 
 export const getMyOwnerships = async () => {
-  try {
-    const response = await apiClient.get('/auth/me/ownerships/')
-    return { success: true, data: response.data }
-  } catch {
-    return { success: false, message: '소유권 정보를 불러오지 못했습니다.' }
-  }
-}
+  const response = await apiClient.get('/auth/me/ownerships/');
+  return { success: true, data: response.data };
+};
+
+export const registerOwnership = async (data) => {
+  const response = await apiClient.post('/auth/me/ownerships/', data);
+  return { success: true, data: response.data };
+};
+
+export const getMyWishlist = async () => {
+  const response = await apiClient.get('/auth/me/wishlist/');
+  return { success: true, data: response.data };
+};
+
+export const deleteWishlistItem = async (id) => {
+  const response = await apiClient.delete(`/auth/me/wishlist/${id}/`);
+  return { success: true, data: response.data };
+};
