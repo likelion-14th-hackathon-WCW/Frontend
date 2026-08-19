@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAiRecommendation, saveNorigaeDesign } from '../api/norigaeApi';
-import LoginModal from '../components/LoginModal'; // 모달 컴포넌트 불러오기
+import { getAiRecommendation, saveNorigaeDesign, getRecommendProducts } from '../api/norigaeApi';
+import LoginModal from '../components/LoginModal';
 import './EditorPage.css';
 import shareIcon from '../assets/editor-share.svg';
 import checkIcon from '../assets/calendar-check-02.svg';
@@ -15,10 +15,11 @@ export default function EditorPage() {
 
   const [recommendation, setRecommendation] = useState(null);
   const [excludeCombinations, setExcludeCombinations] = useState([]);
+  const [mcmProducts, setMcmProducts] = useState([]);
 
   const [selectedKnot, setSelectedKnot] = useState(1);
   const [selectedDecoration, setSelectedDecoration] = useState(1);
-  const [selectedTassel, setSelectedTassel] = useState(13);
+  const [selectedTassel, setSelectedTassel] = useState(1); // 기본값 1로 변경
   const [selectedColor, setSelectedColor] = useState('#1E293B');
 
   const [loading, setLoading] = useState(false);
@@ -100,15 +101,19 @@ export default function EditorPage() {
         setSelectedKnot(1);
         setSelectedDecoration(1);
       }
-      setSelectedTassel(13);
+      setSelectedTassel(1);
       setSelectedColor('#1E293B');
     }
   };
 
   const handleSave = async () => {
-    // 1) 클라이언트 측 비회원 사전 차단
     if (!isLoggedIn) {
       setIsLoginModalOpen(true);
+      return;
+    }
+
+    if (!title.trim()) {
+      alert('작품 제목을 입력해 주세요.');
       return;
     }
 
@@ -116,7 +121,7 @@ export default function EditorPage() {
       wish_keyword: keyword,
       symbol_reason: recommendation?.reason || '',
       knot: Number(selectedKnot),
-      tassel: Number(selectedTassel),
+      tassel_count: Number(selectedTassel),
       decoration: Number(selectedDecoration),
       color: selectedColor,
       title: title,
@@ -126,8 +131,15 @@ export default function EditorPage() {
 
     if (result.success) {
       alert('노리개 디자인이 성공적으로 저장되었습니다!');
+      
+      // 저장 성공 후 해당 노리개 ID로 MCM 추천 상품 조회
+      if (result.data?.id) {
+        const mcmRes = await getRecommendProducts(result.data.id);
+        if (mcmRes.success) {
+          setMcmProducts(mcmRes.data);
+        }
+      }
     } else {
-      // 2) 서버 응답 401 Unauthorized 처리
       if (result.status === 401) {
         setIsLoginModalOpen(true);
       } else if (result.status === 400) {
@@ -179,7 +191,6 @@ export default function EditorPage() {
 
   return (
     <div className="editor-page-container">
-      {/* 로그인 모달 바인딩 */}
       <LoginModal
         isOpen={isLoginModalOpen}
         onClose={() => setIsLoginModalOpen(false)}
@@ -339,7 +350,23 @@ export default function EditorPage() {
 
             <div className="mcm-recommend-box">
               <div className="mcm-title">함께 어울리는 MCM 상품</div>
-              <div className="mcm-desc">노리개를 만들어 보고 MCM 상품을 추천받아 보세요.</div>
+              <div className="mcm-desc">
+                {mcmProducts.length > 0 ? (
+                  <div className="mcm-product-list">
+                    {mcmProducts.map((prod) => (
+                      <a key={prod.id} href={prod.mcm_link} target="_blank" rel="noreferrer" className="mcm-product-item">
+                        <img src={prod.image_url} alt={prod.name} width="40" height="40" />
+                        <div>
+                          <p>{prod.name}</p>
+                          <small>{prod.price.toLocaleString()}원</small>
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                ) : (
+                  '노리개를 저장하면 어울리는 MCM 상품을 추천받을 수 있습니다.'
+                )}
+              </div>
             </div>
           </div>
 
