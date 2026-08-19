@@ -1,13 +1,14 @@
 import './Header.css'
 import NavTabs from './NavTabs.jsx'
 import { useAuth } from '../hooks/useAuth.js'
+import logo from '../assets/logo-mcm-yeongyeol.png'
 
 export default function Header() {
   const { user } = useAuth()
   return (
     <header className="header">
       <a href="/" className="header__logo">
-        로고 영역
+        <img src={logo} alt="MCM : Yeongyeol" className="header__logo-image" />
       </a>
 
       <nav className="header__nav">

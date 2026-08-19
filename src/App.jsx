@@ -1,7 +1,8 @@
 import React from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import './App.css'
 import Header from './components/Header.jsx'
+import AuthHeader from './components/AuthHeader.jsx'
 import Footer from './components/Footer.jsx'
 import Craftsmanship from './pages/Craftsmanship.jsx'
 import Terms from './pages/Terms.jsx'
@@ -19,10 +20,15 @@ import Login from './pages/Login.jsx'
 import EditorPage from './pages/EditorPage.jsx'
 import MyPage from './pages/MyPage.jsx'
 
+const AUTH_HEADER_PATHS = ['/signup', '/login', '/reservation/lookup']
+
 function App() {
+  const location = useLocation()
+  const useAuthHeader = AUTH_HEADER_PATHS.includes(location.pathname)
+
   return (
     <div>
-      <Header />
+      {useAuthHeader ? <AuthHeader /> : <Header />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/craftsmanship" element={<Craftsmanship />} />

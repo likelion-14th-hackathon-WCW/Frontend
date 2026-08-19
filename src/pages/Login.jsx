@@ -35,7 +35,9 @@ export default function Login() {
       <div className="login__card">
         <div className="login__intro">
           <h1 className="login__title">로그인</h1>
-          <p className="login__subtitle">(서비스명) 로그인 정보를 입력해주세요.</p>
+          <p className="login__subtitle">
+            <span className="login__subtitle-brand">Yeongyeol</span> 로그인 정보를 입력해주세요.
+          </p>
         </div>
 
         <div className="login__form">
