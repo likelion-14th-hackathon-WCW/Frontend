@@ -1,0 +1,24 @@
+/* 하드코딩: main/yellow/yellow-200 — common.css에 아직 등록되지 않은 톤 */
+.norigae-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 289px;
+  box-sizing: border-box;
+  padding: 1px;
+  border: 1px solid #f9e5b4;
+  background: #fff;
+}
+
+.norigae-preview__image {
+  width: 98px;
+  height: 271px;
+  object-fit: cover;
+}
+
+.norigae-preview__icon {
+  width: 32px;
+  height: 32px;
+  opacity: 0.5;
+}
