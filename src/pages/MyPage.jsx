@@ -2,7 +2,14 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.js';
 import { getMe, getMyReservations, getMyItems, getMyOwnerships } from '../api/mypage.js';
+import MyPageSidebar from '../components/MyPageSidebar.jsx';
+import iconAvatarPlaceholder from '../assets/mypage/icon-avatar-placeholder.svg';
+import iconPlusSmall from '../assets/mypage/icon-plus-small.svg';
+import iconPlusCircle from '../assets/mypage/icon-plus-circle.svg';
 import './MyPage.css';
+
+// 완료/취소된 예약만 흐리게 표시, 그 외(확정/변경 등)는 강조 태그
+const isSettledStatus = (status) => status === '완료됨' || status === '완료' || status === '취소'
 
 function formatReservedAt(isoString) {
   if (!isoString) return '';
@@ -63,49 +70,9 @@ export default function MyPage() {
 
   return (
     <div className="mypage-wrapper">
-      {/* 1. 사이드바 메뉴 (클릭 시 activeTab 변경) */}
-      <aside className="mypage-sidebar">
-        <ul className="sidebar-menu">
-          <li
-            className={`menu-item ${activeTab === 'profile' ? 'active' : ''}`}
-            onClick={() => setActiveTab('profile')}
-          >
-            <span className="icon">👤</span> 프로필 개요
-          </li>
-          <li
-            className={`menu-item ${activeTab === 'reservations' ? 'active' : ''}`}
-            onClick={() => setActiveTab('reservations')}
-          >
-            <span className="icon">📋</span> 예약 내역
-          </li>
-          <li
-            className={`menu-item ${activeTab === 'items' ? 'active' : ''}`}
-            onClick={() => setActiveTab('items')}
-          >
-            <span className="icon">🔖</span> 저장된 노리개 디자인
-          </li>
-          <li
-            className={`menu-item ${activeTab === 'ownerships' ? 'active' : ''}`}
-            onClick={() => setActiveTab('ownerships')}
-          >
-            <span className="icon">🛡️</span> 소유권 및 관리
-          </li>
-          <li
-            className={`menu-item menu-gap ${activeTab === 'wishlist' ? 'active' : ''}`}
-            onClick={() => setActiveTab('wishlist')}
-          >
-            <span className="icon">♡</span> 위시리스트
-          </li>
-          <li
-            className={`menu-item ${activeTab === 'settings' ? 'active' : ''}`}
-            onClick={() => setActiveTab('settings')}
-          >
-            <span className="icon">⚙️</span> 계정 설정
-          </li>
-        </ul>
-      </aside>
+      <MyPageSidebar active={activeTab} onSelect={setActiveTab} />
 
-      {/* 2. 메인 컨텐츠 영역 (activeTab에 따라 다른 뷰 출력) */}
+      {/* 메인 컨텐츠 영역 (activeTab에 따라 다른 뷰 출력) */}
       <main className="mypage-content">
         {/* TAB 1: 프로필 개요 (기존 마이페이지 메인) */}
         {activeTab === 'profile' && (
@@ -121,7 +88,7 @@ export default function MyPage() {
                   {profile?.profile_image ? (
                     <img src={profile.profile_image} alt="프로필" className="avatar-image" />
                   ) : (
-                    <span className="avatar-icon">👤</span>
+                    <img src={iconAvatarPlaceholder} alt="" className="avatar-icon" />
                   )}
                 </div>
                 <div className="user-info">
@@ -152,7 +119,7 @@ export default function MyPage() {
                   </div>
                 ))}
                 <Link to="/editor" className="timeline-card add-card">
-                  <div className="add-icon">+</div>
+                  <img src={iconPlusCircle} alt="" className="add-icon" />
                   <h4>새로 만들기</h4>
                   <p>나만의 노리개를 디자인하세요.</p>
                 </Link>
@@ -163,19 +130,22 @@ export default function MyPage() {
               <div className="info-card">
                 <div className="card-header">
                   <h3>최근 예약 내역</h3>
-                  <button className="btn-more" onClick={() => setActiveTab('reservations')}>
+                  <button className="btn-more" onClick={() => navigate('/mypage/reservations')}>
                     전체 보기
                   </button>
                 </div>
                 <ul className="reservation-list">
                   {reservations.length === 0 && <p className="card-desc">예약 내역이 없습니다.</p>}
                   {reservations.slice(0, 2).map((res) => (
-                    <li className="reservation-item" key={res.id || res.reservation_id}>
+                    <li
+                      className={`reservation-item${isSettledStatus(res.status) ? ' reservation-item--settled' : ''}`}
+                      key={res.id || res.reservation_id}
+                    >
                       <div>
                         <strong>{res.store_name || res.store}</strong>
                         <p>{formatReservedAt(res.reserved_at || res.reservation_date)}</p>
                       </div>
-                      <span className={`status-tag ${res.status === '취소' ? 'done' : 'active'}`}>
+                      <span className={`status-tag${isSettledStatus(res.status) ? ' status-tag--muted' : ''}`}>
                         {res.status || '확정'}
                       </span>
                     </li>
@@ -187,45 +157,30 @@ export default function MyPage() {
                 <div className="card-header">
                   <h3>소유권 레지스트리</h3>
                 </div>
-                <p className="card-desc">디자인 일련번호 및 제작권을 관리하세요.</p>
+                <p className="card-desc">만든 노리개 디자인의 일련번호를 등록하고 당신만의 디자인으로 등록하세요.</p>
+                {ownerships[0] && (
+                  <div className="registry-box">
+                    <div className="registry-info">
+                      <strong>{ownerships[0].product_name || ownerships[0].title}</strong>
+                      <p>
+                        상태:{' '}
+                        <span className="registry-status">
+                          {ownerships[0].has_production_right ? '보유' : '심사 중'}
+                        </span>
+                      </p>
+                    </div>
+                    <button type="button" className="btn-text-link" onClick={() => setActiveTab('ownerships')}>
+                      자세히
+                    </button>
+                  </div>
+                )}
                 <button className="btn-accent-full" onClick={() => setActiveTab('ownerships')}>
-                  소유권 상세 관리 &gt;
+                  새 소유권 등록
+                  <img src={iconPlusSmall} alt="" />
                 </button>
               </div>
             </div>
           </>
-        )}
-
-        {/* TAB 2: 예약 내역 전체 페이지 */}
-        {activeTab === 'reservations' && (
-          <div className="tab-page">
-            <div className="content-header">
-              <h2>전체 예약 내역</h2>
-              <p>진행 중이거나 완료된 방문/체험 예약 내역입니다.</p>
-            </div>
-            <div className="info-card">
-              <ul className="reservation-list">
-                {reservations.length === 0 ? (
-                  <p className="card-desc">예약 내역이 존재하지 않습니다.</p>
-                ) : (
-                  reservations.map((res) => (
-                    <li className="reservation-item" key={res.id || res.reservation_id}>
-                      <div>
-                        <strong>{res.store_name || res.store || '체험 공방'}</strong>
-                        <p>{formatReservedAt(res.reserved_at || res.reservation_date)}</p>
-                        <span style={{ fontSize: '13px', color: '#666' }}>
-                          인원: {res.party_size || 1}명
-                        </span>
-                      </div>
-                      <span className={`status-tag ${res.status === '취소' ? 'done' : 'active'}`}>
-                        {res.status || '예약 완료'}
-                      </span>
-                    </li>
-                  ))
-                )}
-              </ul>
-            </div>
-          </div>
         )}
 
         {/* TAB 3: 저장된 노리개 디자인 전체 페이지 */}

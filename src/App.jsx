@@ -19,6 +19,9 @@ import SignUpComplete from './pages/SignUpComplete.jsx'
 import Login from './pages/Login.jsx'
 import EditorPage from './pages/EditorPage.jsx'
 import MyPage from './pages/MyPage.jsx'
+import MyPageReservations from './pages/MyPageReservations.jsx'
+import MyPageReservationDetail from './pages/MyPageReservationDetail.jsx'
+import MyPageReservationCancel from './pages/MyPageReservationCancel.jsx'
 
 const AUTH_HEADER_PATHS = ['/signup', '/login', '/reservation/lookup']
 
@@ -46,6 +49,9 @@ function App() {
         <Route path="/editor" element={<EditorPage />} />
         <Route path="/make" element={<EditorPage />} />
         <Route path="/mypage" element={<MyPage />} />
+        <Route path="/mypage/reservations" element={<MyPageReservations />} />
+        <Route path="/mypage/reservations/:id" element={<MyPageReservationDetail />} />
+        <Route path="/mypage/reservations/:id/cancel" element={<MyPageReservationCancel />} />
       </Routes>
       <Footer />
     </div>
