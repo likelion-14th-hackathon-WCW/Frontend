@@ -1,0 +1,274 @@
+.naming-page-container {
+  position: relative;
+  width: 100%;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  background-color: #ffffff;
+  padding: 64px 20px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.naming-page-container * {
+  box-sizing: border-box;
+  font-family: 'Noto Sans KR', 'Noto Sans', sans-serif;
+}
+
+.naming-bg-accent {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 663px;
+  height: 663px;
+  transform: translate(-50%, -50%);
+  background-color: rgba(212, 140, 70, 0.05);
+  filter: blur(32px);
+  border-radius: 9999px;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+.naming-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 429px;
+  max-width: 100%;
+}
+
+.naming-heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.naming-title {
+  font-size: 32px;
+  font-weight: 500;
+  color: #1a1a1a;
+  letter-spacing: -0.64px;
+  margin: 0;
+}
+
+.naming-desc {
+  font-size: 18px;
+  font-weight: 400;
+  color: #484848;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.naming-success-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 9999px;
+  background-color: #f5e9da;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.naming-success-icon img {
+  width: 40px;
+  height: 40px;
+}
+
+.naming-norigae-frame {
+  width: 429px;
+  height: 407px;
+  max-width: 100%;
+  border-radius: 16px;
+  padding: 1px;
+  background-color: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0px 4px 30px 0px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(6px);
+  display: flex;
+}
+
+.naming-norigae-inner {
+  position: relative;
+  flex: 1;
+  border-radius: 12px;
+  background-color: #ffffff;
+  border: 1px solid rgba(26, 26, 26, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.naming-corner {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-color: rgba(212, 140, 70, 0.4);
+  border-style: solid;
+}
+
+.naming-corner-tl {
+  top: 16px;
+  left: 16px;
+  border-width: 1px 0 0 1px;
+}
+
+.naming-corner-tr {
+  top: 16px;
+  right: 16px;
+  border-width: 1px 1px 0 0;
+}
+
+.naming-corner-bl {
+  bottom: 16px;
+  left: 16px;
+  border-width: 0 0 1px 1px;
+}
+
+.naming-corner-br {
+  bottom: 16px;
+  right: 16px;
+  border-width: 0 1px 1px 0;
+}
+
+.naming-norigae-render {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: scale(0.65);
+}
+
+.naming-knot-part {
+  width: 140px;
+  height: auto;
+  object-fit: contain;
+  position: relative;
+  z-index: 2;
+}
+
+.naming-decoration-part {
+  width: 96px;
+  height: auto;
+  object-fit: contain;
+  margin-top: -32px;
+  position: relative;
+  z-index: 3;
+}
+
+.naming-tassel-part {
+  height: auto;
+  object-fit: contain;
+  margin-top: -10px;
+  position: relative;
+  z-index: 1;
+}
+
+.naming-tassel-part.tassel-part--count-1 {
+  width: 180px;
+  padding-left: 6px;
+}
+
+.naming-tassel-part.tassel-part--count-2 {
+  width: 230px;
+  padding-left: 6.5px;
+}
+
+.naming-tassel-part.tassel-part--count-3 {
+  width: 190px;
+  padding-left: 5px;
+}
+
+.naming-input-wrap {
+  width: 100%;
+}
+
+.naming-input {
+  width: 100%;
+  background-color: #ffffff;
+  border: 1px solid #e2b283;
+  padding: 14px 17px 13px;
+  font-size: 16px;
+  font-family: 'Noto Serif KR', serif;
+  color: #1a1a1a;
+  text-align: center;
+  outline: none;
+}
+
+.naming-input::placeholder {
+  font-family: 'Noto Sans KR', sans-serif;
+  font-weight: 500;
+  color: #969696;
+}
+
+.naming-input-wrap--filled .naming-input {
+  border-color: #d48c46;
+}
+
+.naming-btn {
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  color: #ffffff;
+  padding: 16px;
+  text-align: center;
+}
+
+.naming-btn--full {
+  width: 100%;
+  background-color: #ebcaaa;
+}
+
+.naming-btn--full.naming-btn--active {
+  background-color: #d48c46;
+}
+
+.naming-btn--full:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.naming-btn--primary {
+  width: 100%;
+  background-color: #d48c46;
+}
+
+.naming-success-btn-group {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.naming-success-btn-row {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 3px;
+}
+
+.naming-btn--light {
+  flex: 1;
+  background-color: #ebcaaa;
+  color: #484848;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: -0.28px;
+}
+
+.naming-btn--yellow {
+  flex: 1;
+  background-color: #f1c75c;
+  color: #484848;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: -0.28px;
+}

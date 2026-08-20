@@ -18,6 +18,7 @@ import SignUp from './pages/SignUp.jsx'
 import SignUpComplete from './pages/SignUpComplete.jsx'
 import Login from './pages/Login.jsx'
 import EditorPage from './pages/EditorPage.jsx'
+import NorigaeNamingPage from './pages/NorigaeNamingPage.jsx'
 import MyPage from './pages/MyPage.jsx'
 import MyPageReservations from './pages/MyPageReservations.jsx'
 import MyPageReservationDetail from './pages/MyPageReservationDetail.jsx'
@@ -49,6 +50,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/editor" element={<EditorPage />} />
         <Route path="/make" element={<EditorPage />} />
+        <Route path="/editor/naming" element={<NorigaeNamingPage />} />
         <Route path="/mypage" element={<MyPage />} />
         <Route path="/mypage/reservations" element={<MyPageReservations />} />
         <Route path="/mypage/reservations/:id" element={<MyPageReservationDetail />} />

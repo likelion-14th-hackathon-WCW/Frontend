@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAiRecommendation, saveNorigaeDesign } from '../api/norigaeApi';
+import { getAiRecommendation } from '../api/norigaeApi';
+import { useAuth } from '../hooks/useAuth.js';
 import LoginModal from '../components/LoginModal';
 import './EditorPage.css';
 import shareIcon from '../assets/editor-share.svg';
@@ -8,38 +9,115 @@ import checkIcon from '../assets/calendar-check-02.svg';
 import checkIcon2 from '../assets/calendar-check-03.svg';
 import downloadIcon from '../assets/editor-download.svg';
 import meansIcon from '../assets/editor-means.svg';
+import knotMaemi from '../assets/editor-items/knot-maemi.svg';
+import knotSamjeongja from '../assets/editor-items/knot-samjeongja.svg';
+import knotDongsimgyeol from '../assets/editor-items/knot-dongsimgyeol.svg';
+import knotJanggu from '../assets/editor-items/knot-janggu.svg';
+import knotSaengjjok from '../assets/editor-items/knot-saengjjok.svg';
+import knotGuidorae from '../assets/editor-items/knot-guidorae.svg';
+import decoMugunghwa from '../assets/editor-items/deco-mugunghwa.svg';
+import decoCrane from '../assets/editor-items/deco-crane.svg';
+import decoAmber from '../assets/editor-items/deco-amber.svg';
+import decoWhale from '../assets/editor-items/deco-whale.svg';
+import decoButterfly from '../assets/editor-items/deco-butterfly.svg';
+import decoLotus from '../assets/editor-items/deco-lotus.svg';
+import tassel1 from '../assets/editor-items/tassel-1.svg';
+import tassel2 from '../assets/editor-items/tassel-2.svg';
+import tassel3 from '../assets/editor-items/tassel-3.svg';
+
+// 실 색상(hex) -> 조합 에셋 파일명에 쓰인 색상 키
+const COLOR_KEY_BY_HEX = {
+  '#17216E': 'navy',
+  '#FEB9E3': 'pink',
+  '#FFC95F': 'yellow',
+  '#369F39': 'green',
+  '#F37E7E': 'coral',
+};
+
+// knot-{key}-{color}.svg / tassel-{count}-{color}.svg 전체를 한 번에 로드
+function loadComboAssets(pattern) {
+  const modules = import.meta.glob('../assets/editor-combo/*.svg', { eager: true, import: 'default' });
+  const map = {};
+  for (const path in modules) {
+    const name = path.split('/').pop().replace('.svg', '');
+    if (pattern.test(name)) map[name] = modules[path];
+  }
+  return map;
+}
+const KNOT_COMBO_ASSETS = loadComboAssets(/^knot-/);
+const TASSEL_COMBO_ASSETS = loadComboAssets(/^tassel-/);
+
+// ponytail: decorative scroll thumb sized/positioned from real scroll metrics, not hand-tuned px
+function useHorizontalScrollThumb() {
+  const ref = useRef(null);
+  const [thumb, setThumb] = useState({ width: 100, left: 0 });
+
+  const update = () => {
+    const el = ref.current;
+    if (!el) return;
+    const { scrollWidth, clientWidth, scrollLeft } = el;
+    if (scrollWidth <= clientWidth) {
+      setThumb({ width: 100, left: 0 });
+      return;
+    }
+    const widthPct = (clientWidth / scrollWidth) * 100;
+    const maxLeftPct = 100 - widthPct;
+    const leftPct = (scrollLeft / (scrollWidth - clientWidth)) * maxLeftPct;
+    setThumb({ width: widthPct, left: leftPct });
+  };
+
+  useEffect(() => {
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+
+  return { ref, thumb, onScroll: update };
+}
 
 export default function EditorPage() {
   const navigate = useNavigate();
 
   // 부품 목록 상태 (기본 더미 데이터 지정 & 중복 선언 제거)
   const [components, setComponents] = useState([
-    { pk: 1, type: 'knot', name: '나비매듭', season: false },
-    { pk: 2, type: 'knot', name: '국화매듭', season: true },
-    { pk: 3, type: 'knot', name: '생쪽매듭', season: true },
-    { pk: 7, type: 'decoration', name: '옥장식', season: false },
-    { pk: 8, type: 'decoration', name: '금장식', season: true },
-    { pk: 13, type: 'tassel', name: '봉술', season: true },
-    { pk: 14, type: 'tassel', name: '낙지발술', season: false },
+    { pk: 1, type: 'knot', name: '매미 매듭', season: true, image: knotMaemi, comboKey: 'maemi' },
+    { pk: 2, type: 'knot', name: '삼정자 매듭', season: false, image: knotSamjeongja, comboKey: 'samjeongja' },
+    { pk: 3, type: 'knot', name: '동심결 매듭', season: false, image: knotDongsimgyeol, comboKey: 'dongsimgyeol' },
+    { pk: 4, type: 'knot', name: '장구 매듭', season: false, image: knotJanggu, comboKey: 'janggu' },
+    { pk: 5, type: 'knot', name: '생쪽 매듭', season: false, image: knotSaengjjok, comboKey: 'saengjjok' },
+    { pk: 6, type: 'knot', name: '귀도래 매듭', season: false, image: knotGuidorae, comboKey: 'guidorae' },
+    { pk: 7, type: 'decoration', name: '무궁화', season: true, image: decoMugunghwa },
+    { pk: 8, type: 'decoration', name: '학', season: true, image: decoCrane },
+    { pk: 9, type: 'decoration', name: '호박보석', season: false, image: decoAmber },
+    { pk: 10, type: 'decoration', name: '고래', season: false, image: decoWhale },
+    { pk: 11, type: 'decoration', name: '나비', season: false, image: decoButterfly },
+    { pk: 12, type: 'decoration', name: '연꽃', season: false, image: decoLotus },
+    { pk: 13, type: 'tassel', name: '1개', season: false, image: tassel1, count: 1 },
+    { pk: 14, type: 'tassel', name: '2개', season: false, image: tassel2, count: 2 },
+    { pk: 15, type: 'tassel', name: '3개', season: false, image: tassel3, count: 3 },
   ]);
 
-  const [keyword, setKeyword] = useState('성장');
+  const [keyword, setKeyword] = useState('');
   const [title, setTitle] = useState('');
 
   const [recommendation, setRecommendation] = useState(null);
   const [excludeCombinations, setExcludeCombinations] = useState([]);
 
-  // 선택된 Component PK (기본값)
-  const [selectedKnot, setSelectedKnot] = useState(1);
-  const [selectedDecoration, setSelectedDecoration] = useState(7);
-  const [selectedTassel, setSelectedTassel] = useState(13);
-  const [selectedColor, setSelectedColor] = useState('#1E293B');
+  // 선택된 Component PK (초기 상태: 아무것도 선택되지 않음)
+  const [selectedKnot, setSelectedKnot] = useState(null);
+  const [selectedDecoration, setSelectedDecoration] = useState(null);
+  const [selectedTassel, setSelectedTassel] = useState(null);
+  const [selectedColor, setSelectedColor] = useState(null);
 
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
-  const isLoggedIn = Boolean(localStorage.getItem('token'));
+  const { user } = useAuth();
+  const isLoggedIn = Boolean(user);
+
+  const knotScroll = useHorizontalScrollThumb();
+  const decoScroll = useHorizontalScrollThumb();
 
   // TODO: 백엔드 API 연동 시 사용
   /*
@@ -59,6 +137,12 @@ export default function EditorPage() {
   const activeKnotObj = components.find((item) => item.pk === Number(selectedKnot));
   const activeDecoObj = components.find((item) => item.pk === Number(selectedDecoration));
   const activeTasselObj = components.find((item) => item.pk === Number(selectedTassel));
+  const colorKey = COLOR_KEY_BY_HEX[selectedColor];
+
+  // 매듭/장식/술/색상까지 노리개 스펙을 모두 골라야 예약·저장·공유가 가능
+  const allSpecsSelected = Boolean(
+    selectedKnot && selectedDecoration && selectedTassel && selectedColor
+  );
 
   const handleGetRecommendation = async () => {
     const trimmedKeyword = keyword.trim();
@@ -137,49 +221,35 @@ export default function EditorPage() {
     }
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     if (!isLoggedIn) {
       setIsLoginModalOpen(true);
       return;
     }
 
-    // 1. 원인 1 조치: title이 없을 경우 자동 보완
-    const finalTitle = title.trim() || `${activeKnotObj?.name || '커스텀'} 노리개`;
-
-    // 2. 원인 2&3 조치: symbol_reason 기본값 및 술 PK/개수 대응 (술 PK 필드로 'tassel'도 함께 전달)
-    const payload = {
-      wish_keyword: keyword || '',
-      symbol_reason: recommendation?.reason || '사용자 지정 노리개 디자인',
-      knot: Number(selectedKnot),
-      tassel: Number(selectedTassel),
-      tassel_count: 1, // 백엔드가 수량을 기대하는 경우 기본 1개로 전송
-      decoration: Number(selectedDecoration),
-      color: selectedColor,
-      title: finalTitle,
-    };
-
-    const result = await saveNorigaeDesign(payload);
-
-    if (result.success) {
-      alert('노리개 디자인이 성공적으로 저장되었습니다!');
-    } else {
-      if (result.status === 401) {
-        setIsLoginModalOpen(true);
-      } else if (result.status === 400) {
-        const errors = result.errors;
-        console.log('Validation Errors:', errors);
-
-        if (errors && typeof errors === 'object') {
-          const firstKey = Object.keys(errors)[0];
-          const firstError = Array.isArray(errors[firstKey]) ? errors[firstKey][0] : errors[firstKey];
-          alert(`[${firstKey}] 오류: ${firstError}`);
-        } else {
-          alert('입력값을 확인해 주세요.');
-        }
-      } else {
-        alert(result.message || '저장에 실패했습니다.');
-      }
+    if (!allSpecsSelected) {
+      alert('매듭, 메인 장식, 술, 실 색상을 모두 선택해 주세요.');
+      return;
     }
+
+    navigate('/editor/naming', {
+      state: {
+        norigaeData: {
+          wish_keyword: keyword || '',
+          symbol_reason: recommendation?.reason || '사용자 지정 노리개 디자인',
+          knot: Number(selectedKnot),
+          tassel: Number(selectedTassel),
+          tassel_count: 1, // 백엔드가 수량을 기대하는 경우 기본 1개로 전송
+          decoration: Number(selectedDecoration),
+          color: selectedColor,
+          defaultTitle: `${activeKnotObj?.name || '커스텀'} 노리개`,
+          knotImage: KNOT_COMBO_ASSETS[`knot-${activeKnotObj.comboKey}-${colorKey}`],
+          decorationImage: activeDecoObj.image,
+          tasselImage: TASSEL_COMBO_ASSETS[`tassel-${activeTasselObj.count}-${colorKey}`],
+          tasselCount: activeTasselObj.count,
+        },
+      },
+    });
   };
 
   const handleShare = async () => {
@@ -245,7 +315,7 @@ export default function EditorPage() {
               value={keyword || ''}
               onChange={(e) => setKeyword(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="소망 입력 (최대 10자)"
+              placeholder="예: 번영, 건강... "
               maxLength={10}
             />
           </div>
@@ -268,20 +338,26 @@ export default function EditorPage() {
           <label className="input-label">실 색상 선택</label>
           <div className="color-selector">
             {['#17216E', '#FEB9E3', '#FFC95F', '#369F39', '#F37E7E'].map(
-              (col) => (
+              (col, idx) => (
                 <div
                   key={col}
                   className={`color-dot ${selectedColor === col ? 'active' : ''
                     }`}
                   style={{ backgroundColor: col }}
                   onClick={() => setSelectedColor(col)}
-                />
+                >
+                  {idx === 4 && <span className="badge-dot" />}
+                </div>
               )
             )}
           </div>
 
           <label className="input-label">매듭 선택</label>
-          <div className="option-cards-grid">
+          <div
+            className="option-cards-scroll"
+            ref={knotScroll.ref}
+            onScroll={knotScroll.onScroll}
+          >
             {knots.map((item) => (
               <div
                 key={item.pk}
@@ -289,17 +365,27 @@ export default function EditorPage() {
                   }`}
                 onClick={() => setSelectedKnot(item.pk)}
               >
-                <div className="img-placeholder" />
-                <span>{item.name}</span>
-                {item.season && <span className="badge-dot" />}
+                <div className="item-thumb-box">
+                  <img className="item-thumb-img" src={item.image} alt="" />
+                  {item.season && <span className="badge-dot" />}
+                  <span className="item-thumb-label">{item.name}</span>
+                </div>
               </div>
             ))}
           </div>
-
-          <div className="divider-line" />
+          <div className="scroll-track">
+            <div
+              className="scroll-thumb"
+              style={{ width: `${knotScroll.thumb.width}%`, left: `${knotScroll.thumb.left}%` }}
+            />
+          </div>
 
           <label className="input-label">메인 장식</label>
-          <div className="option-cards-grid">
+          <div
+            className="option-cards-scroll"
+            ref={decoScroll.ref}
+            onScroll={decoScroll.onScroll}
+          >
             {decorations.map((item) => (
               <div
                 key={item.pk}
@@ -307,17 +393,23 @@ export default function EditorPage() {
                   }`}
                 onClick={() => setSelectedDecoration(item.pk)}
               >
-                <div className="img-placeholder" />
-                <span>{item.name}</span>
-                {item.season && <span className="badge-dot" />}
+                <div className="item-thumb-box">
+                  <img className="item-thumb-img" src={item.image} alt="" />
+                  {item.season && <span className="badge-dot" />}
+                  <span className="item-thumb-label">{item.name}</span>
+                </div>
               </div>
             ))}
           </div>
-
-          <div className="divider-line" />
+          <div className="scroll-track">
+            <div
+              className="scroll-thumb"
+              style={{ width: `${decoScroll.thumb.width}%`, left: `${decoScroll.thumb.left}%` }}
+            />
+          </div>
 
           <label className="input-label">술 선택</label>
-          <div className="option-cards-grid">
+          <div className="option-cards-row">
             {tassels.map((item) => (
               <div
                 key={item.pk}
@@ -325,11 +417,16 @@ export default function EditorPage() {
                   }`}
                 onClick={() => setSelectedTassel(item.pk)}
               >
-                <div className="img-placeholder" />
-                <span>{item.name}</span>
-                {item.season && <span className="badge-dot" />}
+                <div className="item-thumb-box">
+                  <img className="item-thumb-img" src={item.image} alt="" />
+                  <span className="item-thumb-label">{item.name}</span>
+                </div>
               </div>
             ))}
+          </div>
+
+          <div className="season-legend">
+            <span className="season-legend-dot" /> 시즌 한정판
           </div>
         </div>
 
@@ -341,54 +438,29 @@ export default function EditorPage() {
                 AI가 입력한 소망과 어울리는 노리개 조합을 생각하고 있어요.
               </p>
             </div>
-          ) : !recommendation ? (
+          ) : !allSpecsSelected ? (
             <div className="canvas-state-box">
               <p className="canvas-loading-text">
-                키워드를 입력하고 만들어진 노리개의 부여된 상징적 의미를 확인해 보세요.
+                매듭, 메인 장식, 술, 실 색상을 모두 선택하면 노리개 미리보기가 나타납니다.
               </p>
             </div>
           ) : (
             <div className="norigae-render-container">
-              <div
-                className={`knot-part knot-style-${selectedKnot}`}
-                style={{ color: selectedColor }}
-              >
-                <img
-                  src={
-                    activeKnotObj?.image_url
-                      ? `/assets/knots/${activeKnotObj.image_url}.svg`
-                      : `/assets/knots/knot_${selectedKnot}.svg`
-                  }
-                  alt="매듭"
-                />
-              </div>
-
-              <div
-                className={`decoration-part deco-style-${selectedDecoration}`}
-              >
-                <img
-                  src={
-                    activeDecoObj?.image_url
-                      ? `/assets/decorations/${activeDecoObj.image_url}.svg`
-                      : `/assets/decorations/deco_${selectedDecoration}.svg`
-                  }
-                  alt="장식"
-                />
-              </div>
-
-              <div
-                className={`tassel-part tassel-style-${selectedTassel}`}
-                style={{ color: selectedColor }}
-              >
-                <img
-                  src={
-                    activeTasselObj?.image_url
-                      ? `/assets/tassels/${activeTasselObj.image_url}.svg`
-                      : `/assets/tassels/tassel_${selectedTassel}.svg`
-                  }
-                  alt="술"
-                />
-              </div>
+              <img
+                className="knot-part"
+                src={KNOT_COMBO_ASSETS[`knot-${activeKnotObj.comboKey}-${colorKey}`]}
+                alt="매듭"
+              />
+              <img
+                className="decoration-part"
+                src={activeDecoObj.image}
+                alt="장식"
+              />
+              <img
+                className={`tassel-part tassel-part--count-${activeTasselObj.count}`}
+                src={TASSEL_COMBO_ASSETS[`tassel-${activeTasselObj.count}-${colorKey}`]}
+                alt="술"
+              />
             </div>
           )}
 
@@ -437,21 +509,30 @@ export default function EditorPage() {
 
           <div className="bottom-action-container">
             <button
-              className={`btn-full-action ${recommendation ? 'active' : ''}`}
+              className={`btn-full-action ${allSpecsSelected ? 'active' : ''}`}
               onClick={handleGoToReservation}
+              disabled={!allSpecsSelected}
             >
               <img
-                src={recommendation ? checkIcon2 : checkIcon}
+                src={allSpecsSelected ? checkIcon2 : checkIcon}
                 alt="예약"
               />
               매장 예약하기
             </button>
 
             <div className="btn-dual-group">
-              <button className="btn-secondary-action" onClick={handleSave}>
+              <button
+                className="btn-secondary-action"
+                onClick={handleSave}
+                disabled={!allSpecsSelected}
+              >
                 <img src={downloadIcon} alt="저장" /> 디자인 저장
               </button>
-              <button className="btn-secondary-action" onClick={handleShare}>
+              <button
+                className="btn-secondary-action"
+                onClick={handleShare}
+                disabled={!allSpecsSelected}
+              >
                 <img src={shareIcon} alt="공유" /> 공유하기
               </button>
             </div>
