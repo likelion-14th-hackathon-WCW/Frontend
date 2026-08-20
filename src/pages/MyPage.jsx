@@ -136,7 +136,7 @@ export default function MyPage() {
                       {item.image_url || item.thumbnail ? (
                         <img src={item.image_url || item.thumbnail} alt={item.title || ''} className="timeline-image" />
                       ) : preview?.knotImage ? (
-                        <NorigaePreview norigaeData={preview} />
+                        <NorigaePreview norigaeData={preview} showSeasonBadge={false} />
                       ) : (
                         <div className="img-placeholder">🖼️</div>
                       )}
@@ -244,7 +244,7 @@ export default function MyPage() {
                         {item.image_url || item.thumbnail ? (
                           <img src={item.image_url || item.thumbnail} alt={item.title || ''} className="timeline-image" />
                         ) : preview?.knotImage ? (
-                          <NorigaePreview norigaeData={preview} />
+                          <NorigaePreview norigaeData={preview} showSeasonBadge={false} />
                         ) : (
                           <div className="img-placeholder">🖼️</div>
                         )}

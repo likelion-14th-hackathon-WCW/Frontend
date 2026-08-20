@@ -72,7 +72,7 @@ export default function SavedItemPage({ items = [] }) {
             return (
               <article key={itemId} className="saved-item-card">
                 <div className="saved-item-card__preview-box">
-                  <NorigaePreview norigaeData={norigaeData} imageSrc={item.image_url} />
+                  <NorigaePreview norigaeData={norigaeData} imageSrc={item.image_url} showSeasonBadge={false} />
                 </div>
 
                 <div className="saved-item-card__info-box">
