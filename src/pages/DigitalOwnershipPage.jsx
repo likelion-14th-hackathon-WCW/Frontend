@@ -1,202 +1,233 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import './DigitalOwnershipPage.css';
+import diaIcon from '../assets/ownership-1.png';
+import checkIcon from '../assets/ownership-check.png';
+import InfoIcon from '../assets/ownership-info.png';
 
-// 테스트용 가짜 백엔드 제출 함수
-const mockSubmitOwnershipApi = (payload) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      console.log('서버로 전달된 더미 데이터:', payload);
-      resolve({ success: true, status: 200, message: '신청이 완료되었습니다.' });
-    }, 1000);
-  });
-};
+const DigitalOwnership = ({ ownerships = [], onRegisterSuccess }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [productId, setProductId] = useState('');
+  const [serialNo, setSerialNo] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-export default function DigitalOwnershipPage() {
-  const navigate = useNavigate();
-
-  // 더미 데이터 초기값 세팅
-  const [productCode, setProductCode] = useState('MCM-2026-1010');
-  const [createdDate, setCreatedDate] = useState('2026.08.13');
-  const [productName, setProductName] = useState('클래식 비세토스 매듭');
-
-  // 더미 이미지 (SVG Placehold)
-  const dummyImage =
-    "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='220' viewBox='0 0 400 220'><rect width='100%' height='100%' fill='%23e5e5e5'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='16' fill='%23888888'>노리개 이미지 미리보기 (더미)</text></svg>";
-
-  const [imagePreview, setImagePreview] = useState(dummyImage);
-  const [loading, setLoading] = useState(false);
-
-  // 뒤로가기
-  const handleBack = () => {
-    navigate(-1);
+  // 날짜 포맷 함수
+  const formatDate = (dateString) => {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0].replace(/-/g, '.');
   };
 
-  // 이미지 변경 핸들러
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  // 폼 제출 핸들러
-  const handleSubmit = async (e) => {
+  // 소유권 등록 처리 API
+  const handleRegister = async (e) => {
     e.preventDefault();
-
-    if (!productCode.trim() || !productName.trim()) {
-      alert('제품 번호와 제품명을 확인해 주세요.');
+    if (!productId || !serialNo) {
+      alert('상품 ID와 시리얼 번호를 모두 입력해주세요.');
       return;
     }
 
-    setLoading(true);
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/ownerships/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify({
+          product: parseInt(productId, 10),
+          serial_no: serialNo,
+        }),
+      });
 
-    const payload = {
-      product_code: productCode,
-      created_at: createdDate,
-      product_name: productName,
-      image: imagePreview,
-    };
+      const data = await response.json();
 
-    const res = await mockSubmitOwnershipApi(payload);
-
-    if (res.success) {
-      alert('🎉 디지털 소유권 신청이 성공적으로 완료되었습니다!');
-    } else {
-      alert('신청 실패: ' + res.message);
+      if (response.status === 201) {
+        alert('시리얼 번호가 성공적으로 등록되었습니다.');
+        setIsModalOpen(false);
+        setProductId('');
+        setSerialNo('');
+        if (onRegisterSuccess) onRegisterSuccess(); // 목록 새로고침 콜백
+      } else if (response.status === 400) {
+        const errorMsg = data.serial_no ? data.serial_no[0] : '유효하지 않은 입력입니다.';
+        alert(errorMsg);
+      } else {
+        alert('등록 중 오류가 발생했습니다.');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('서버와의 통신에 실패했습니다.');
+    } finally {
+      setIsLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
-    <div className="ownership-page-container">
-      {/* 헤더 영역 */}
+    <div className="digital-ownership-container">
+      {/* 타이틀 및 등록 버튼 상단 헤더 */}
       <div className="ownership-header">
-        <button className="btn-back" onClick={handleBack} aria-label="뒤로가기">
-          &lt;
+        <div>
+          <h2>디지털 소유권 및 권리</h2>
+          <p>보유하고 있는 노리개 커스텀 디자인의 디지털 인증서를 확인하세요.</p>
+        </div>
+        <button className="btn-open-modal" onClick={() => setIsModalOpen(true)}>
+          + 시리얼 번호 등록
         </button>
-        <h1 className="ownership-title">디지털 소유권 신청</h1>
       </div>
-      <p className="ownership-subtitle">
-        제작한 노리개의 디지털 소유권을 신청하고 디지털 자산으로서의 가치를 경험하세요.
-      </p>
 
-      <div className="ownership-grid">
-        {/* 왼쪽: 신청 폼 영역 */}
-        <form className="ownership-form-card" onSubmit={handleSubmit}>
-          {/* 제품 번호 */}
-          <div className="form-group full-width">
-            <label className="form-label" htmlFor="productCode">
-              제품 번호
-            </label>
-            <input
-              id="productCode"
-              type="text"
-              className="form-input"
-              value={productCode}
-              onChange={(e) => setProductCode(e.target.value)}
-              placeholder="예: MCM-2026-1010"
-            />
-            <span className="input-helper">
-              제품 내부 택 또는 보증서에 기재된 일련번호를 확인해주세요.
+      {/* 요약 통계 카드 */}
+      <div className="ownership-stats-grid">
+        <div className="stat-card">
+          <div className="stat-icon-bg diamond-bg"><img src={diaIcon} alt="" /></div>
+          <div className="stat-info">
+            <span className="stat-label">총 보유 자산</span>
+            <span className="stat-value">{ownerships.length}</span>
+          </div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-icon-bg check-bg"><img src={checkIcon} alt=''/></div>
+          <div className="stat-info">
+            <span className="stat-label">인증 완료</span>
+            <span className="stat-value">
+              {ownerships.filter((o) => o.has_production_right).length}
             </span>
           </div>
-
-          {/* 제작 일자 & 제품명 */}
-          <div className="form-row">
-            <div className="form-group">
-              <label className="form-label" htmlFor="createdDate">
-                제작 일자
-              </label>
-              <input
-                id="createdDate"
-                type="text"
-                className="form-input"
-                value={createdDate}
-                onChange={(e) => setCreatedDate(e.target.value)}
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label" htmlFor="productName">
-                제품명
-              </label>
-              <input
-                id="productName"
-                type="text"
-                className="form-input"
-                value={productName}
-                onChange={(e) => setProductName(e.target.value)}
-              />
-            </div>
-          </div>
-
-          {/* 제품 이미지 */}
-          <div className="form-group full-width">
-            <label className="form-label">제품 이미지</label>
-            <div className="image-upload-box">
-              <input
-                type="file"
-                accept="image/*"
-                id="image-upload-input"
-                onChange={handleImageChange}
-                style={{ display: 'none' }}
-              />
-              <label htmlFor="image-upload-input" className="image-upload-label">
-                {imagePreview ? (
-                  <img src={imagePreview} alt="제품 미리보기" className="image-preview" />
-                ) : (
-                  <span style={{ color: '#888' }}>이미지를 클릭하여 변경</span>
-                )}
-              </label>
-            </div>
-          </div>
-
-          {/* 제출 버튼 */}
-          <button type="submit" className="btn-submit" disabled={loading}>
-            {loading ? '신청 처리 중...' : '신청하기'}
-          </button>
-        </form>
-
-        {/* 오른쪽: 인증 혜택 안내 영역 */}
-        <div className="benefit-info-card">
-          <div className="benefit-header">
-            <span className="benefit-icon">🎖️</span>
-            <h2>인증 혜택</h2>
-          </div>
-
-          <div className="benefit-list">
-            <div className="benefit-item">
-              <span className="benefit-item-icon">📋</span>
-              <div>
-                <h3>디지털 인증서 발급</h3>
-                <p>블록체인 기반의 위변조 불가능한 디지털 소유권 증명을 제공합니다.</p>
-              </div>
-            </div>
-
-            <div className="benefit-item">
-              <span className="benefit-item-icon">🏷️</span>
-              <div>
-                <h3>Exclusive Rewards</h3>
-                <p>인증 고객 전용 프라이빗 이벤트 초대 및 한정 리워드를 제공합니다.</p>
-              </div>
-            </div>
-
-            <div className="benefit-item">
-              <span className="benefit-item-icon">🎧</span>
-              <div>
-                <h3>프리미엄 케어 서비스</h3>
-                <p>제품 수선 및 관리 시 우선적인 서비스를 받으실 수 있습니다.</p>
-              </div>
-            </div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-icon-bg info-bg"><img src={InfoIcon}/></div>
+          <div className="stat-info">
+            <span className="stat-label">진행 중</span>
+            <span className="stat-value">
+              {ownerships.filter((o) => !o.has_production_right).length}
+            </span>
           </div>
         </div>
       </div>
+
+      {/* 소유권 상품 카드 리스트 */}
+      <div className="ownership-list">
+        {ownerships.length === 0 ? (
+          <div className="empty-ownership">등록된 디지털 소유권이 없습니다.</div>
+        ) : (
+          ownerships.map((item) => {
+            const isCertified = item.has_production_right;
+            return (
+              <div className="ownership-item-card" key={item.id || item.serial_no}>
+                <div className="ownership-thumb-box">
+                  {item.image_url ? (
+                    <img src={item.image_url} alt={item.product_name} />
+                  ) : (
+                    <div className="img-placeholder">🖼️</div>
+                  )}
+                </div>
+
+                <div className="ownership-details">
+                  <div className="ownership-title-row">
+                    <h3 className="ownership-item-title">
+                      {item.product_name || item.title || '노리개 커스텀'}
+                    </h3>
+                    <span
+                      className={`ownership-badge ${
+                        isCertified ? 'badge-completed' : 'badge-pending'
+                      }`}
+                    >
+                      {isCertified ? '✓ 인증 완료' : '진행중'}
+                    </span>
+                  </div>
+
+                  <p className="ownership-date">
+                    {isCertified ? '등록일' : '신청일'}: {formatDate(item.created_at)}
+                  </p>
+
+                  <div className="ownership-info-box">
+                    <div className="info-grid">
+                      <div className="info-col">
+                        <span className="info-label">시리얼 넘버</span>
+                        <span className="info-val">{item.serial_no}</span>
+                      </div>
+                      <div className="info-col">
+                        <span className="info-label">제작 정보</span>
+                        <span className="info-val">
+                          {item.production_count ?? 0}회 제작
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="info-col full-width">
+                      <span className="info-label">등록 인증 코드</span>
+                      <span className="info-val code-val">
+                        {item.auth_code || '0x71C...9731'}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="ownership-actions">
+                    {isCertified ? (
+                      <>
+                        <button className="btn-cert-view">증명서 보기</button>
+                        <button className="btn-cert-download" title="다운로드">
+                          📥
+                        </button>
+                      </>
+                    ) : (
+                      <button className="btn-application-view">신청서 보기</button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* 시리얼 번호 등록 모달 팝업 */}
+      {isModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h3>시리얼 번호 등록</h3>
+              <button className="btn-close" onClick={() => setIsModalOpen(false)}>
+                ✕
+              </button>
+            </div>
+            <form onSubmit={handleRegister} className="modal-form">
+              <div className="form-group">
+                <label>상품 ID (Product ID)</label>
+                <input
+                  type="number"
+                  placeholder="예: 2"
+                  value={productId}
+                  onChange={(e) => setProductId(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>시리얼 번호 (Serial No)</label>
+                <input
+                  type="text"
+                  placeholder="예: MCM-2026-1010"
+                  value={serialNo}
+                  onChange={(e) => setSerialNo(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="modal-actions">
+                <button
+                  type="button"
+                  className="btn-cancel"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  취소
+                </button>
+                <button type="submit" className="btn-submit" disabled={isLoading}>
+                  {isLoading ? '등록 중...' : '등록하기'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
-}
+};
+
+export default DigitalOwnership;
