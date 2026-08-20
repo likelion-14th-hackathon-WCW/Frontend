@@ -15,7 +15,10 @@ import { getNotificationSettings, saveNotificationSettings } from '../utils/noti
 import MyPageSidebar from '../components/MyPageSidebar.jsx';
 import NorigaePreview from '../components/NorigaePreview.jsx';
 import NorigaeDetailView from '../components/NorigaeDetailView.jsx';
+import DigitalOwnershipPage from './DigitalOwnershipPage.jsx';
+import WishlistTab from '../components/WishlistTab.jsx';
 import { buildNorigaeData } from '../utils/norigaeAssets.js';
+
 import iconAvatarPlaceholder from '../assets/mypage/icon-avatar-placeholder.svg';
 import iconPlusSmall from '../assets/mypage/icon-plus-small.svg';
 import iconPlusCircle from '../assets/mypage/icon-plus-circle.svg';
@@ -28,7 +31,7 @@ import eyeOffIcon from '../assets/eye-toggle-icon.svg';
 import eyeOpenIcon from '../assets/eye-open-icon.svg';
 import hintCheckDefault from '../assets/hint-check-default.svg';
 import hintCheckValid from '../assets/hint-check-valid.svg';
-import DigitalOwnership from './DigitalOwnershipPage';
+
 import './MyPage.css';
 
 const NICKNAME_RULE = {
@@ -43,7 +46,6 @@ const PASSWORD_RULES = [
   { key: 'digit', label: '숫자 최소 1개 이상', test: (v) => /\d/.test(v) },
 ];
 
-// 완료/취소된 예약 상태 판별
 const isCancelledStatus = (status) => status === '취소' || status === '취소됨' || status === '예약 취소';
 const isCompletedStatus = (status) => status === '완료' || status === '완료됨' || status === '방문 완료' || status === '방문완료' || status === '이용 완료' || status === '이용완료';
 
@@ -63,7 +65,6 @@ async function handleShareItem(item) {
     await navigator.clipboard.writeText(shareUrl);
     alert('공유 링크가 클립보드에 복사되었습니다.');
   } catch {
-    // 클립보드 접근 실패 시 무시
   }
 }
 
@@ -79,7 +80,6 @@ function formatReservedAt(isoString) {
   return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 • ${meridiem} ${hour12}:${minute}`;
 }
 
-// URL 경로에서 탭 결정
 const getTabFromPath = (pathname) => {
   if (pathname.includes('reservations')) return 'reservations';
   if (pathname.includes('collections')) return 'items';
@@ -94,7 +94,6 @@ export default function MyPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 현재 활성화된 탭 ('profile', 'reservations', 'items', 'ownerships', 'wishlist', 'settings')
   const [activeTab, setActiveTab] = useState(() => getTabFromPath(location.pathname));
 
   const [profile, setProfile] = useState(null);
@@ -124,6 +123,8 @@ export default function MyPage() {
   const [passwordError, setPasswordError] = useState('');
   const [isSavingPassword, setIsSavingPassword] = useState(false);
 
+  const [selectedItem, setSelectedItem] = useState(null);
+
   useEffect(() => {
     if (profile?.nickname) {
       setNickname(profile.nickname);
@@ -131,12 +132,10 @@ export default function MyPage() {
     }
   }, [profile]);
 
-  // URL 변경 시 activeTab 업데이트
   useEffect(() => {
     setActiveTab(getTabFromPath(location.pathname));
   }, [location.pathname]);
 
-  // activeTab 변경 시 URL 업데이트
   useEffect(() => {
     const pathMap = {
       profile: '/mypage',
@@ -152,9 +151,6 @@ export default function MyPage() {
     }
   }, [activeTab, navigate, location.pathname]);
 
-  // [수정점 1] 선택된 상세 노리개 아이템 상태 추가
-  const [selectedItem, setSelectedItem] = useState(null);
-
   const fetchOwnershipsData = async () => {
     try {
       const ownRes = await getMyOwnerships();
@@ -166,7 +162,6 @@ export default function MyPage() {
     }
   };
 
-  // [수정점 2] 삭제 완료 시 아이템 목록 갱신 함수
   const handleDeleteSuccess = (deletedId) => {
     setItems((prev) => prev.filter((item) => (item.id || item.item_id) !== deletedId));
   };
@@ -290,14 +285,12 @@ export default function MyPage() {
       <MyPageSidebar 
         active={activeTab} 
         onSelect={(tab) => {
-          setSelectedItem(null); // 탭 이동 시 상세보기 상태 초기화
+          setSelectedItem(null); 
           setActiveTab(tab);
         }} 
       />
 
-      {/* 메인 컨텐츠 영역 (activeTab에 따라 다른 뷰 출력) */}
       <main className="mypage-content">
-        {/* TAB 1: 프로필 개요 (기존 마이페이지 메인) */}
         {activeTab === 'profile' && (
           <>
             <div className="content-header">
@@ -432,10 +425,8 @@ export default function MyPage() {
           </>
         )}
 
-        {/* TAB 3: 저장된 노리개 디자인 전체 페이지 */}
         {activeTab === 'items' && (
           selectedItem ? (
-            /* [수정점 3] 상세보기 클릭 시 보여지는 인라인 상세 뷰 화면 */
             <NorigaeDetailView
               item={selectedItem}
               onBack={() => setSelectedItem(null)}
@@ -447,7 +438,6 @@ export default function MyPage() {
               }}
             />
           ) : (
-            /* 기존 카드 그리드 목록 화면 */
             <div className="tab-page">
               <div className="content-header">
                 <h2>저장된 노리개 디자인</h2>
@@ -480,7 +470,6 @@ export default function MyPage() {
                           <p className="wish-card__desc">{item.symbol_reason || item.wish_keyword || ''}</p>
                         </div>
                         <div className="wish-card__actions">
-                          {/* [수정점 4] 상세보기 버튼에 setSelectedItem 클릭 이벤트만 추가 */}
                           <button 
                             type="button" 
                             className="wish-card__btn wish-card__btn--primary"
@@ -509,25 +498,22 @@ export default function MyPage() {
           )
         )}
 
-        {/* TAB 4: 소유권 및 관리 전체 페이지 (독립된 컴포넌트 출력) */}
         {activeTab === 'ownerships' && (
-          <DigitalOwnership 
+          <DigitalOwnershipPage 
             ownerships={ownerships} 
             onRegisterSuccess={fetchOwnershipsData} 
           />
         )}
 
-        {/* TAB 5: 위시리스트 임시 뷰 */}
         {activeTab === 'wishlist' && (
-          <div className="tab-page">
-            <div className="content-header">
-              <h2>위시리스트</h2>
-              <p>해당 기능은 준비 중입니다.</p>
-            </div>
-          </div>
+          <WishlistTab
+            onSelectDetail={(item) => {
+              setSelectedItem(item);
+              setActiveTab('items');
+            }}
+          />
         )}
 
-        {/* TAB 6: 설정 */}
         {activeTab === 'settings' && (
           <div className="tab-page">
             <div className="content-header">
