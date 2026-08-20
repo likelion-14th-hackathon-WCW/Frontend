@@ -431,7 +431,9 @@ export default function MyPage() {
               item={selectedItem}
               onBack={() => setSelectedItem(null)}
               onDeleteSuccess={handleDeleteSuccess}
-              onGoToReservation={() => navigate('/reservation')}
+              onGoToReservation={() =>
+                navigate('/reservation', { state: { norigaeData: { ...selectedItem, alreadySaved: true } } })
+              }
               onGoToOwnership={() => {
                 setSelectedItem(null);
                 setActiveTab('ownerships');
