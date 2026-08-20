@@ -59,9 +59,6 @@ export default function NorigaeDetailView({ item, onBack, onDeleteSuccess, onGoT
 
       <div className="detail-body-grid">
         <div className="detail-left-col">
-          <span className="serial-code">
-            {item.serial_number || item.code || 'MCM-2026-1010'}
-          </span>
           <div className="preview-box">
             {item.image_url || item.thumbnail ? (
               <img src={item.image_url || item.thumbnail} alt={item.title || ''} className="preview-img" />
