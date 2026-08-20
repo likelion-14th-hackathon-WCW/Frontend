@@ -6,10 +6,41 @@ export const getMe = async () => {
 };
 
 export const updateProfile = async (formData) => {
-  const response = await apiClient.patch('/auth/me/nickname/', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
-  return { success: true, data: response.data };
+  try {
+    const response = await apiClient.patch('/auth/me/nickname/', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return { success: true, data: response.data };
+  } catch (error) {
+    const message = error.response?.data?.detail || error.response?.data?.nickname?.[0] || '프로필 수정에 실패했습니다.';
+    return { success: false, message };
+  }
+};
+
+export const changePassword = async ({ currentPassword, newPassword }) => {
+  try {
+    await apiClient.patch('/auth/me/password/', {
+      current_password: currentPassword,
+      new_password: newPassword,
+    });
+    return { success: true };
+  } catch (error) {
+    const message = error.response?.data?.detail || '비밀번호 변경에 실패했습니다.';
+    return { success: false, message };
+  }
+};
+
+export const deleteAccount = async () => {
+  try {
+    await apiClient.post('/auth/withdraw/');
+    localStorage.removeItem('token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('wcw_user');
+    return { success: true };
+  } catch (error) {
+    const message = error.response?.data?.detail || '회원 탈퇴에 실패했습니다.';
+    return { success: false, message };
+  }
 };
 
 export const getMyReservations = async () => {

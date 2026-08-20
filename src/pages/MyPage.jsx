@@ -1,7 +1,17 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.js';
-import { getMe, getMyReservations, getMyItems, getMyOwnerships } from '../api/mypage.js';
+import { logout } from '../api/auth.js';
+import {
+  getMe,
+  getMyReservations,
+  getMyItems,
+  getMyOwnerships,
+  updateProfile,
+  changePassword,
+  deleteAccount,
+} from '../api/mypage.js';
+import { getNotificationSettings, saveNotificationSettings } from '../utils/notificationSettings.js';
 import MyPageSidebar from '../components/MyPageSidebar.jsx';
 import NorigaePreview from '../components/NorigaePreview.jsx';
 import { buildNorigaeData } from '../utils/norigaeAssets.js';
@@ -9,7 +19,27 @@ import iconAvatarPlaceholder from '../assets/mypage/icon-avatar-placeholder.svg'
 import iconPlusSmall from '../assets/mypage/icon-plus-small.svg';
 import iconPlusCircle from '../assets/mypage/icon-plus-circle.svg';
 import iconLink from '../assets/mypage/icon-link.svg';
+import iconCamera from '../assets/mypage/icon-camera.svg';
+import iconBell from '../assets/mypage/icon-bell.svg';
+import iconUserX from '../assets/mypage/icon-user-x.svg';
+import iconSettingsPerson from '../assets/mypage/icon-settings-person.svg';
+import eyeOffIcon from '../assets/eye-toggle-icon.svg';
+import eyeOpenIcon from '../assets/eye-open-icon.svg';
+import hintCheckDefault from '../assets/hint-check-default.svg';
+import hintCheckValid from '../assets/hint-check-valid.svg';
 import './MyPage.css';
+
+const NICKNAME_RULE = {
+  label: '특수문자 제외 2~10자 이내',
+  test: (v) => /^[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]{2,10}$/.test(v),
+};
+
+const PASSWORD_RULES = [
+  { key: 'length', label: '최소 8자 이상', test: (v) => v.length >= 8 },
+  { key: 'case', label: '영문 대문자 최소 1개 및 소문자 최소 1개 이상', test: (v) => /[a-z]/.test(v) && /[A-Z]/.test(v) },
+  { key: 'special', label: '특수 문자 최소 1개 이상', test: (v) => /[!@#$%^&*]/.test(v) },
+  { key: 'digit', label: '숫자 최소 1개 이상', test: (v) => /\d/.test(v) },
+];
 
 // 완료/취소된 예약 상태 판별
 const isCancelledStatus = (status) => status === '취소' || status === '취소됨' || status === '예약 취소'
@@ -71,6 +101,30 @@ export default function MyPage() {
   const [items, setItems] = useState([]);
   const [ownerships, setOwnerships] = useState([]);
 
+  // 설정 탭: 프로필 수정
+  const [nickname, setNickname] = useState('');
+  const [nicknameError, setNicknameError] = useState('');
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState('');
+
+  // 설정 탭: 알림
+  const [notifications, setNotifications] = useState(getNotificationSettings());
+
+  // 설정 탭: 비밀번호 변경
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
+  const [isSavingPassword, setIsSavingPassword] = useState(false);
+
+  useEffect(() => {
+    if (profile?.nickname) setNickname(profile.nickname);
+  }, [profile]);
+
   // URL 변경 시 activeTab 업데이트
   useEffect(() => {
     setActiveTab(getTabFromPath());
@@ -118,6 +172,86 @@ export default function MyPage() {
 
     fetchMyPageData();
   }, [user, navigate]);
+
+  const isNicknameValid = NICKNAME_RULE.test(nickname);
+  const passwordRuleStatus = PASSWORD_RULES.map((rule) => ({ ...rule, valid: rule.test(newPassword) }));
+  const isNewPasswordValid = passwordRuleStatus.every((rule) => rule.valid);
+  const isConfirmPasswordValid = confirmPassword.length > 0 && confirmPassword === newPassword;
+  const canChangePassword = currentPassword.length > 0 && isNewPasswordValid && isConfirmPasswordValid;
+
+  const handleAvatarChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setAvatarFile(file);
+    setAvatarPreview(URL.createObjectURL(file));
+  };
+
+  const handleSaveProfile = async () => {
+    if (!isNicknameValid) return;
+    setIsSavingProfile(true);
+    setNicknameError('');
+    const formData = new FormData();
+    formData.append('nickname', nickname);
+    formData.append('name', profile?.name || user?.name || '');
+    formData.append('phone', profile?.phone || '');
+    if (avatarFile) formData.append('profile_image', avatarFile);
+    const result = await updateProfile(formData);
+    setIsSavingProfile(false);
+    if (!result.success) {
+      setNicknameError(result.message);
+      return;
+    }
+    setProfile((prev) => ({ ...prev, ...result.data }));
+    setAvatarFile(null);
+  };
+
+  const handleDeleteAvatar = async () => {
+    setAvatarFile(null);
+    setAvatarPreview('');
+    const formData = new FormData();
+    formData.append('nickname', nickname || profile?.nickname || '');
+    formData.append('name', profile?.name || user?.name || '');
+    formData.append('phone', profile?.phone || '');
+    formData.append('profile_image', '');
+    const result = await updateProfile(formData);
+    if (result.success) {
+      setProfile((prev) => ({ ...prev, ...result.data, profile_image: null }));
+    }
+  };
+
+  const handleToggleNotification = (key) => {
+    setNotifications(saveNotificationSettings({ [key]: !notifications[key] }));
+  };
+
+  const handleChangePassword = async () => {
+    if (!canChangePassword) return;
+    setIsSavingPassword(true);
+    setPasswordError('');
+    const result = await changePassword({ currentPassword, newPassword });
+    setIsSavingPassword(false);
+    if (!result.success) {
+      setPasswordError(result.message);
+      return;
+    }
+    setCurrentPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!window.confirm('탈퇴 시 모든 정보가 삭제되며 복구할 수 없습니다. 계속하시겠습니까?')) return;
+    const result = await deleteAccount();
+    if (result.success) {
+      navigate('/');
+    } else {
+      alert(result.message);
+    }
+  };
 
   if (!user) return null;
 
@@ -343,12 +477,242 @@ export default function MyPage() {
           </div>
         )}
 
-        {/* TAB 5 & 6: 위시리스트 및 계정 설정 임시 뷰 */}
-        {(activeTab === 'wishlist' || activeTab === 'settings') && (
+        {/* TAB 5: 위시리스트 임시 뷰 */}
+        {activeTab === 'wishlist' && (
           <div className="tab-page">
             <div className="content-header">
-              <h2>{activeTab === 'wishlist' ? '위시리스트' : '계정 설정'}</h2>
+              <h2>위시리스트</h2>
               <p>해당 기능은 준비 중입니다.</p>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 6: 설정 */}
+        {activeTab === 'settings' && (
+          <div className="tab-page">
+            <div className="content-header">
+              <h2>설정</h2>
+              <p>계정 정보 및 서비스 환경을 관리하세요.</p>
+            </div>
+
+            <div className="settings-groups">
+              <section className="settings-card">
+                <div className="settings-card__header">
+                  <img src={iconSettingsPerson} alt="" className="settings-card__icon" />
+                  <h3>프로필 정보 수정</h3>
+                </div>
+
+                <div className="settings-avatar-row">
+                  <label className="settings-avatar">
+                    {avatarPreview || profile?.profile_image ? (
+                      <img src={avatarPreview || profile.profile_image} alt="" className="settings-avatar__image" />
+                    ) : (
+                      <img src={iconCamera} alt="" />
+                    )}
+                    <input type="file" accept="image/jpeg,image/png,image/gif" hidden onChange={handleAvatarChange} />
+                  </label>
+                  <div className="settings-avatar-actions">
+                    <div className="settings-avatar-buttons">
+                      <label className="settings-btn-outline">
+                        사진 변경
+                        <input type="file" accept="image/jpeg,image/png,image/gif" hidden onChange={handleAvatarChange} />
+                      </label>
+                      {(avatarPreview || profile?.profile_image) && (
+                        <button type="button" className="settings-btn-outline settings-btn-outline--danger" onClick={handleDeleteAvatar}>
+                          사진 삭제
+                        </button>
+                      )}
+                    </div>
+                    <p className="settings-hint-text">JPG, GIF 또는 PNG 파일 (최대 5MB)</p>
+                  </div>
+                </div>
+
+                <div className="settings-field">
+                  <label>닉네임</label>
+                  <div
+                    className={`settings-input${nicknameError ? ' settings-input--error' : nickname ? ' settings-input--filled' : ''}`}
+                  >
+                    <input
+                      type="text"
+                      value={nickname}
+                      onChange={(e) => {
+                        setNickname(e.target.value);
+                        setNicknameError('');
+                      }}
+                    />
+                  </div>
+                  <p className={`settings-hint-text${nicknameError ? ' settings-hint-text--error' : ''}`}>
+                    {nicknameError || NICKNAME_RULE.label}
+                  </p>
+                </div>
+
+                <div className="settings-field">
+                  <label>이메일 주소</label>
+                  <div className="settings-input settings-input--readonly">{profile?.email || user?.email}</div>
+                  <p className="settings-hint-text">이메일 변경은 고객센터로 문의해주세요.</p>
+                </div>
+
+                <div className="settings-actions-row">
+                  <button
+                    type="button"
+                    className="settings-btn-primary"
+                    disabled={!isNicknameValid || isSavingProfile}
+                    onClick={handleSaveProfile}
+                  >
+                    프로필 수정
+                  </button>
+                  <p className="settings-note">* 프로필 수정 버튼을 누르지 않을 경우 반영되지 않습니다.</p>
+                </div>
+              </section>
+
+              <section className="settings-card">
+                <div className="settings-card__header">
+                  <img src={iconBell} alt="" className="settings-card__icon" />
+                  <h3>알림 설정</h3>
+                </div>
+
+                <div className="settings-toggle-row">
+                  <div>
+                    <h4>카카오톡 예약 알림</h4>
+                    <p>예약 확정 및 리마인드 메시지를 카카오톡으로 받습니다.</p>
+                  </div>
+                  <button
+                    type="button"
+                    className={`settings-toggle${notifications.sms ? ' settings-toggle--on' : ''}`}
+                    onClick={() => handleToggleNotification('sms')}
+                    aria-label="카카오톡 예약 알림 전환"
+                  >
+                    <span className="settings-toggle__knob" />
+                  </button>
+                </div>
+
+                <div className="settings-toggle-row settings-toggle-row--divider">
+                  <div>
+                    <h4>이메일 프로모션 수신</h4>
+                    <p>이벤트 및 신상품 정보를 이메일로 받아봅니다.</p>
+                  </div>
+                  <button
+                    type="button"
+                    className={`settings-toggle${notifications.email ? ' settings-toggle--on' : ''}`}
+                    onClick={() => handleToggleNotification('email')}
+                    aria-label="이메일 프로모션 수신 전환"
+                  >
+                    <span className="settings-toggle__knob" />
+                  </button>
+                </div>
+              </section>
+
+              <section className="settings-card">
+                <div className="settings-card__header">
+                  <img src={iconUserX} alt="" className="settings-card__icon" />
+                  <h3>계정 관리</h3>
+                </div>
+
+                <h4 className="settings-subheading">비밀번호 변경</h4>
+
+                <div className="settings-field">
+                  <label>현재 비밀번호</label>
+                  <div className="settings-input settings-input--password">
+                    <input
+                      type={showCurrentPassword ? 'text' : 'password'}
+                      placeholder="현재 비밀번호를 입력해주세요."
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      className="settings-input__toggle"
+                      onClick={() => setShowCurrentPassword((v) => !v)}
+                      aria-label="현재 비밀번호 표시 전환"
+                    >
+                      <img src={showCurrentPassword ? eyeOpenIcon : eyeOffIcon} alt="" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="settings-field">
+                  <label>새 비밀번호</label>
+                  <div className="settings-input settings-input--password">
+                    <input
+                      type={showNewPassword ? 'text' : 'password'}
+                      placeholder="새로운 비밀번호를 입력해주세요."
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      className="settings-input__toggle"
+                      onClick={() => setShowNewPassword((v) => !v)}
+                      aria-label="새 비밀번호 표시 전환"
+                    >
+                      <img src={showNewPassword ? eyeOpenIcon : eyeOffIcon} alt="" />
+                    </button>
+                  </div>
+                  <div className="settings-password-rules">
+                    {passwordRuleStatus.map((rule) => (
+                      <span key={rule.key} className={`settings-hint-text${rule.valid ? ' settings-hint-text--valid' : ''}`}>
+                        <img src={rule.valid ? hintCheckValid : hintCheckDefault} alt="" />
+                        {rule.label}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="settings-field">
+                  <label>새 비밀번호 확인</label>
+                  <div className="settings-input settings-input--password">
+                    <input
+                      type={showConfirmPassword ? 'text' : 'password'}
+                      placeholder="새로운 비밀번호를 다시 입력해주세요."
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      className="settings-input__toggle"
+                      onClick={() => setShowConfirmPassword((v) => !v)}
+                      aria-label="새 비밀번호 확인 표시 전환"
+                    >
+                      <img src={showConfirmPassword ? eyeOpenIcon : eyeOffIcon} alt="" />
+                    </button>
+                  </div>
+                  <span className={`settings-hint-text${isConfirmPasswordValid ? ' settings-hint-text--valid' : ''}`}>
+                    <img src={isConfirmPasswordValid ? hintCheckValid : hintCheckDefault} alt="" />
+                    비밀번호 일치
+                  </span>
+                </div>
+
+                {passwordError && <p className="settings-hint-text settings-hint-text--error">{passwordError}</p>}
+
+                <button
+                  type="button"
+                  className="settings-btn-primary"
+                  disabled={!canChangePassword || isSavingPassword}
+                  onClick={handleChangePassword}
+                >
+                  변경하기
+                </button>
+
+                <div className="settings-withdraw-row">
+                  <div>
+                    <h4>로그아웃</h4>
+                    <p>현재 기기에서 로그아웃합니다.</p>
+                  </div>
+                  <button type="button" className="settings-logout-btn" onClick={handleLogout}>
+                    로그아웃
+                  </button>
+                </div>
+
+                <div className="settings-withdraw-row">
+                  <div>
+                    <h4 className="settings-withdraw-title">회원 탈퇴</h4>
+                    <p>탈퇴 시 모든 정보가 삭제되며 복구할 수 없습니다.</p>
+                  </div>
+                  <button type="button" className="settings-withdraw-btn" onClick={handleDeleteAccount}>
+                    탈퇴 하기
+                  </button>
+                </div>
+              </section>
             </div>
           </div>
         )}
