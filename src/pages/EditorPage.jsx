@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAiRecommendation, saveNorigaeDesign } from '../api/norigaeApi';
+import { getAiRecommendation } from '../api/norigaeApi';
+import { useAuth } from '../hooks/useAuth.js';
 import LoginModal from '../components/LoginModal';
 import './EditorPage.css';
 import shareIcon from '../assets/editor-share.svg';
@@ -112,7 +113,8 @@ export default function EditorPage() {
   const [errorMsg, setErrorMsg] = useState('');
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
-  const isLoggedIn = Boolean(localStorage.getItem('token'));
+  const { user } = useAuth();
+  const isLoggedIn = Boolean(user);
 
   const knotScroll = useHorizontalScrollThumb();
   const decoScroll = useHorizontalScrollThumb();
@@ -219,49 +221,35 @@ export default function EditorPage() {
     }
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     if (!isLoggedIn) {
       setIsLoginModalOpen(true);
       return;
     }
 
-    // 1. 원인 1 조치: title이 없을 경우 자동 보완
-    const finalTitle = title.trim() || `${activeKnotObj?.name || '커스텀'} 노리개`;
-
-    // 2. 원인 2&3 조치: symbol_reason 기본값 및 술 PK/개수 대응 (술 PK 필드로 'tassel'도 함께 전달)
-    const payload = {
-      wish_keyword: keyword || '',
-      symbol_reason: recommendation?.reason || '사용자 지정 노리개 디자인',
-      knot: Number(selectedKnot),
-      tassel: Number(selectedTassel),
-      tassel_count: 1, // 백엔드가 수량을 기대하는 경우 기본 1개로 전송
-      decoration: Number(selectedDecoration),
-      color: selectedColor,
-      title: finalTitle,
-    };
-
-    const result = await saveNorigaeDesign(payload);
-
-    if (result.success) {
-      alert('노리개 디자인이 성공적으로 저장되었습니다!');
-    } else {
-      if (result.status === 401) {
-        setIsLoginModalOpen(true);
-      } else if (result.status === 400) {
-        const errors = result.errors;
-        console.log('Validation Errors:', errors);
-
-        if (errors && typeof errors === 'object') {
-          const firstKey = Object.keys(errors)[0];
-          const firstError = Array.isArray(errors[firstKey]) ? errors[firstKey][0] : errors[firstKey];
-          alert(`[${firstKey}] 오류: ${firstError}`);
-        } else {
-          alert('입력값을 확인해 주세요.');
-        }
-      } else {
-        alert(result.message || '저장에 실패했습니다.');
-      }
+    if (!allSpecsSelected) {
+      alert('매듭, 메인 장식, 술, 실 색상을 모두 선택해 주세요.');
+      return;
     }
+
+    navigate('/editor/naming', {
+      state: {
+        norigaeData: {
+          wish_keyword: keyword || '',
+          symbol_reason: recommendation?.reason || '사용자 지정 노리개 디자인',
+          knot: Number(selectedKnot),
+          tassel: Number(selectedTassel),
+          tassel_count: 1, // 백엔드가 수량을 기대하는 경우 기본 1개로 전송
+          decoration: Number(selectedDecoration),
+          color: selectedColor,
+          defaultTitle: `${activeKnotObj?.name || '커스텀'} 노리개`,
+          knotImage: KNOT_COMBO_ASSETS[`knot-${activeKnotObj.comboKey}-${colorKey}`],
+          decorationImage: activeDecoObj.image,
+          tasselImage: TASSEL_COMBO_ASSETS[`tassel-${activeTasselObj.count}-${colorKey}`],
+          tasselCount: activeTasselObj.count,
+        },
+      },
+    });
   };
 
   const handleShare = async () => {
