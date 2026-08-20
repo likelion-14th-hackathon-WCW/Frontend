@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import './Reservation.css'
 import searchIcon from '../assets/search-icon.svg'
 import clockIcon from '../assets/clock-icon.svg'
@@ -7,6 +8,8 @@ import chevronRight from '../assets/chevron-right.svg'
 import { useAuth } from '../hooks/useAuth.js'
 import { saveReservationDraft } from '../utils/reservationDraft.js'
 import { getStores, getBookedTimes, createReservation } from '../api/reservations.js'
+import { saveNorigaeDesign } from '../api/norigaeApi.js'
+import { buildNorigaeData } from '../utils/norigaeAssets.js'
 import { STORE_INFO } from '../data/storeInfo.js'
 import NorigaePreview from '../components/NorigaePreview.jsx'
 // ponytail: StoreMap은 여기선 더 이상 안 쓰지만 마이페이지 예약 상세에서 재사용 예정 — 컴포넌트 삭제하지 않음
@@ -83,6 +86,25 @@ function buildCalendarDays(viewYear, viewMonth) {
 export default function Reservation() {
   const today = useMemo(() => new Date(), [])
   const { user } = useAuth()
+  const location = useLocation()
+  const [norigaeData] = useState(() => {
+    if (location.state?.norigaeData) {
+      try {
+        sessionStorage.setItem('wcw_pending_norigae', JSON.stringify(location.state.norigaeData))
+      } catch {
+        // ignore storage error
+      }
+      return location.state.norigaeData
+    }
+    return null
+  })
+
+  const effectiveNorigaeData = useMemo(() => {
+    if (!norigaeData) return null
+    return buildNorigaeData(norigaeData) || (norigaeData.knotImage ? norigaeData : null)
+  }, [norigaeData])
+
+  const hasNorigae = Boolean(effectiveNorigaeData?.knotImage || norigaeData?.knotImage)
 
   const [query, setQuery] = useState('')
   const [selectedStoreId, setSelectedStoreId] = useState(null)
@@ -135,6 +157,7 @@ export default function Reservation() {
       storeName: selectedStore.name,
       dateLabel: `${selectedDate.getFullYear()}년 ${selectedDate.getMonth() + 1}월 ${selectedDate.getDate()}일`,
       timeLabel: selectedTime,
+      norigaeData,
     }
 
     if (!user) {
@@ -146,11 +169,33 @@ export default function Reservation() {
     setSubmitError('')
     setIsSubmitting(true)
     const result = await createReservation({ store: selectedStore.id, reservedAt })
-    setIsSubmitting(false)
     if (!result.success) {
+      setIsSubmitting(false)
       setSubmitError(result.message)
       return
     }
+
+    // 노리개 만들기에서 매장 예약을 진행한 경우, 확정 시 마이페이지 노리개 타임라인에 디자인 자동 저장
+    if (norigaeData && norigaeData.knot && norigaeData.tassel && norigaeData.decoration && norigaeData.color) {
+      try {
+        const finalTitle = norigaeData.title?.trim() || norigaeData.defaultTitle || '나만의 노리개'
+        await saveNorigaeDesign({
+          wish_keyword: norigaeData.wish_keyword || norigaeData.keyword || '',
+          symbol_reason: norigaeData.symbol_reason || '매장 예약 노리개 디자인',
+          knot: Number(norigaeData.knot),
+          tassel: Number(norigaeData.tassel),
+          tassel_count: Number(norigaeData.tassel_count) || 1,
+          decoration: Number(norigaeData.decoration),
+          color: norigaeData.color,
+          title: finalTitle,
+        })
+        sessionStorage.removeItem('wcw_pending_norigae')
+      } catch (saveErr) {
+        console.error('노리개 타임라인 디자인 자동 저장 실패:', saveErr)
+      }
+    }
+
+    setIsSubmitting(false)
     saveReservationDraft(draft)
     window.location.href = '/reservation/complete-member'
   }
@@ -320,7 +365,7 @@ export default function Reservation() {
             </button>
           </div>
 
-          <NorigaePreview />
+          {hasNorigae && <NorigaePreview norigaeData={effectiveNorigaeData} />}
         </aside>
       </div>
     </main>

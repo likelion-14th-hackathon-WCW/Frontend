@@ -105,7 +105,10 @@ export default function NorigaeNamingPage() {
               <button className="naming-btn naming-btn--light" onClick={() => navigate('/editor')}>
                 계속 편집하기
               </button>
-              <button className="naming-btn naming-btn--yellow" onClick={() => navigate('/reservation')}>
+              <button
+                className="naming-btn naming-btn--yellow"
+                onClick={() => navigate('/reservation', { state: { norigaeData: { ...norigaeData, title } } })}
+              >
                 매장 예약하기
               </button>
             </div>

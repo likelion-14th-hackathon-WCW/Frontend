@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import shareIcon from '../assets/editor-share.svg';
 
@@ -14,8 +14,8 @@ export default function SavedItemsPage({ items = [] }) {
           text: item.symbol_reason,
           url: shareUrl,
         });
-      } catch (err) {
-        // 공유 취소 시 예외 처리
+      } catch {
+        // 공유 취소 시 무시
       }
     } else {
       await navigator.clipboard.writeText(shareUrl);

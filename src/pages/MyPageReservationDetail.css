@@ -28,11 +28,18 @@
   border: none;
   background: none;
   cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.reservation-detail__back:hover {
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 .reservation-detail__back img {
-  width: 100%;
-  height: 100%;
+  width: 10px;
+  height: 16px;
+  display: block;
 }
 
 .reservation-detail__title {
@@ -63,17 +70,32 @@
   align-items: stretch;
 }
 
-.reservation-detail__image-placeholder {
+.reservation-detail__image-container {
   flex: 1 0 0;
   min-height: 290px;
+  display: flex;
+  align-items: stretch;
   background: var(--color-background);
-  border: 1px solid #f9e5b4;
+  border: 1px solid var(--color-brown-200);
+  border-radius: 2px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   box-sizing: border-box;
+  overflow: hidden;
 }
 
-.reservation-detail__image-placeholder--cancelled {
+.reservation-detail__image-container .norigae-preview {
+  width: 100%;
+  height: 100%;
+  min-height: 290px;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+.reservation-detail__image-container--cancelled {
   background: #fff;
-  border-color: var(--color-grey-50);
+  border-color: var(--color-grey-300);
+  opacity: 0.7;
 }
 
 .reservation-detail__summary-row > :nth-child(2) {

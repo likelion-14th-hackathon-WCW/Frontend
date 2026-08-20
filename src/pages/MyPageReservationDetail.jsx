@@ -1,10 +1,13 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import MyPageSidebar from '../components/MyPageSidebar.jsx'
 import ReservationSummaryCard from '../components/ReservationSummaryCard.jsx'
+import NorigaePreview from '../components/NorigaePreview.jsx'
 import StoreMap from '../components/StoreMap.jsx'
-import { getMyReservations } from '../api/mypage.js'
+import { getMyReservations, getMyItems } from '../api/mypage.js'
 import { getCurrentSeason } from '../api/season.js'
+import { readReservationDraft } from '../utils/reservationDraft.js'
+import { buildNorigaeData } from '../utils/norigaeAssets.js'
 import { STORE_INFO } from '../data/storeInfo.js'
 import chevronLeft from '../assets/chevron-left.svg'
 import './MyPageReservationDetail.css'
@@ -26,17 +29,76 @@ export default function MyPageReservationDetail() {
   const navigate = useNavigate()
 
   const [reservations, setReservations] = useState(null)
+  const [items, setItems] = useState([])
   const [seasonTag, setSeasonTag] = useState('')
 
   useEffect(() => {
     getMyReservations().then((result) => {
       setReservations(result.success ? result.data || [] : [])
     })
+    getMyItems().then((result) => {
+      if (result.success) setItems(result.data || [])
+    })
     // ponytail: 시즌 태그는 현재 활성 시즌을 그대로 보여줌(예약 시점 시즌과 매칭하는 필드가 없음)
     getCurrentSeason().then((season) => {
       if (season?.name) setSeasonTag(`${season.name.replace(/^\d+\s*/, '')} 시즌`)
     })
   }, [])
+
+  const reservation = useMemo(() => {
+    if (!reservations) return null
+    return reservations.find((r) => String(r.id ?? r.reservation_id) === id) || null
+  }, [reservations, id])
+
+  const storeName = reservation?.store_name || reservation?.store || ''
+  const storeInfo = STORE_INFO[storeName]
+  const isCancelled = reservation?.status === '취소'
+  const reservationNumber = reservation?.reservation_number || (reservation ? `MCM-${reservation.id ?? reservation.reservation_id}` : '')
+
+  const previewData = useMemo(() => {
+    if (!reservation) return null
+
+    // 1. 예약 객체 자체에 노리개 데이터가 있는 경우
+    if (reservation.norigaeData || reservation.norigae_data) {
+      const data = buildNorigaeData(reservation.norigaeData || reservation.norigae_data)
+      if (data) return data
+    }
+
+    // 2. 예약 객체에 매듭/장식/술 부품 필드가 직접 있는 경우
+    const builtFromRes = buildNorigaeData(reservation)
+    if (builtFromRes?.knotImage) return builtFromRes
+
+    // 3. 예약과 연계된 아이템이 있는 경우
+    if (reservation.item || reservation.item_id) {
+      const targetItemId = reservation.item_id ?? (typeof reservation.item === 'object' ? reservation.item.id : reservation.item)
+      const matched = items.find((item) => (item.id ?? item.item_id) === targetItemId)
+      if (matched) {
+        const built = buildNorigaeData(matched)
+        if (built) return built
+      }
+    }
+
+    // 4. 최근 작성된 예약 드래프트 세션에서 노리개 데이터 추출
+    const draft = readReservationDraft()
+    if (draft?.norigaeData) {
+      const builtDraft = buildNorigaeData(draft.norigaeData)
+      if (builtDraft) return builtDraft
+    }
+
+    // 5. 사용자가 저장한 아이템 목록이 있을 경우 최신 아이템 활용
+    if (items.length > 0) {
+      const latestBuilt = buildNorigaeData(items[0])
+      if (latestBuilt) return latestBuilt
+    }
+
+    return null
+  }, [reservation, items])
+
+  const previewImageSrc =
+    reservation?.image_url ||
+    reservation?.thumbnail ||
+    reservation?.norigae_image ||
+    previewData?.image_url
 
   if (reservations === null) {
     return (
@@ -49,8 +111,6 @@ export default function MyPageReservationDetail() {
     )
   }
 
-  const reservation = reservations.find((r) => String(r.id ?? r.reservation_id) === id)
-
   if (!reservation) {
     return (
       <div className="mypage-wrapper">
@@ -61,11 +121,6 @@ export default function MyPageReservationDetail() {
       </div>
     )
   }
-
-  const storeName = reservation.store_name || reservation.store || ''
-  const storeInfo = STORE_INFO[storeName]
-  const isCancelled = reservation.status === '취소'
-  const reservationNumber = reservation.reservation_number || `MCM-${reservation.id ?? reservation.reservation_id}`
 
   const stores = [
     {
@@ -100,7 +155,12 @@ export default function MyPageReservationDetail() {
         </div>
 
         <div className="reservation-detail__summary-row">
-          <div className={`reservation-detail__image-placeholder${isCancelled ? ' reservation-detail__image-placeholder--cancelled' : ''}`} />
+          <div className={`reservation-detail__image-container${isCancelled ? ' reservation-detail__image-container--cancelled' : ''}`}>
+            <NorigaePreview
+              imageSrc={previewImageSrc}
+              norigaeData={previewData}
+            />
+          </div>
           <ReservationSummaryCard
             heading={isCancelled ? '예약 취소 정보' : '예약 정보'}
             reservationNumber={reservationNumber}

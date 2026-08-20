@@ -34,7 +34,6 @@ export default function MyPage() {
   const [reservations, setReservations] = useState([]);
   const [items, setItems] = useState([]);
   const [ownerships, setOwnerships] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!user) {
@@ -43,7 +42,6 @@ export default function MyPage() {
     }
 
     const fetchMyPageData = async () => {
-      setLoading(true);
       try {
         const [meRes, resRes, itemsRes, ownRes] = await Promise.allSettled([
           getMe(),
@@ -58,8 +56,6 @@ export default function MyPage() {
         if (ownRes.status === 'fulfilled' && ownRes.value?.success) setOwnerships(ownRes.value.data || []);
       } catch (error) {
         console.error('마이페이지 데이터 조회 실패:', error);
-      } finally {
-        setLoading(false);
       }
     };
 

@@ -1,4 +1,3 @@
-/* 하드코딩: main/yellow/yellow-200 — common.css에 아직 등록되지 않은 톤 */
 .norigae-preview {
   display: flex;
   align-items: center;
@@ -6,19 +5,65 @@
   width: 100%;
   height: 289px;
   box-sizing: border-box;
-  padding: 1px;
-  border: 1px solid #f9e5b4;
-  background: #fff;
+  padding: 16px;
+  border: 1px solid var(--color-brown-200);
+  border-radius: 2px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  background: var(--color-background);
 }
 
 .norigae-preview__image {
-  width: 98px;
-  height: 271px;
-  object-fit: cover;
+  max-width: 90px;
+  max-height: 190px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
 }
 
-.norigae-preview__icon {
-  width: 32px;
-  height: 32px;
-  opacity: 0.5;
+.norigae-preview__render {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+}
+
+.norigae-preview__knot {
+  width: 48px;
+  height: auto;
+  object-fit: contain;
+  position: relative;
+  z-index: 2;
+}
+
+.norigae-preview__decoration {
+  width: 38px;
+  height: auto;
+  object-fit: contain;
+  margin-top: -12px;
+  position: relative;
+  z-index: 3;
+}
+
+.norigae-preview__tassel {
+  height: auto;
+  object-fit: contain;
+  margin-top: -4px;
+  position: relative;
+  z-index: 1;
+}
+
+.norigae-preview__tassel--count-1 {
+  width: 44px;
+  padding-left: 2px;
+}
+
+.norigae-preview__tassel--count-2 {
+  width: 60px;
+  padding-left: 2px;
+}
+
+.norigae-preview__tassel--count-3 {
+  width: 50px;
+  padding-left: 1px;
 }

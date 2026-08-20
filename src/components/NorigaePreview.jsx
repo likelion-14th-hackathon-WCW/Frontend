@@ -1,16 +1,29 @@
 import './NorigaePreview.css'
-import optionPlaceholderIcon from '../assets/option-placeholder-icon.svg'
 
-// ponytail: 실제 조합 이미지 생성기가 아직 없어서 자리만 만들어둠 —
-// 준비되면 imageSrc로 실제 노리개 이미지 URL을 넘기면 됨
-export default function NorigaePreview({ imageSrc }) {
-  return (
-    <div className="norigae-preview">
-      {imageSrc ? (
-        <img src={imageSrc} alt="예약할 노리개" className="norigae-preview__image" />
-      ) : (
-        <img src={optionPlaceholderIcon} alt="" className="norigae-preview__icon" />
-      )}
-    </div>
-  )
+export default function NorigaePreview({ imageSrc, norigaeData }) {
+  if (norigaeData?.knotImage) {
+    return (
+      <div className="norigae-preview">
+        <div className="norigae-preview__render">
+          <img className="norigae-preview__knot" src={norigaeData.knotImage} alt="매듭" />
+          <img className="norigae-preview__decoration" src={norigaeData.decorationImage} alt="장식" />
+          <img
+            className={`norigae-preview__tassel norigae-preview__tassel--count-${norigaeData.tasselCount ?? 1}`}
+            src={norigaeData.tasselImage}
+            alt="술"
+          />
+        </div>
+      </div>
+    )
+  }
+
+  if (imageSrc) {
+    return (
+      <div className="norigae-preview">
+        <img src={imageSrc} alt="노리개" className="norigae-preview__image" />
+      </div>
+    )
+  }
+
+  return null
 }

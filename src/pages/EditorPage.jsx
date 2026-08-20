@@ -79,7 +79,7 @@ export default function EditorPage() {
   const navigate = useNavigate();
 
   // 부품 목록 상태 (기본 더미 데이터 지정 & 중복 선언 제거)
-  const [components, setComponents] = useState([
+  const [components] = useState([
     { pk: 1, type: 'knot', name: '매미 매듭', season: true, image: knotMaemi, comboKey: 'maemi' },
     { pk: 2, type: 'knot', name: '삼정자 매듭', season: false, image: knotSamjeongja, comboKey: 'samjeongja' },
     { pk: 3, type: 'knot', name: '동심결 매듭', season: false, image: knotDongsimgyeol, comboKey: 'dongsimgyeol' },
@@ -267,15 +267,24 @@ export default function EditorPage() {
   };
 
   const handleGoToReservation = () => {
+    const finalTitle = title?.trim() || `${activeKnotObj?.name || '커스텀'} 노리개`;
     navigate('/reservation', {
       state: {
         norigaeData: {
-          title: title || '',
+          title: finalTitle,
+          defaultTitle: `${activeKnotObj?.name || '커스텀'} 노리개`,
+          wish_keyword: keyword || '',
+          symbol_reason: recommendation?.reason || '매장 예약 맞춤형 노리개 디자인',
           keyword: keyword || '',
-          knot: selectedKnot,
-          decoration: selectedDecoration,
-          tassel: selectedTassel,
+          knot: Number(selectedKnot),
+          decoration: Number(selectedDecoration),
+          tassel: Number(selectedTassel),
+          tassel_count: 1,
           color: selectedColor,
+          knotImage: KNOT_COMBO_ASSETS[`knot-${activeKnotObj.comboKey}-${colorKey}`],
+          decorationImage: activeDecoObj.image,
+          tasselImage: TASSEL_COMBO_ASSETS[`tassel-${activeTasselObj.count}-${colorKey}`],
+          tasselCount: activeTasselObj.count,
         },
       },
     });
