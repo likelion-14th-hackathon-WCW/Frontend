@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.js';
 import { getMe, getMyReservations, getMyItems, getMyOwnerships } from '../api/mypage.js';
 import MyPageSidebar from '../components/MyPageSidebar.jsx';
@@ -50,14 +50,47 @@ function formatReservedAt(isoString) {
 export default function MyPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // URL 경로에서 탭 결정
+  const getTabFromPath = () => {
+    const path = location.pathname;
+    if (path.includes('reservations')) return 'reservations';
+    if (path.includes('collections')) return 'items';
+    if (path.includes('ownership')) return 'ownerships';
+    if (path.includes('wishlist')) return 'wishlist';
+    if (path.includes('settings')) return 'settings';
+    return 'profile';
+  };
 
   // 현재 활성화된 탭 ('profile', 'reservations', 'items', 'ownerships', 'wishlist', 'settings')
-  const [activeTab, setActiveTab] = useState('profile');
+  const [activeTab, setActiveTab] = useState(getTabFromPath());
 
   const [profile, setProfile] = useState(null);
   const [reservations, setReservations] = useState([]);
   const [items, setItems] = useState([]);
   const [ownerships, setOwnerships] = useState([]);
+
+  // URL 변경 시 activeTab 업데이트
+  useEffect(() => {
+    setActiveTab(getTabFromPath());
+  }, [location.pathname]);
+
+  // activeTab 변경 시 URL 업데이트
+  useEffect(() => {
+    const pathMap = {
+      profile: '/mypage',
+      reservations: '/mypage/reservations',
+      items: '/mypage/collections',
+      ownerships: '/mypage/ownership',
+      wishlist: '/mypage/wishlist',
+      settings: '/mypage/settings',
+    };
+    const newPath = pathMap[activeTab] || '/mypage';
+    if (location.pathname !== newPath) {
+      navigate(newPath, { replace: true });
+    }
+  }, [activeTab, navigate, location.pathname]);
 
   useEffect(() => {
     if (!user) {
@@ -276,10 +309,13 @@ export default function MyPage() {
                   </div>
                 );
               })}
-              <Link to="/editor" className="wish-card wish-card--add">
-                <div className="add-icon">+</div>
-                <h4>새로 만들기</h4>
-              </Link>
+              {items.length === 0 && (
+                <Link to="/editor" className="wish-card wish-card--add">
+                  <img src={iconPlusCircle} alt="" className="add-icon" />
+                  <h4>새로 만들기</h4>
+                  <p>나만의 노리개를 디자인하세요.</p>
+                </Link>
+              )}
             </div>
           </div>
         )}

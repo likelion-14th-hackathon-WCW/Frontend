@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import NorigaePreview from '../components/NorigaePreview.jsx';
 import { buildNorigaeData, getNorigaeComponentNames } from '../utils/norigaeAssets.js';
 import shareIcon from '../assets/editor-share.svg';
-import iconPlusSmall from '../assets/mypage/icon-plus-small.svg';
+import iconPlusCircle from '../assets/mypage/icon-plus-circle.svg';
 import './SavedItemPage.css';
 
 function formatDate(isoString) {
@@ -51,17 +51,13 @@ export default function SavedItemPage({ items = [] }) {
       </div>
 
       {items.length === 0 ? (
-        <div className="saved-items__empty">
-          <p className="saved-items__empty-text">저장된 노리개 디자인이 없습니다.</p>
-          <button
-            type="button"
-            className="saved-items__btn-create"
-            onClick={() => navigate('/editor')}
-          >
-            새 노리개 만들기
-            <img src={iconPlusSmall} alt="" />
-          </button>
-        </div>
+        <button type="button" className="saved-items__add-new" onClick={() => navigate('/editor')}>
+          <img src={iconPlusCircle} alt="" className="saved-items__add-new-icon" />
+          <span className="saved-items__add-new-text">
+            <span className="saved-items__add-new-title">새로 만들기</span>
+            <span className="saved-items__add-new-desc">나만의 노리개를 디자인하세요.</span>
+          </span>
+        </button>
       ) : (
         <div className="saved-items__list">
           {items.map((item) => {
