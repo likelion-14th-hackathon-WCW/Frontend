@@ -528,10 +528,6 @@ export default function EditorPage() {
                 {recommendation?.reason ||
                   '키워드를 입력하고 만들어진 노리개의 부여된 상징적 의미를 확인해 보세요.'}
               </div>
-
-              <button className="symbol-reset-btn" onClick={handleReset}>
-                <span>↺</span> 추천 받은 노리개로 되돌리기
-              </button>
             </div>
 
             <div className="mcm-recommend-box">
