@@ -6,6 +6,18 @@
   background: #FFF;
 }
 
+@media (max-width: 1024px) {
+  .reservation {
+    padding: 40px 32px 40px;
+  }
+}
+
+@media (max-width: 640px) {
+  .reservation {
+    padding: 32px 20px 32px;
+  }
+}
+
 .reservation__intro {
   display: flex;
   flex-direction: column;
@@ -32,6 +44,16 @@
   display: flex;
   align-items: flex-start;
   gap: 24px;
+}
+
+@media (max-width: 900px) {
+  .reservation__layout {
+    flex-direction: column;
+  }
+
+  .summary-col {
+    width: 100%;
+  }
 }
 
 .reservation__main {
@@ -315,6 +337,7 @@
   flex-direction: column;
   gap: 40px;
   width: 466px;
+  max-width: 100%;
   margin-top: 16px;
 }
 

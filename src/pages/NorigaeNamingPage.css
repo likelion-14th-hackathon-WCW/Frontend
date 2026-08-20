@@ -272,3 +272,9 @@
   font-weight: 400;
   letter-spacing: -0.28px;
 }
+
+@media (max-width: 480px) {
+  .naming-desc {
+    white-space: normal;
+  }
+}

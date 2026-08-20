@@ -538,3 +538,29 @@
 .btn-icon {
   font-size: 14px;
 }
+
+@media (max-width: 1024px) {
+  .editor-grid {
+    grid-template-columns: 240px 1fr 300px;
+  }
+
+  .navbar-header {
+    padding: 0 20px;
+  }
+}
+
+@media (max-width: 900px) {
+  .editor-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .panel-left,
+  .panel-right {
+    border-right: none;
+    border-top: 1px solid #e0d8c8;
+  }
+
+  .keyword-input-card {
+    width: 100%;
+  }
+}

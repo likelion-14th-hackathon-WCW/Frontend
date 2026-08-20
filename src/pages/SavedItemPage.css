@@ -82,6 +82,18 @@
   box-sizing: border-box;
 }
 
+@media (max-width: 640px) {
+  .saved-item-card {
+    flex-direction: column;
+  }
+
+  .saved-item-card__preview-box {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
+}
+
 .saved-item-card__preview-box .norigae-preview {
   width: 100%;
   height: 100%;

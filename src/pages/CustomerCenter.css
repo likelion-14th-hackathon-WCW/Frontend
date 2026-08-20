@@ -7,6 +7,19 @@
   padding: 48px 64px 360px;
 }
 
+@media (max-width: 1024px) {
+  .customer-center {
+    padding: 40px 32px 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .customer-center {
+    flex-direction: column;
+    padding: 32px 20px 120px;
+  }
+}
+
 .customer-center__content {
   display: flex;
   flex-direction: column;
