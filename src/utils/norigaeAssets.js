@@ -241,6 +241,17 @@ export function buildNorigaeData(itemOrReservation) {
   const decorationImage = DECO_ASSETS[decoKey]
   const tasselImage = COMBO_ASSETS[`tassel-${tasselCount}-${colorKey}`]
 
+  // ▼▼▼ 디버그 로그 (원인 확인 후 지워도 됩니다) ▼▼▼
+  console.log('찾으려는 키:', {
+    knotKey: `knot-${knotKey}-${colorKey}`,
+    decoKey,
+    tasselKey: `tassel-${tasselCount}-${colorKey}`,
+  })
+  console.log('실제 보유한 COMBO_ASSETS 키 목록:', Object.keys(COMBO_ASSETS))
+  console.log('실제 보유한 DECO_ASSETS 키 목록:', Object.keys(DECO_ASSETS))
+  console.log('찾은 결과:', { knotImage, decorationImage, tasselImage })
+  // ▲▲▲ 디버그 로그 끝 ▲▲▲
+
   if (knotImage && decorationImage && tasselImage) {
     return {
       knotImage,

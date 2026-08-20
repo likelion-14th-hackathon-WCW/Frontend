@@ -124,7 +124,11 @@ export default function NorigaeDetailView({ item, onBack, onDeleteSuccess, onGoT
       </div>
 
       <footer className="detail-bottom-actions">
-        <button type="button" className="btn-action-outline btn-ownership" onClick={onGoToOwnership}>
+        <button
+          type="button"
+          className="btn-action-outline btn-ownership"
+          onClick={() => onGoToOwnership(item)}
+        >
           <span className="btn-icon"><img src={awardIcon} alt="" /></span> 소유권 신청
         </button>
         <button type="button" className="btn-action-outline btn-delete" onClick={handleDelete} disabled={isDeleting}>
