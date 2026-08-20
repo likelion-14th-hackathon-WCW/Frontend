@@ -16,7 +16,7 @@ import MyPageSidebar from '../components/MyPageSidebar.jsx';
 import NorigaePreview from '../components/NorigaePreview.jsx';
 import NorigaeDetailView from '../components/NorigaeDetailView.jsx';
 import DigitalOwnershipPage from './DigitalOwnershipPage.jsx';
-import WishlistTab from '../components/WishlistTab.jsx';
+import WishlistGrid from '../components/WishlistGrid.jsx';
 import { buildNorigaeData } from '../utils/norigaeAssets.js';
 
 import iconAvatarPlaceholder from '../assets/mypage/icon-avatar-placeholder.svg';
@@ -508,14 +508,7 @@ export default function MyPage() {
           />
         )}
 
-        {activeTab === 'wishlist' && (
-          <WishlistTab
-            onSelectDetail={(item) => {
-              setSelectedItem(item);
-              setActiveTab('items');
-            }}
-          />
-        )}
+        {activeTab === 'wishlist' && <WishlistGrid />}
 
         {activeTab === 'settings' && (
           <div className="tab-page">

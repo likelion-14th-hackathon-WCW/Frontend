@@ -1,0 +1,266 @@
+.wd-detail {
+  width: 100%;
+  padding-bottom: 40px;
+}
+
+.wd-detail__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.wd-detail__back {
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wd-detail__back img {
+  width: 40px;
+  height: 40px;
+}
+
+.wd-detail__title {
+  font-size: 32px;
+  font-weight: 400;
+  letter-spacing: -0.64px;
+  color: #1d1b20;
+  margin: 0;
+}
+
+.wd-detail__creator {
+  font-size: 14px;
+  color: #666;
+  letter-spacing: -0.28px;
+  margin: 0 0 24px 0;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #f9e5b4;
+}
+
+.wd-detail__body {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+.wd-detail__left,
+.wd-detail__right {
+  flex: 1;
+  min-width: 0;
+}
+
+.wd-detail__left {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wd-detail__right {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.wd-detail__preview {
+  width: 100%;
+  height: 497px;
+  background-color: #e5e5e5;
+  border-bottom: 1px solid rgba(17, 17, 17, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wd-detail__placeholder {
+  font-size: 48px;
+}
+
+.wd-detail__preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.wd-detail__notice {
+  font-size: 12px;
+  font-style: italic;
+  color: #969696;
+  margin: 0;
+}
+
+.wd-detail__keyword {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  color: #1a1a1a;
+}
+
+.wd-detail__keyword-divider {
+  color: #1a1a1a;
+}
+
+.wd-box {
+  background-color: #ffffff;
+  border: 1px solid #e2b283;
+  padding: 25px;
+}
+
+.wd-box h3 {
+  font-size: 20px;
+  font-weight: 500;
+  margin: 0 0 24px 0;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wd-combo-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.wd-combo-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  border-bottom: 1px solid #f9e5b4;
+  padding: 8px 0 9px;
+}
+
+.wd-combo-list li:last-child {
+  border-bottom: none;
+}
+
+.wd-combo-list__label {
+  color: #666;
+  letter-spacing: -0.28px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wd-combo-list__value {
+  font-weight: 500;
+  color: #1a1a1a;
+  letter-spacing: -0.28px;
+}
+
+.wd-box--meaning {
+  background-color: #fbf4ed;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.wd-box--meaning h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+  color: #d48c46;
+}
+
+.wd-box__desc {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22.75px;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.wd-box__caption {
+  font-size: 12px;
+  letter-spacing: -0.24px;
+  color: #969696;
+  display: block;
+  text-align: right;
+}
+
+.wd-detail__reserve-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.wd-icon {
+  width: 20px;
+  height: 20px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.wd-icon--lg {
+  width: 22px;
+  height: 22px;
+}
+
+.wd-icon img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.wd-icon--rotate {
+  transform: rotate(180deg);
+}
+
+.wd-btn {
+  height: 44px;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.28px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: background-color 0.2s;
+}
+
+.wd-btn--reserve {
+  padding: 16px 12px;
+  background-color: #d48c46;
+  color: #fff;
+}
+
+.wd-btn--reserve:hover {
+  background-color: #b8783a;
+}
+
+.wd-detail__wish-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.wd-btn--wish {
+  padding: 17px 13px;
+  background: #fff;
+  border: 1px solid #88242e;
+  color: #88242e;
+}
+
+.wd-btn--wish:hover {
+  background-color: #fdf1f2;
+}
+
+@media (max-width: 768px) {
+  .wd-detail__body {
+    flex-direction: column;
+  }
+}
