@@ -425,23 +425,6 @@
   word-break: keep-all;
 }
 
-.symbol-reset-btn {
-  background: none;
-  border: none;
-  color: #b5824c;
-  font-size: 12px;
-  padding: 0;
-  cursor: pointer;
-  text-align: left;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.symbol-reset-btn:hover {
-  text-decoration: underline;
-}
-
 .mcm-recommend-box {
   height: 383px;
   min-height: 383px;

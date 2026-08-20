@@ -236,20 +236,6 @@ export default function EditorPage() {
     }
   };
 
-  const handleReset = () => {
-    if (window.confirm('디자인을 초기 상태로 복원하시겠습니까?')) {
-      if (recommendation) {
-        setSelectedKnot(Number(recommendation.knot));
-        setSelectedDecoration(Number(recommendation.decoration));
-      } else {
-        setSelectedKnot(1);
-        setSelectedDecoration(7);
-      }
-      setSelectedTassel(13);
-      setSelectedColor('#1E293B');
-    }
-  };
-
   const handleSave = () => {
     if (!isLoggedIn) {
       setIsLoginModalOpen(true);
