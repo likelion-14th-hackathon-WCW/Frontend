@@ -386,6 +386,8 @@ export default function MyPage() {
                       <li
                         className={`reservation-item${itemClass}`}
                         key={res.id || res.reservation_id}
+                        onClick={() => navigate('/mypage/reservations')}
+                        style={{ cursor: 'pointer' }}
                       >
                         <div>
                           <strong>{res.store_name || res.store}</strong>
