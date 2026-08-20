@@ -2,14 +2,18 @@ import React, { useMemo, useState, useEffect } from 'react';
 import NorigaePreview from './NorigaePreview.jsx';
 import { buildNorigaeData } from '../utils/norigaeAssets.js';
 import { findDesignForOwnership } from '../utils/ownership.js';
+import { getOwnershipDesign } from '../utils/ownershipDesignCache.js';
 import './OwnershipCertificationView.css';
 
 export default function OwnershipCertificateView({ item, items = [], onBack }) {
   const [certData, setCertData] = useState(item || null);
   const [loading, setLoading] = useState(!item);
 
-  // 소유권(product PK)에 연결된 저장된 노리개 디자인을 찾아 실제 이름/프리뷰를 가져온다.
-  const designItem = useMemo(() => findDesignForOwnership(items, certData ?? item), [certData, item, items]);
+  // 신청 시점에 캐싱해둔 디자인을 최우선으로 쓰고, 없으면 product 매칭으로 보완한다.
+  const designItem = useMemo(() => {
+    const ownership = certData ?? item;
+    return getOwnershipDesign(ownership?.id) || findDesignForOwnership(items, ownership);
+  }, [certData, item, items]);
   const designPreview = designItem ? buildNorigaeData(designItem) : null;
 
   // API 연동: item 객체만 넘어온 경우 상세 데이터 API Fetching (필요시)
@@ -104,8 +108,8 @@ export default function OwnershipCertificateView({ item, items = [], onBack }) {
         <div className="cert-content-grid">
           {/* 좌측 이미지 */}
           <div className="cert-image-container">
-            {data.image_url ? (
-              <img src={data.image_url} alt={title} />
+            {designItem?.image_url || designItem?.thumbnail || designItem?.image ? (
+              <img src={designItem.image_url || designItem.thumbnail || designItem.image} alt={title} />
             ) : designPreview?.knotImage ? (
               <NorigaePreview norigaeData={designPreview} showSeasonBadge={false} />
             ) : (

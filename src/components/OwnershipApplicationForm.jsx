@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { registerOwnership } from '../api/mypage.js';
 import NorigaePreview from './NorigaePreview.jsx';
 import { buildNorigaeData } from '../utils/norigaeAssets.js';
+import { cacheOwnershipDesign } from '../utils/ownershipDesignCache.js';
 import awardIcon from '../assets/ownership-application/icon-award-03.svg';
 import fileCheckIcon from '../assets/ownership-application/icon-file-check-02.svg';
 import tagIcon from '../assets/ownership-application/icon-tag-01.svg';
@@ -60,6 +61,9 @@ export default function OwnershipApplicationForm({ item, onCancel, onSuccess }) 
         setIsLoading(false);
 
         if (result.success) {
+            // 목록/증명서 화면에서 저장된 노리개 이름·사진을 그대로 보여주기 위해
+            // 이 시점에 확실히 알고 있는 디자인 정보를 새 소유권 id에 캐싱해둔다.
+            cacheOwnershipDesign(result.data?.id, { ...item, title: itemTitle });
             alert('소유권 신청이 접수되었습니다.');
             if (onSuccess) onSuccess();
         } else {

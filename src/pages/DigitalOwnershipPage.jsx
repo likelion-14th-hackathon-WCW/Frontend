@@ -6,6 +6,7 @@ import InfoIcon from '../assets/ownership-info.png';
 import NorigaePreview from '../components/NorigaePreview.jsx';
 import { buildNorigaeData } from '../utils/norigaeAssets.js';
 import { findDesignForOwnership } from '../utils/ownership.js';
+import { getOwnershipDesign } from '../utils/ownershipDesignCache.js';
 
 const DigitalOwnership = ({ ownerships = [], items = [], onRegisterSuccess, onViewApplication }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -113,14 +114,17 @@ const DigitalOwnership = ({ ownerships = [], items = [], onRegisterSuccess, onVi
         ) : (
           ownerships.map((item) => {
             const isCertified = item.has_production_right;
-            const designItem = findDesignForOwnership(items, item);
+            const cachedDesign = getOwnershipDesign(item.id);
+            const designItem = cachedDesign || findDesignForOwnership(items, item);
             const preview = designItem ? buildNorigaeData(designItem) : null;
             const title = designItem?.title || item.product_name || '노리개 커스텀';
 
             return (
               <div className="ownership-item-card" key={item.id || item.serial_no}>
                 <div className="ownership-thumb-box">
-                  {preview?.knotImage ? (
+                  {designItem?.image_url || designItem?.thumbnail || designItem?.image ? (
+                    <img src={designItem.image_url || designItem.thumbnail || designItem.image} alt={title} />
+                  ) : preview?.knotImage ? (
                     <NorigaePreview norigaeData={preview} showSeasonBadge={false} />
                   ) : (
                     <div className="img-placeholder" />
