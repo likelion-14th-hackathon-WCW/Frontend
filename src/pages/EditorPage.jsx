@@ -24,6 +24,28 @@ import tassel1 from '../assets/editor-items/tassel-1.svg';
 import tassel2 from '../assets/editor-items/tassel-2.svg';
 import tassel3 from '../assets/editor-items/tassel-3.svg';
 
+// 실 색상(hex) -> 조합 에셋 파일명에 쓰인 색상 키
+const COLOR_KEY_BY_HEX = {
+  '#17216E': 'navy',
+  '#FEB9E3': 'pink',
+  '#FFC95F': 'yellow',
+  '#369F39': 'green',
+  '#F37E7E': 'coral',
+};
+
+// knot-{key}-{color}.svg / tassel-{count}-{color}.svg 전체를 한 번에 로드
+function loadComboAssets(pattern) {
+  const modules = import.meta.glob('../assets/editor-combo/*.svg', { eager: true, import: 'default' });
+  const map = {};
+  for (const path in modules) {
+    const name = path.split('/').pop().replace('.svg', '');
+    if (pattern.test(name)) map[name] = modules[path];
+  }
+  return map;
+}
+const KNOT_COMBO_ASSETS = loadComboAssets(/^knot-/);
+const TASSEL_COMBO_ASSETS = loadComboAssets(/^tassel-/);
+
 // ponytail: decorative scroll thumb sized/positioned from real scroll metrics, not hand-tuned px
 function useHorizontalScrollThumb() {
   const ref = useRef(null);
@@ -57,21 +79,21 @@ export default function EditorPage() {
 
   // 부품 목록 상태 (기본 더미 데이터 지정 & 중복 선언 제거)
   const [components, setComponents] = useState([
-    { pk: 1, type: 'knot', name: '매미 매듭', season: true, image: knotMaemi },
-    { pk: 2, type: 'knot', name: '삼정자 매듭', season: false, image: knotSamjeongja },
-    { pk: 3, type: 'knot', name: '동심결 매듭', season: false, image: knotDongsimgyeol },
-    { pk: 4, type: 'knot', name: '장구 매듭', season: false, image: knotJanggu },
-    { pk: 5, type: 'knot', name: '생쪽 매듭', season: false, image: knotSaengjjok },
-    { pk: 6, type: 'knot', name: '귀도래 매듭', season: false, image: knotGuidorae },
+    { pk: 1, type: 'knot', name: '매미 매듭', season: true, image: knotMaemi, comboKey: 'maemi' },
+    { pk: 2, type: 'knot', name: '삼정자 매듭', season: false, image: knotSamjeongja, comboKey: 'samjeongja' },
+    { pk: 3, type: 'knot', name: '동심결 매듭', season: false, image: knotDongsimgyeol, comboKey: 'dongsimgyeol' },
+    { pk: 4, type: 'knot', name: '장구 매듭', season: false, image: knotJanggu, comboKey: 'janggu' },
+    { pk: 5, type: 'knot', name: '생쪽 매듭', season: false, image: knotSaengjjok, comboKey: 'saengjjok' },
+    { pk: 6, type: 'knot', name: '귀도래 매듭', season: false, image: knotGuidorae, comboKey: 'guidorae' },
     { pk: 7, type: 'decoration', name: '무궁화', season: true, image: decoMugunghwa },
     { pk: 8, type: 'decoration', name: '학', season: true, image: decoCrane },
     { pk: 9, type: 'decoration', name: '호박보석', season: false, image: decoAmber },
     { pk: 10, type: 'decoration', name: '고래', season: false, image: decoWhale },
     { pk: 11, type: 'decoration', name: '나비', season: false, image: decoButterfly },
     { pk: 12, type: 'decoration', name: '연꽃', season: false, image: decoLotus },
-    { pk: 13, type: 'tassel', name: '1개', season: false, image: tassel1 },
-    { pk: 14, type: 'tassel', name: '2개', season: false, image: tassel2 },
-    { pk: 15, type: 'tassel', name: '3개', season: false, image: tassel3 },
+    { pk: 13, type: 'tassel', name: '1개', season: false, image: tassel1, count: 1 },
+    { pk: 14, type: 'tassel', name: '2개', season: false, image: tassel2, count: 2 },
+    { pk: 15, type: 'tassel', name: '3개', season: false, image: tassel3, count: 3 },
   ]);
 
   const [keyword, setKeyword] = useState('');
@@ -113,6 +135,7 @@ export default function EditorPage() {
   const activeKnotObj = components.find((item) => item.pk === Number(selectedKnot));
   const activeDecoObj = components.find((item) => item.pk === Number(selectedDecoration));
   const activeTasselObj = components.find((item) => item.pk === Number(selectedTassel));
+  const colorKey = COLOR_KEY_BY_HEX[selectedColor];
 
   // 매듭/장식/술/색상까지 노리개 스펙을 모두 골라야 예약·저장·공유가 가능
   const allSpecsSelected = Boolean(
@@ -427,54 +450,29 @@ export default function EditorPage() {
                 AI가 입력한 소망과 어울리는 노리개 조합을 생각하고 있어요.
               </p>
             </div>
-          ) : !recommendation ? (
+          ) : !allSpecsSelected ? (
             <div className="canvas-state-box">
               <p className="canvas-loading-text">
-                키워드를 입력하고 만들어진 노리개의 부여된 상징적 의미를 확인해 보세요.
+                매듭, 메인 장식, 술, 실 색상을 모두 선택하면 노리개 미리보기가 나타납니다.
               </p>
             </div>
           ) : (
             <div className="norigae-render-container">
-              <div
-                className={`knot-part knot-style-${selectedKnot}`}
-                style={{ color: selectedColor }}
-              >
-                <img
-                  src={
-                    activeKnotObj?.image_url
-                      ? `/assets/knots/${activeKnotObj.image_url}.svg`
-                      : `/assets/knots/knot_${selectedKnot}.svg`
-                  }
-                  alt="매듭"
-                />
-              </div>
-
-              <div
-                className={`decoration-part deco-style-${selectedDecoration}`}
-              >
-                <img
-                  src={
-                    activeDecoObj?.image_url
-                      ? `/assets/decorations/${activeDecoObj.image_url}.svg`
-                      : `/assets/decorations/deco_${selectedDecoration}.svg`
-                  }
-                  alt="장식"
-                />
-              </div>
-
-              <div
-                className={`tassel-part tassel-style-${selectedTassel}`}
-                style={{ color: selectedColor }}
-              >
-                <img
-                  src={
-                    activeTasselObj?.image_url
-                      ? `/assets/tassels/${activeTasselObj.image_url}.svg`
-                      : `/assets/tassels/tassel_${selectedTassel}.svg`
-                  }
-                  alt="술"
-                />
-              </div>
+              <img
+                className="knot-part"
+                src={KNOT_COMBO_ASSETS[`knot-${activeKnotObj.comboKey}-${colorKey}`]}
+                alt="매듭"
+              />
+              <img
+                className="decoration-part"
+                src={activeDecoObj.image}
+                alt="장식"
+              />
+              <img
+                className={`tassel-part tassel-part--count-${activeTasselObj.count}`}
+                src={TASSEL_COMBO_ASSETS[`tassel-${activeTasselObj.count}-${colorKey}`]}
+                alt="술"
+              />
             </div>
           )}
 
