@@ -7,6 +7,7 @@ import StoreMap from '../components/StoreMap.jsx'
 import { getMyReservations, getMyItems } from '../api/mypage.js'
 import { getCurrentSeason } from '../api/season.js'
 import { readReservationDraft } from '../utils/reservationDraft.js'
+import { getReservationNorigae } from '../utils/reservationNorigaeCache.js'
 import { formatReservationNumber } from '../utils/reservationNumber.js'
 import { buildNorigaeData } from '../utils/norigaeAssets.js'
 import { STORE_INFO } from '../data/storeInfo.js'
@@ -57,50 +58,50 @@ export default function MyPageReservationDetail() {
   const isCompleted = reservation?.status === '완료' || reservation?.status === '완료됨' || reservation?.status === '방문 완료' || reservation?.status === '방문완료' || reservation?.status === '이용 완료' || reservation?.status === '이용완료'
   const reservationNumber = formatReservationNumber(reservation)
 
-  const previewData = useMemo(() => {
+  // 예약과 연결된 노리개 원본 데이터를 우선순위대로 찾는다 (아직 조합 이미지로 빌드하지 않은 원본 객체).
+  const norigaeSource = useMemo(() => {
     if (!reservation) return null
+    const reservationId = reservation.id ?? reservation.reservation_id
 
-    // 1. 예약 객체 자체에 노리개 데이터가 있는 경우
+    // 1. 예약 확정 시 이 예약 id로 캐싱해둔 노리개 데이터 (가장 신뢰도 높음 — 예약별로 구분됨)
+    const cached = getReservationNorigae(reservationId)
+    if (cached) return cached
+
+    // 2. 예약 객체 자체에 노리개 데이터가 있는 경우
     if (reservation.norigaeData || reservation.norigae_data) {
-      const data = buildNorigaeData(reservation.norigaeData || reservation.norigae_data)
-      if (data) return data
+      return reservation.norigaeData || reservation.norigae_data
     }
 
-    // 2. 예약 객체에 매듭/장식/술 부품 필드가 직접 있는 경우
-    const builtFromRes = buildNorigaeData(reservation)
-    if (builtFromRes?.knotImage) return builtFromRes
+    // 3. 예약 객체에 매듭/장식/술 부품 필드가 직접 있는 경우
+    if (buildNorigaeData(reservation)?.knotImage) return reservation
 
-    // 3. 예약과 연계된 아이템이 있는 경우
+    // 4. 예약과 연계된 아이템이 있는 경우
     if (reservation.item || reservation.item_id) {
       const targetItemId = reservation.item_id ?? (typeof reservation.item === 'object' ? reservation.item.id : reservation.item)
       const matched = items.find((item) => (item.id ?? item.item_id) === targetItemId)
-      if (matched) {
-        const built = buildNorigaeData(matched)
-        if (built) return built
-      }
+      if (matched) return matched
     }
 
-    // 4. 최근 작성된 예약 드래프트 세션에서 노리개 데이터 추출
+    // 5. 이 예약 id로 캐싱된 데이터가 없을 때만: 방금 작성한 예약 드래프트를 최후의 보정값으로 사용
+    //    (id가 아직 없던 시점에 저장된 구버전 예약 등, 그 외엔 매칭 정보가 전혀 없는 경우)
     const draft = readReservationDraft()
-    if (draft?.norigaeData) {
-      const builtDraft = buildNorigaeData(draft.norigaeData)
-      if (builtDraft) return builtDraft
-    }
-
-    // 5. 사용자가 저장한 아이템 목록이 있을 경우 최신 아이템 활용
-    if (items.length > 0) {
-      const latestBuilt = buildNorigaeData(items[0])
-      if (latestBuilt) return latestBuilt
-    }
+    if (!reservationId && draft?.norigaeData) return draft.norigaeData
 
     return null
   }, [reservation, items])
 
+  // 위시리스트에서 캐싱된 실제 이미지가 있으면 자동 조합 렌더링보다 그 이미지를 우선한다
+  // (WishlistGrid/WishlistDesignDetail과 동일한 우선순위).
   const previewImageSrc =
+    norigaeSource?.image ||
     reservation?.image_url ||
     reservation?.thumbnail ||
-    reservation?.norigae_image ||
-    previewData?.image_url
+    reservation?.norigae_image
+
+  const previewData = useMemo(() => {
+    if (previewImageSrc) return null
+    return norigaeSource ? buildNorigaeData(norigaeSource) : null
+  }, [norigaeSource, previewImageSrc])
 
   if (reservations === null) {
     return (
