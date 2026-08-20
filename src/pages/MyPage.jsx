@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.js';
 import { logout } from '../api/auth.js';
 import {
@@ -79,12 +79,23 @@ function formatReservedAt(isoString) {
   return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 • ${meridiem} ${hour12}:${minute}`;
 }
 
+// URL 경로에서 탭 결정
+const getTabFromPath = (pathname) => {
+  if (pathname.includes('reservations')) return 'reservations';
+  if (pathname.includes('collections')) return 'items';
+  if (pathname.includes('ownership')) return 'ownerships';
+  if (pathname.includes('wishlist')) return 'wishlist';
+  if (pathname.includes('settings')) return 'settings';
+  return 'profile';
+};
+
 export default function MyPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   // 현재 활성화된 탭 ('profile', 'reservations', 'items', 'ownerships', 'wishlist', 'settings')
-  const [activeTab, setActiveTab] = useState('profile');
+  const [activeTab, setActiveTab] = useState(() => getTabFromPath(location.pathname));
 
   const [profile, setProfile] = useState(null);
   const [reservations, setReservations] = useState([]);
@@ -117,8 +128,25 @@ export default function MyPage() {
 
   // URL 변경 시 activeTab 업데이트
   useEffect(() => {
-    setActiveTab(getTabFromPath());
+    setActiveTab(getTabFromPath(location.pathname));
   }, [location.pathname]);
+
+  // activeTab 변경 시 URL 업데이트
+  useEffect(() => {
+    const pathMap = {
+      profile: '/mypage',
+      reservations: '/mypage/reservations',
+      items: '/mypage/collections',
+      ownerships: '/mypage/ownership',
+      wishlist: '/mypage/wishlist',
+      settings: '/mypage/settings',
+    };
+    const newPath = pathMap[activeTab] || '/mypage';
+    if (location.pathname !== newPath) {
+      navigate(newPath, { replace: true });
+    }
+  }, [activeTab, navigate, location.pathname]);
+
   // [수정점 1] 선택된 상세 노리개 아이템 상태 추가
   const [selectedItem, setSelectedItem] = useState(null);
 
