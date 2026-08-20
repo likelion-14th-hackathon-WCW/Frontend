@@ -537,7 +537,7 @@ export default function EditorPage() {
             <div className="mcm-recommend-box">
               <div className="mcm-title">함께 어울리는 MCM 상품</div>
               <div className="mcm-desc">
-                노리개를 만들어 보고 MCM 상품을 추천받아 보세요.
+                노리개 디자인을 저장하면 함께 어울리는 MCM 상품을 추천받을 수 있어요.
               </div>
             </div>
           </div>
