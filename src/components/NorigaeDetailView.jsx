@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import NorigaePreview from './NorigaePreview.jsx';
-import { buildNorigaeData } from '../utils/norigaeAssets.js';
+import { buildNorigaeData, getNorigaeComponentNames } from '../utils/norigaeAssets.js';
 import { apiClient } from '../api/client.js';
 import './NorigaeDetailView.css';
 import pencilIcon from '../assets/icon-pencil.png';
@@ -29,6 +29,7 @@ export default function NorigaeDetailView({ item, onBack, onDeleteSuccess, onGoT
   if (!item) return null;
 
   const preview = buildNorigaeData(item);
+  const { knotName, decoName, tasselName } = getNorigaeComponentNames(item);
 
   const handleDelete = async () => {
     if (!window.confirm('정말 이 디자인을 삭제하시겠습니까?')) return;
@@ -88,19 +89,19 @@ export default function NorigaeDetailView({ item, onBack, onDeleteSuccess, onGoT
                 <span className="part-type">
                   <span className="icon-sm"><img src={ornamentIcon} alt="" /></span> 메인 장식
                 </span>
-                <span className="part-name">{item.main_ornament || item.parts?.ornament || '연꽃 옥'}</span>
+                <span className="part-name">{decoName}</span>
               </li>
               <li>
                 <span className="part-type">
                   <span className="icon-sm"><img src={knotIcon} alt="" /></span> 매듭
                 </span>
-                <span className="part-name">{item.knot || item.parts?.knot || '국화 매듭'}</span>
+                <span className="part-name">{knotName}</span>
               </li>
               <li>
                 <span className="part-type">
                   <span className="icon-sm icon-rotate-180"><img src={tasselPartIcon} alt="" /></span> 술
                 </span>
-                <span className="part-name">{item.tassel || item.parts?.tassel || 'MCM 모노그램 술'}</span>
+                <span className="part-name">{tasselName}</span>
               </li>
             </ul>
           </div>
