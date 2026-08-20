@@ -52,7 +52,8 @@ export default function MyPageReservationDetail() {
 
   const storeName = reservation?.store_name || reservation?.store || ''
   const storeInfo = STORE_INFO[storeName]
-  const isCancelled = reservation?.status === '취소'
+  const isCancelled = reservation?.status === '취소' || reservation?.status === '취소됨' || reservation?.status === '예약 취소'
+  const isCompleted = reservation?.status === '완료' || reservation?.status === '완료됨' || reservation?.status === '방문 완료' || reservation?.status === '방문완료' || reservation?.status === '이용 완료' || reservation?.status === '이용완료'
   const reservationNumber = reservation?.reservation_number || (reservation ? `MCM-${reservation.id ?? reservation.reservation_id}` : '')
 
   const previewData = useMemo(() => {
@@ -149,6 +150,8 @@ export default function MyPageReservationDetail() {
           </div>
           {isCancelled ? (
             <span className="reservation-detail__tag reservation-detail__tag--cancelled">예약 취소</span>
+          ) : isCompleted ? (
+            <span className="reservation-detail__tag reservation-detail__tag--completed">방문 완료</span>
           ) : (
             seasonTag && <span className="reservation-detail__tag">{seasonTag}</span>
           )}

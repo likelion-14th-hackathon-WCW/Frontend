@@ -57,11 +57,20 @@
   font-size: 18px;
   color: #0a4747;
   background: #b6d8d8;
+  border: 1px solid transparent;
+  box-sizing: border-box;
 }
 
 .reservation-detail__tag--cancelled {
   color: #691c24;
   background: #ebc0c4;
+  border: 1px solid #691c24;
+}
+
+.reservation-detail__tag--completed {
+  color: #0e0e0e;
+  background: #b8b8b8;
+  border: 1px solid #0e0e0e;
 }
 
 .reservation-detail__summary-row {

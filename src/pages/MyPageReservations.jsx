@@ -9,8 +9,9 @@ import './MyPageReservations.css';
 
 const PAGE_SIZE = 3;
 
-// 완료/취소된 예약만 흐리게 표시, 그 외(확정/변경 등)는 강조 태그
-const isSettledStatus = (status) => status === '완료됨' || status === '완료' || status === '취소';
+// 완료/취소된 예약 상태 판별
+const isCancelledStatus = (status) => status === '취소' || status === '취소됨' || status === '예약 취소';
+const isCompletedStatus = (status) => status === '완료' || status === '완료됨' || status === '방문 완료' || status === '방문완료' || status === '이용 완료' || status === '이용완료';
 
 function formatReservedAt(isoString) {
   if (!isoString) return '';
@@ -60,17 +61,33 @@ export default function MyPageReservations() {
             <div className="reservation-cards">
               {pageItems.map((res) => {
                 const id = res.id ?? res.reservation_id;
-                const settled = isSettledStatus(res.status);
+                const isCancelled = isCancelledStatus(res.status);
+                const isCompleted = isCompletedStatus(res.status);
+                const statusLabel = isCancelled
+                  ? '예약 취소'
+                  : isCompleted
+                  ? '방문 완료'
+                  : (res.status || '확정');
+                const tagClass = isCancelled
+                  ? ' reservation-card__tag--cancelled'
+                  : isCompleted
+                  ? ' reservation-card__tag--completed'
+                  : '';
+                const cardClass = isCancelled
+                  ? ' reservation-card--cancelled'
+                  : isCompleted
+                  ? ' reservation-card--completed'
+                  : '';
                 return (
                   <div
-                    className={`reservation-card${settled ? ' reservation-card--settled' : ''}`}
+                    className={`reservation-card${cardClass}`}
                     key={id}
                     onClick={() => navigate(`/mypage/reservations/${id}`)}
                   >
                     <div className="reservation-card__body">
                       <div className="reservation-card__top">
-                        <span className={`reservation-card__tag${settled ? ' reservation-card__tag--muted' : ''}`}>
-                          {res.status || '확정'}
+                        <span className={`reservation-card__tag${tagClass}`}>
+                          {statusLabel}
                         </span>
                       </div>
                       <h3 className="reservation-card__store">{res.store_name || res.store || '체험 공방'}</h3>

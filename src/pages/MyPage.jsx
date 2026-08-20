@@ -8,8 +8,9 @@ import iconPlusSmall from '../assets/mypage/icon-plus-small.svg';
 import iconPlusCircle from '../assets/mypage/icon-plus-circle.svg';
 import './MyPage.css';
 
-// 완료/취소된 예약만 흐리게 표시, 그 외(확정/변경 등)는 강조 태그
-const isSettledStatus = (status) => status === '완료됨' || status === '완료' || status === '취소'
+// 완료/취소된 예약 상태 판별
+const isCancelledStatus = (status) => status === '취소' || status === '취소됨' || status === '예약 취소'
+const isCompletedStatus = (status) => status === '완료' || status === '완료됨' || status === '방문 완료' || status === '방문완료' || status === '이용 완료' || status === '이용완료'
 
 function formatReservedAt(isoString) {
   if (!isoString) return '';
@@ -132,20 +133,39 @@ export default function MyPage() {
                 </div>
                 <ul className="reservation-list">
                   {reservations.length === 0 && <p className="card-desc">예약 내역이 없습니다.</p>}
-                  {reservations.slice(0, 2).map((res) => (
-                    <li
-                      className={`reservation-item${isSettledStatus(res.status) ? ' reservation-item--settled' : ''}`}
-                      key={res.id || res.reservation_id}
-                    >
-                      <div>
-                        <strong>{res.store_name || res.store}</strong>
-                        <p>{formatReservedAt(res.reserved_at || res.reservation_date)}</p>
-                      </div>
-                      <span className={`status-tag${isSettledStatus(res.status) ? ' status-tag--muted' : ''}`}>
-                        {res.status || '확정'}
-                      </span>
-                    </li>
-                  ))}
+                  {reservations.slice(0, 2).map((res) => {
+                    const isCancelled = isCancelledStatus(res.status);
+                    const isCompleted = isCompletedStatus(res.status);
+                    const statusLabel = isCancelled
+                      ? '예약 취소'
+                      : isCompleted
+                      ? '방문 완료'
+                      : (res.status || '확정');
+                    const tagClass = isCancelled
+                      ? ' status-tag--cancelled'
+                      : isCompleted
+                      ? ' status-tag--completed'
+                      : '';
+                    const itemClass = isCancelled
+                      ? ' reservation-item--cancelled'
+                      : isCompleted
+                      ? ' reservation-item--completed'
+                      : '';
+                    return (
+                      <li
+                        className={`reservation-item${itemClass}`}
+                        key={res.id || res.reservation_id}
+                      >
+                        <div>
+                          <strong>{res.store_name || res.store}</strong>
+                          <p>{formatReservedAt(res.reserved_at || res.reservation_date)}</p>
+                        </div>
+                        <span className={`status-tag${tagClass}`}>
+                          {statusLabel}
+                        </span>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
 
