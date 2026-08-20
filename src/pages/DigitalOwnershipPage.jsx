@@ -4,7 +4,7 @@ import diaIcon from '../assets/ownership-1.png';
 import checkIcon from '../assets/ownership-check.png';
 import InfoIcon from '../assets/ownership-info.png';
 
-const DigitalOwnership = ({ ownerships = [], onRegisterSuccess }) => {
+const DigitalOwnership = ({ ownerships = [], onRegisterSuccess, onViewApplication }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [productId, setProductId] = useState('');
   const [serialNo, setSerialNo] = useState('');
@@ -163,13 +163,23 @@ const DigitalOwnership = ({ ownerships = [], onRegisterSuccess }) => {
                   <div className="ownership-actions">
                     {isCertified ? (
                       <>
-                        <button className="btn-cert-view">증명서 보기</button>
+                        <button 
+                          className="btn-cert-view"
+                          onClick={() => onViewApplication && onViewApplication(item)}
+                        >
+                          증명서 보기
+                        </button>
                         <button className="btn-cert-download" title="다운로드">
                           📥
                         </button>
                       </>
                     ) : (
-                      <button className="btn-application-view">신청서 보기</button>
+                      <button 
+                        className="btn-application-view"
+                        onClick={() => onViewApplication && onViewApplication(item)}
+                      >
+                        신청서 보기
+                      </button>
                     )}
                   </div>
                 </div>

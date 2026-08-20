@@ -16,6 +16,8 @@ import MyPageSidebar from '../components/MyPageSidebar.jsx';
 import NorigaePreview from '../components/NorigaePreview.jsx';
 import NorigaeDetailView from '../components/NorigaeDetailView.jsx';
 import DigitalOwnershipPage from './DigitalOwnershipPage.jsx';
+import OwnershipApplicationForm from '../components/OwnershipApplicationForm.jsx';
+import OwnershipCertificateView from '../components/OwnershipCertificateView.jsx';
 import WishlistGrid from '../components/WishlistGrid.jsx';
 import { buildNorigaeData } from '../utils/norigaeAssets.js';
 
@@ -100,6 +102,11 @@ export default function MyPage() {
   const [reservations, setReservations] = useState([]);
   const [items, setItems] = useState([]);
   const [ownerships, setOwnerships] = useState([]);
+
+  // 소유권 신청 대상 (노리개 상세에서 "소유권 신청" 클릭 시 채워짐)
+  const [ownershipTarget, setOwnershipTarget] = useState(null);
+  // 소유권 증서 상세보기 대상
+  const [selectedCertificate, setSelectedCertificate] = useState(null);
 
   // 설정 탭: 프로필 수정
   const [nickname, setNickname] = useState('');
@@ -285,7 +292,9 @@ export default function MyPage() {
       <MyPageSidebar 
         active={activeTab} 
         onSelect={(tab) => {
-          setSelectedItem(null); 
+          setSelectedItem(null);
+          setOwnershipTarget(null);
+          setSelectedCertificate(null);
           setActiveTab(tab);
         }} 
       />
@@ -411,12 +420,27 @@ export default function MyPage() {
                         </span>
                       </p>
                     </div>
-                    <button type="button" className="btn-text-link" onClick={() => setActiveTab('ownerships')}>
+                    <button
+                      type="button"
+                      className="btn-text-link"
+                      onClick={() => {
+                        setOwnershipTarget(null);
+                        setSelectedCertificate(null);
+                        setActiveTab('ownerships');
+                      }}
+                    >
                       자세히
                     </button>
                   </div>
                 )}
-                <button className="btn-accent-full" onClick={() => setActiveTab('ownerships')}>
+                <button
+                  className="btn-accent-full"
+                  onClick={() => {
+                    setOwnershipTarget(null);
+                    setSelectedCertificate(null);
+                    setActiveTab('ownerships');
+                  }}
+                >
                   새 소유권 등록
                   <img src={iconPlusSmall} alt="" />
                 </button>
@@ -432,7 +456,8 @@ export default function MyPage() {
               onBack={() => setSelectedItem(null)}
               onDeleteSuccess={handleDeleteSuccess}
               onGoToReservation={() => navigate('/reservation')}
-              onGoToOwnership={() => {
+              onGoToOwnership={(item) => {
+                setOwnershipTarget(item);
                 setSelectedItem(null);
                 setActiveTab('ownerships');
               }}
@@ -502,10 +527,27 @@ export default function MyPage() {
         )}
 
         {activeTab === 'ownerships' && (
-          <DigitalOwnershipPage 
-            ownerships={ownerships} 
-            onRegisterSuccess={fetchOwnershipsData} 
-          />
+          selectedCertificate ? (
+            <OwnershipCertificateView
+              item={selectedCertificate}
+              onBack={() => setSelectedCertificate(null)}
+            />
+          ) : ownershipTarget ? (
+            <OwnershipApplicationForm
+              item={ownershipTarget}
+              onCancel={() => setOwnershipTarget(null)}
+              onSuccess={() => {
+                setOwnershipTarget(null);
+                fetchOwnershipsData();
+              }}
+            />
+          ) : (
+            <DigitalOwnershipPage 
+              ownerships={ownerships} 
+              onRegisterSuccess={fetchOwnershipsData} 
+              onViewApplication={(certItem) => setSelectedCertificate(certItem)}
+            />
+          )
         )}
 
         {activeTab === 'wishlist' && <WishlistGrid />}

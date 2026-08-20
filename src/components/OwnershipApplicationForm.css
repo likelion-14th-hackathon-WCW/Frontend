@@ -1,0 +1,122 @@
+.ownership-application-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.btn-back {
+  background: none;
+  border: none;
+  font-size: 22px;
+  font-weight: 700;
+  color: #111111;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 8px;
+}
+
+.ownership-application-desc {
+  font-size: 14px;
+  color: #666666;
+  margin-bottom: 24px;
+}
+
+.ownership-application-form {
+  background-color: #ffffff;
+  border: 1px solid #f0e4d3;
+  border-radius: 12px;
+  padding: 32px;
+}
+
+.ownership-application-form .form-group {
+  margin-bottom: 20px;
+}
+
+.ownership-application-form label {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: #333333;
+  margin-bottom: 8px;
+}
+
+.ownership-application-form input[type='text'] {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #dddddd;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.ownership-application-form .hint {
+  font-size: 12px;
+  color: #999999;
+  margin-top: 6px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.readonly-field {
+  padding: 12px 14px;
+  background-color: #f7f7f7;
+  border: 1px solid #eeeeee;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #444444;
+}
+
+.image-upload-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 220px;
+  background-color: #f7f7f7;
+  border: 1px dashed #dddddd;
+  border-radius: 8px;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.image-upload-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-upload-box .img-placeholder {
+  font-size: 32px;
+  color: #bbbbbb;
+}
+
+.form-error {
+  font-size: 13px;
+  color: #dc2626;
+  margin-bottom: 12px;
+}
+
+.btn-submit-application {
+  width: 100%;
+  padding: 14px;
+  background-color: #d98842;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-submit-application:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.image-upload-box .norigae-preview {
+  transform: scale(0.12);
+  transform-origin: center center;
+}
