@@ -176,7 +176,8 @@ export default function Reservation() {
     }
 
     // 노리개 만들기에서 매장 예약을 진행한 경우, 확정 시 마이페이지 노리개 타임라인에 디자인 자동 저장
-    if (norigaeData && norigaeData.knot && norigaeData.tassel && norigaeData.decoration && norigaeData.color) {
+    // (이미 저장된 노리개 디자인에서 넘어온 경우 alreadySaved 플래그로 중복 저장 방지)
+    if (norigaeData && !norigaeData.alreadySaved && norigaeData.knot && norigaeData.tassel && norigaeData.decoration && norigaeData.color) {
       try {
         const finalTitle = norigaeData.title?.trim() || norigaeData.defaultTitle || '나만의 노리개'
         await saveNorigaeDesign({
