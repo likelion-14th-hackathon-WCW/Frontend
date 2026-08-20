@@ -73,15 +73,36 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  aspect-ratio: 361 / 345;
+  max-width: 359px;
+  height: 343px;
+  margin: 0 auto;
   background-color: var(--color-surface-muted);
   border-bottom: 1px solid var(--color-border);
+  overflow: hidden;
 }
 
 .combination-card__placeholder {
   width: 45px;
   height: 45px;
   opacity: 0.5;
+}
+
+.combination-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+/* 원본 이미지마다 여백 비율이 달라 노리개 실제 길이가 제각각으로 보이는 것을
+   보정: 1번(미드나잇 앰버) 길이를 기준으로 2번은 확대, 3번은 축소 */
+.combination-card__image--rank-2 {
+  transform: scale(1.55);
+}
+
+.combination-card__image--rank-3 {
+  transform: scale(0.8);
 }
 
 .combination-card__rank {
@@ -130,7 +151,7 @@
 }
 
 .combination-card__title {
-  font-family: var(--font-body);
+  font-family: 'Noto Serif KR', serif;
   font-weight: 500;
   font-size: 24px;
   color: var(--color-text-primary);
