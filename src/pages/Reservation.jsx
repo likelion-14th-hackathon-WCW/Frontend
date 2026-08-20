@@ -7,6 +7,7 @@ import chevronLeft from '../assets/chevron-left.svg'
 import chevronRight from '../assets/chevron-right.svg'
 import { useAuth } from '../hooks/useAuth.js'
 import { saveReservationDraft } from '../utils/reservationDraft.js'
+import { saveReservationNorigae } from '../utils/reservationNorigaeCache.js'
 import { getStores, getBookedTimes, createReservation } from '../api/reservations.js'
 import { saveNorigaeDesign } from '../api/norigaeApi.js'
 import { buildNorigaeData } from '../utils/norigaeAssets.js'
@@ -197,6 +198,7 @@ export default function Reservation() {
     }
 
     setIsSubmitting(false)
+    saveReservationNorigae(result.data?.id, norigaeData)
     saveReservationDraft({ ...draft, id: result.data?.id, reservation_number: result.data?.reservation_number })
     window.location.href = '/reservation/complete-member'
   }

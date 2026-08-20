@@ -55,12 +55,19 @@ export default function WishlistGrid() {
     return <div className="wg-loading">위시리스트를 불러오는 중입니다...</div>;
   }
 
+  const goToReservation = (item) => {
+    const source = getWishSource(item);
+    navigate('/reservation', {
+      state: { norigaeData: { ...item, alreadySaved: true, image: source?.image || item.image, title: source?.title || item.title } },
+    });
+  };
+
   if (selectedItem) {
     return (
       <WishlistDesignDetail
         item={selectedItem}
         onBack={() => setSelectedItem(null)}
-        onReserve={() => navigate('/reservation')}
+        onReserve={() => goToReservation(selectedItem)}
         onUnwished={(id) => {
           setWishlist((prev) => prev.filter((item) => item.id !== id));
           setSelectedItem(null);
@@ -128,7 +135,7 @@ export default function WishlistGrid() {
                     <button type="button" className="wg-btn wg-btn--secondary" onClick={() => setSelectedItem(item)}>
                       상세보기
                     </button>
-                    <button type="button" className="wg-btn wg-btn--primary" onClick={() => navigate('/reservation')}>
+                    <button type="button" className="wg-btn wg-btn--primary" onClick={() => goToReservation(item)}>
                       매장 예약
                     </button>
                   </div>
