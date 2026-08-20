@@ -104,7 +104,9 @@ export default function MyPage() {
 
   // 설정 탭: 프로필 수정
   const [nickname, setNickname] = useState('');
+  const [savedNickname, setSavedNickname] = useState('');
   const [nicknameError, setNicknameError] = useState('');
+  const [profileSaveSuccess, setProfileSaveSuccess] = useState(false);
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState('');
@@ -123,7 +125,10 @@ export default function MyPage() {
   const [isSavingPassword, setIsSavingPassword] = useState(false);
 
   useEffect(() => {
-    if (profile?.nickname) setNickname(profile.nickname);
+    if (profile?.nickname) {
+      setNickname(profile.nickname);
+      setSavedNickname(profile.nickname);
+    }
   }, [profile]);
 
   // URL 변경 시 activeTab 업데이트
@@ -194,6 +199,7 @@ export default function MyPage() {
   }, [user, navigate]);
 
   const isNicknameValid = NICKNAME_RULE.test(nickname);
+  const isProfileDirty = nickname !== savedNickname || !!avatarFile;
   const passwordRuleStatus = PASSWORD_RULES.map((rule) => ({ ...rule, valid: rule.test(newPassword) }));
   const isNewPasswordValid = passwordRuleStatus.every((rule) => rule.valid);
   const isConfirmPasswordValid = confirmPassword.length > 0 && confirmPassword === newPassword;
@@ -204,12 +210,14 @@ export default function MyPage() {
     if (!file) return;
     setAvatarFile(file);
     setAvatarPreview(URL.createObjectURL(file));
+    setProfileSaveSuccess(false);
   };
 
   const handleSaveProfile = async () => {
-    if (!isNicknameValid) return;
+    if (!isNicknameValid || !isProfileDirty) return;
     setIsSavingProfile(true);
     setNicknameError('');
+    setProfileSaveSuccess(false);
     const formData = new FormData();
     formData.append('nickname', nickname);
     formData.append('name', profile?.name || user?.name || '');
@@ -221,6 +229,8 @@ export default function MyPage() {
       setNicknameError(result.message);
       return;
     }
+    setSavedNickname(nickname);
+    setProfileSaveSuccess(true);
     setProfile((prev) => ({ ...prev, ...result.data }));
     setAvatarFile(null);
   };
@@ -566,6 +576,7 @@ export default function MyPage() {
                       onChange={(e) => {
                         setNickname(e.target.value);
                         setNicknameError('');
+                        setProfileSaveSuccess(false);
                       }}
                     />
                   </div>
@@ -584,12 +595,16 @@ export default function MyPage() {
                   <button
                     type="button"
                     className="settings-btn-primary"
-                    disabled={!isNicknameValid || isSavingProfile}
+                    disabled={!isNicknameValid || !isProfileDirty || isSavingProfile}
                     onClick={handleSaveProfile}
                   >
-                    프로필 수정
+                    {isSavingProfile ? '저장 중...' : '프로필 수정'}
                   </button>
-                  <p className="settings-note">* 프로필 수정 버튼을 누르지 않을 경우 반영되지 않습니다.</p>
+                  {profileSaveSuccess ? (
+                    <p className="settings-hint-text settings-hint-text--valid">수정이 완료되었습니다.</p>
+                  ) : (
+                    <p className="settings-note">* 프로필 수정 버튼을 누르지 않을 경우 반영되지 않습니다.</p>
+                  )}
                 </div>
               </section>
 
