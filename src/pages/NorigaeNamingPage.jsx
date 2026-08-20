@@ -55,6 +55,28 @@ export default function NorigaeNamingPage() {
     setSaving(false);
 
     if (result.success) {
+      try {
+        const savedItem = {
+          ...result.data,
+          id: result.data?.id ?? Date.now(),
+          title: finalTitle,
+          knot: norigaeData.knot,
+          decoration: norigaeData.decoration,
+          tassel: norigaeData.tassel,
+          color: norigaeData.color,
+          wish_keyword: norigaeData.wish_keyword || norigaeData.keyword || '',
+          symbol_reason: norigaeData.symbol_reason || '',
+          knotImage: norigaeData.knotImage,
+          decorationImage: norigaeData.decorationImage,
+          tasselImage: norigaeData.tasselImage,
+          tasselCount: norigaeData.tasselCount,
+        };
+        const prev = JSON.parse(localStorage.getItem('wcw_saved_items') || '[]');
+        const updated = [savedItem, ...prev.filter((i) => (i.id ?? i.item_id) !== savedItem.id)];
+        localStorage.setItem('wcw_saved_items', JSON.stringify(updated));
+      } catch (err) {
+        console.error('로컬 스토리지 캐시 실패:', err);
+      }
       setTitle(finalTitle);
       setSaved(true);
     } else if (result.status === 401) {

@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.js';
 import { getMe, getMyReservations, getMyItems, getMyOwnerships } from '../api/mypage.js';
 import MyPageSidebar from '../components/MyPageSidebar.jsx';
+import NorigaePreview from '../components/NorigaePreview.jsx';
+import { buildNorigaeData } from '../utils/norigaeAssets.js';
 import iconAvatarPlaceholder from '../assets/mypage/icon-avatar-placeholder.svg';
 import iconPlusSmall from '../assets/mypage/icon-plus-small.svg';
 import iconPlusCircle from '../assets/mypage/icon-plus-circle.svg';
@@ -106,15 +108,20 @@ export default function MyPage() {
                 </button>
               </div>
               <div className="timeline-grid">
-                {items.slice(0, 2).map((item) => (
-                  <div className="timeline-card" key={item.id || item.item_id}>
-                    {item.image_url || item.thumbnail ? (
-                      <img src={item.image_url || item.thumbnail} alt="" className="timeline-image" />
-                    ) : (
-                      <div className="img-placeholder">🖼️</div>
-                    )}
-                  </div>
-                ))}
+                {items.slice(0, 2).map((item) => {
+                  const preview = buildNorigaeData(item);
+                  return (
+                    <div className="timeline-card" key={item.id || item.item_id}>
+                      {item.image_url || item.thumbnail ? (
+                        <img src={item.image_url || item.thumbnail} alt={item.title || ''} className="timeline-image" />
+                      ) : preview?.knotImage ? (
+                        <NorigaePreview norigaeData={preview} />
+                      ) : (
+                        <div className="img-placeholder">🖼️</div>
+                      )}
+                    </div>
+                  );
+                })}
                 <Link to="/editor" className="timeline-card add-card">
                   <img src={iconPlusCircle} alt="" className="add-icon" />
                   <h4>새로 만들기</h4>
@@ -207,16 +214,21 @@ export default function MyPage() {
               <p>에디터에서 커스텀 및 저장한 나의 노리개 컬렉션입니다.</p>
             </div>
             <div className="timeline-grid">
-              {items.map((item) => (
-                <div className="timeline-card" key={item.id || item.item_id}>
-                  {item.image_url || item.thumbnail ? (
-                    <img src={item.image_url || item.thumbnail} alt="" className="timeline-image" />
-                  ) : (
-                    <div className="img-placeholder">🖼️</div>
-                  )}
-                  <h4 style={{ marginTop: '10px' }}>{item.title || '나의 노리개'}</h4>
-                </div>
-              ))}
+              {items.map((item) => {
+                const preview = buildNorigaeData(item);
+                return (
+                  <div className="timeline-card" key={item.id || item.item_id}>
+                    {item.image_url || item.thumbnail ? (
+                      <img src={item.image_url || item.thumbnail} alt={item.title || ''} className="timeline-image" />
+                    ) : preview?.knotImage ? (
+                      <NorigaePreview norigaeData={preview} />
+                    ) : (
+                      <div className="img-placeholder">🖼️</div>
+                    )}
+                    <h4 style={{ marginTop: '10px' }}>{item.title || '나의 노리개'}</h4>
+                  </div>
+                );
+              })}
               <Link to="/editor" className="timeline-card add-card">
                 <div className="add-icon">+</div>
                 <h4>새로 만들기</h4>

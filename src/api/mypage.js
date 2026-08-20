@@ -23,8 +23,55 @@ export const cancelReservation = async (id) => {
 };
 
 export const getMyItems = async () => {
-  const response = await apiClient.get('/auth/me/items/');
-  return { success: true, data: response.data };
+  try {
+    const response = await apiClient.get('/auth/me/items/');
+    const raw = response.data;
+    const list = Array.isArray(raw) ? raw : Array.isArray(raw?.results) ? raw.results : Array.isArray(raw?.data) ? raw.data : [];
+    if (list.length > 0) {
+      return { success: true, data: list };
+    }
+    // 서버가 빈 배열을 반환했을 때 /api/items/ 경로도 확인
+    try {
+      const fb = await apiClient.get('/api/items/');
+      const fbRaw = fb.data;
+      const fbList = Array.isArray(fbRaw) ? fbRaw : Array.isArray(fbRaw?.results) ? fbRaw.results : Array.isArray(fbRaw?.data) ? fbRaw.data : [];
+      if (fbList.length > 0) {
+        return { success: true, data: fbList };
+      }
+    } catch {
+      // fallback 무시
+    }
+    // 로컬 백업 확인
+    try {
+      const cached = JSON.parse(localStorage.getItem('wcw_saved_items') || '[]');
+      if (Array.isArray(cached) && cached.length > 0) {
+        return { success: true, data: cached };
+      }
+    } catch {
+      // ignore
+    }
+    return { success: true, data: list };
+  } catch {
+    try {
+      const fb = await apiClient.get('/api/items/');
+      const fbRaw = fb.data;
+      const fbList = Array.isArray(fbRaw) ? fbRaw : Array.isArray(fbRaw?.results) ? fbRaw.results : Array.isArray(fbRaw?.data) ? fbRaw.data : [];
+      if (fbList.length > 0) {
+        return { success: true, data: fbList };
+      }
+    } catch {
+      // fallback 무시
+    }
+    try {
+      const cached = JSON.parse(localStorage.getItem('wcw_saved_items') || '[]');
+      if (Array.isArray(cached) && cached.length > 0) {
+        return { success: true, data: cached };
+      }
+    } catch {
+      // ignore
+    }
+    return { success: false, data: [] };
+  }
 };
 
 export const getMyOwnerships = async () => {
