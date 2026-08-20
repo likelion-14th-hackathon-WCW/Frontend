@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.js';
 import { logout } from '../api/auth.js';
 import {
@@ -14,6 +14,7 @@ import {
 import { getNotificationSettings, saveNotificationSettings } from '../utils/notificationSettings.js';
 import MyPageSidebar from '../components/MyPageSidebar.jsx';
 import NorigaePreview from '../components/NorigaePreview.jsx';
+import NorigaeDetailView from '../components/NorigaeDetailView.jsx';
 import { buildNorigaeData } from '../utils/norigaeAssets.js';
 import iconAvatarPlaceholder from '../assets/mypage/icon-avatar-placeholder.svg';
 import iconPlusSmall from '../assets/mypage/icon-plus-small.svg';
@@ -27,6 +28,7 @@ import eyeOffIcon from '../assets/eye-toggle-icon.svg';
 import eyeOpenIcon from '../assets/eye-open-icon.svg';
 import hintCheckDefault from '../assets/hint-check-default.svg';
 import hintCheckValid from '../assets/hint-check-valid.svg';
+import DigitalOwnership from './DigitalOwnershipPage';
 import './MyPage.css';
 
 const NICKNAME_RULE = {
@@ -42,24 +44,24 @@ const PASSWORD_RULES = [
 ];
 
 // 완료/취소된 예약 상태 판별
-const isCancelledStatus = (status) => status === '취소' || status === '취소됨' || status === '예약 취소'
-const isCompletedStatus = (status) => status === '완료' || status === '완료됨' || status === '방문 완료' || status === '방문완료' || status === '이용 완료' || status === '이용완료'
+const isCancelledStatus = (status) => status === '취소' || status === '취소됨' || status === '예약 취소';
+const isCompletedStatus = (status) => status === '완료' || status === '완료됨' || status === '방문 완료' || status === '방문완료' || status === '이용 완료' || status === '이용완료';
 
 function formatItemDate(item) {
-  const raw = item.created_at || item.created_at_date || item.updated_at
-  if (!raw) return ''
-  const date = new Date(raw)
-  if (isNaN(date.getTime())) return String(raw)
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  return `${date.getFullYear()}.${month}.${day}`
+  const raw = item.created_at || item.created_at_date || item.updated_at;
+  if (!raw) return '';
+  const date = new Date(raw);
+  if (isNaN(date.getTime())) return String(raw);
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${date.getFullYear()}.${month}.${day}`;
 }
 
 async function handleShareItem(item) {
-  const shareUrl = `${window.location.origin}/norigae/${item.id || item.item_id || ''}`
+  const shareUrl = `${window.location.origin}/norigae/${item.id || item.item_id || ''}`;
   try {
-    await navigator.clipboard.writeText(shareUrl)
-    alert('공유 링크가 클립보드에 복사되었습니다.')
+    await navigator.clipboard.writeText(shareUrl);
+    alert('공유 링크가 클립보드에 복사되었습니다.');
   } catch {
     // 클립보드 접근 실패 시 무시
   }
@@ -80,21 +82,9 @@ function formatReservedAt(isoString) {
 export default function MyPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-
-  // URL 경로에서 탭 결정
-  const getTabFromPath = () => {
-    const path = location.pathname;
-    if (path.includes('reservations')) return 'reservations';
-    if (path.includes('collections')) return 'items';
-    if (path.includes('ownership')) return 'ownerships';
-    if (path.includes('wishlist')) return 'wishlist';
-    if (path.includes('settings')) return 'settings';
-    return 'profile';
-  };
 
   // 현재 활성화된 탭 ('profile', 'reservations', 'items', 'ownerships', 'wishlist', 'settings')
-  const [activeTab, setActiveTab] = useState(getTabFromPath());
+  const [activeTab, setActiveTab] = useState('profile');
 
   const [profile, setProfile] = useState(null);
   const [reservations, setReservations] = useState([]);
@@ -129,22 +119,24 @@ export default function MyPage() {
   useEffect(() => {
     setActiveTab(getTabFromPath());
   }, [location.pathname]);
+  // [수정점 1] 선택된 상세 노리개 아이템 상태 추가
+  const [selectedItem, setSelectedItem] = useState(null);
 
-  // activeTab 변경 시 URL 업데이트
-  useEffect(() => {
-    const pathMap = {
-      profile: '/mypage',
-      reservations: '/mypage/reservations',
-      items: '/mypage/collections',
-      ownerships: '/mypage/ownership',
-      wishlist: '/mypage/wishlist',
-      settings: '/mypage/settings',
-    };
-    const newPath = pathMap[activeTab] || '/mypage';
-    if (location.pathname !== newPath) {
-      navigate(newPath, { replace: true });
+  const fetchOwnershipsData = async () => {
+    try {
+      const ownRes = await getMyOwnerships();
+      if (ownRes?.success) {
+        setOwnerships(ownRes.data || []);
+      }
+    } catch (error) {
+      console.error('소유권 조회 실패:', error);
     }
-  }, [activeTab, navigate, location.pathname]);
+  };
+
+  // [수정점 2] 삭제 완료 시 아이템 목록 갱신 함수
+  const handleDeleteSuccess = (deletedId) => {
+    setItems((prev) => prev.filter((item) => (item.id || item.item_id) !== deletedId));
+  };
 
   useEffect(() => {
     if (!user) {
@@ -257,7 +249,13 @@ export default function MyPage() {
 
   return (
     <div className="mypage-wrapper">
-      <MyPageSidebar active={activeTab} onSelect={setActiveTab} />
+      <MyPageSidebar 
+        active={activeTab} 
+        onSelect={(tab) => {
+          setSelectedItem(null); // 탭 이동 시 상세보기 상태 초기화
+          setActiveTab(tab);
+        }} 
+      />
 
       {/* 메인 컨텐츠 영역 (activeTab에 따라 다른 뷰 출력) */}
       <main className="mypage-content">
@@ -396,85 +394,87 @@ export default function MyPage() {
 
         {/* TAB 3: 저장된 노리개 디자인 전체 페이지 */}
         {activeTab === 'items' && (
-          <div className="tab-page">
-            <div className="content-header">
-              <h2>저장된 노리개 디자인</h2>
-              <p>에디터에서 커스텀 및 저장한 나의 노리개 컬렉션입니다.</p>
-            </div>
-            <div className="wish-card-grid">
-              {items.map((item) => {
-                const preview = buildNorigaeData(item);
-                return (
-                  <div className="wish-card" key={item.id || item.item_id}>
-                    <div className="wish-card__image-area">
-                      <div className="wish-card__image-frame">
-                        {item.image_url || item.thumbnail ? (
-                          <img src={item.image_url || item.thumbnail} alt={item.title || ''} className="timeline-image" />
-                        ) : preview?.knotImage ? (
-                          <NorigaePreview norigaeData={preview} showSeasonBadge={false} />
-                        ) : (
-                          <div className="img-placeholder">🖼️</div>
-                        )}
-                      </div>
-                      {preview?.isSeasonal && <span className="wish-card__tag">{preview.seasonTag}</span>}
-                    </div>
-                    <div className="wish-card__divider" />
-                    <div className="wish-card__body">
-                      <div className="wish-card__meta">
-                        <div className="wish-card__title-row">
-                          <h3 className="wish-card__title">{item.title || '나의 노리개'}</h3>
-                          <span className="wish-card__date">{formatItemDate(item)}</span>
+          selectedItem ? (
+            /* [수정점 3] 상세보기 클릭 시 보여지는 인라인 상세 뷰 화면 */
+            <NorigaeDetailView
+              item={selectedItem}
+              onBack={() => setSelectedItem(null)}
+              onDeleteSuccess={handleDeleteSuccess}
+              onGoToReservation={() => navigate('/reservation')}
+              onGoToOwnership={() => {
+                setSelectedItem(null);
+                setActiveTab('ownerships');
+              }}
+            />
+          ) : (
+            /* 기존 카드 그리드 목록 화면 */
+            <div className="tab-page">
+              <div className="content-header">
+                <h2>저장된 노리개 디자인</h2>
+                <p>에디터에서 커스텀 및 저장한 나의 노리개 컬렉션입니다.</p>
+              </div>
+              <div className="wish-card-grid">
+                {items.map((item) => {
+                  const preview = buildNorigaeData(item);
+                  return (
+                    <div className="wish-card" key={item.id || item.item_id}>
+                      <div className="wish-card__image-area">
+                        <div className="wish-card__image-frame">
+                          {item.image_url || item.thumbnail ? (
+                            <img src={item.image_url || item.thumbnail} alt={item.title || ''} className="timeline-image" />
+                          ) : preview?.knotImage ? (
+                            <NorigaePreview norigaeData={preview} showSeasonBadge={false} />
+                          ) : (
+                            <div className="img-placeholder">🖼️</div>
+                          )}
                         </div>
-                        <p className="wish-card__desc">{item.symbol_reason || item.wish_keyword || ''}</p>
+                        {preview?.isSeasonal && <span className="wish-card__tag">{preview.seasonTag}</span>}
                       </div>
-                      <div className="wish-card__actions">
-                        <button type="button" className="wish-card__btn wish-card__btn--primary">
-                          상세보기
-                        </button>
-                        <button
-                          type="button"
-                          className="wish-card__btn wish-card__btn--outline"
-                          onClick={() => handleShareItem(item)}
-                        >
-                          <img src={iconLink} alt="" /> 공유하기
-                        </button>
+                      <div className="wish-card__divider" />
+                      <div className="wish-card__body">
+                        <div className="wish-card__meta">
+                          <div className="wish-card__title-row">
+                            <h3 className="wish-card__title">{item.title || '나의 노리개'}</h3>
+                            <span className="wish-card__date">{formatItemDate(item)}</span>
+                          </div>
+                          <p className="wish-card__desc">{item.symbol_reason || item.wish_keyword || ''}</p>
+                        </div>
+                        <div className="wish-card__actions">
+                          {/* [수정점 4] 상세보기 버튼에 setSelectedItem 클릭 이벤트만 추가 */}
+                          <button 
+                            type="button" 
+                            className="wish-card__btn wish-card__btn--primary"
+                            onClick={() => setSelectedItem(item)}
+                          >
+                            상세보기
+                          </button>
+                          <button
+                            type="button"
+                            className="wish-card__btn wish-card__btn--outline"
+                            onClick={() => handleShareItem(item)}
+                          >
+                            <img src={iconLink} alt="" /> 공유하기
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
-              {items.length === 0 && (
+                  );
+                })}
                 <Link to="/editor" className="wish-card wish-card--add">
-                  <img src={iconPlusCircle} alt="" className="add-icon" />
+                  <div className="add-icon">+</div>
                   <h4>새로 만들기</h4>
-                  <p>나만의 노리개를 디자인하세요.</p>
                 </Link>
-              )}
+              </div>
             </div>
-          </div>
+          )
         )}
 
-        {/* TAB 4: 소유권 및 관리 전체 페이지 */}
+        {/* TAB 4: 소유권 및 관리 전체 페이지 (독립된 컴포넌트 출력) */}
         {activeTab === 'ownerships' && (
-          <div className="tab-page">
-            <div className="content-header">
-              <h2>소유권 및 레지스트리</h2>
-              <p>고유 디자인 디지털 증명 및 상업적 제작 권한 관리 페이지입니다.</p>
-            </div>
-            {ownerships.length === 0 ? (
-              <div className="info-card">
-                <p className="card-desc">등록된 소유권 정보가 없습니다.</p>
-              </div>
-            ) : (
-              ownerships.map((own, idx) => (
-                <div className="info-card highlight-card" key={own.id || idx} style={{ marginBottom: '16px' }}>
-                  <h3>{own.product_name || own.title || '등록된 노리개 디자인'}</h3>
-                  <p className="card-desc">일련번호: {own.serial_number || `NORIGAE-2026-${idx + 101}`}</p>
-                  <p className="card-desc">제작권 여부: {own.has_production_right ? '보유 (제작 가능)' : '심사 중'}</p>
-                </div>
-              ))
-            )}
-          </div>
+          <DigitalOwnership 
+            ownerships={ownerships} 
+            onRegisterSuccess={fetchOwnershipsData} 
+          />
         )}
 
         {/* TAB 5: 위시리스트 임시 뷰 */}
