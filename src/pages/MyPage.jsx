@@ -15,12 +15,14 @@ import { getNotificationSettings, saveNotificationSettings } from '../utils/noti
 import MyPageSidebar from '../components/MyPageSidebar.jsx';
 import NorigaePreview from '../components/NorigaePreview.jsx';
 import NorigaeDetailView from '../components/NorigaeDetailView.jsx';
+import DigitalOwnershipPage from './DigitalOwnershipPage.jsx';
+import WishlistTab from '../components/WishlistTab.jsx';
 import { buildNorigaeData } from '../utils/norigaeAssets.js';
+
 import iconAvatarPlaceholder from '../assets/mypage/icon-avatar-placeholder.svg';
 import iconPlusSmall from '../assets/mypage/icon-plus-small.svg';
 import iconPlusCircle from '../assets/mypage/icon-plus-circle.svg';
 import iconLink from '../assets/mypage/icon-link.svg';
-<<<<<<< Updated upstream
 import iconCamera from '../assets/mypage/icon-camera.svg';
 import iconBell from '../assets/mypage/icon-bell.svg';
 import iconUserX from '../assets/mypage/icon-user-x.svg';
@@ -29,11 +31,7 @@ import eyeOffIcon from '../assets/eye-toggle-icon.svg';
 import eyeOpenIcon from '../assets/eye-open-icon.svg';
 import hintCheckDefault from '../assets/hint-check-default.svg';
 import hintCheckValid from '../assets/hint-check-valid.svg';
-import DigitalOwnership from './DigitalOwnershipPage';
-=======
-import DigitalOwnershipPage from './DigitalOwnershipPage.jsx';
-import WishlistTab from '../components/WishlistTab.jsx';
->>>>>>> Stashed changes
+
 import './MyPage.css';
 
 const NICKNAME_RULE = {
@@ -48,7 +46,6 @@ const PASSWORD_RULES = [
   { key: 'digit', label: '숫자 최소 1개 이상', test: (v) => /\d/.test(v) },
 ];
 
-// 완료/취소된 예약 상태 판별
 const isCancelledStatus = (status) => status === '취소' || status === '취소됨' || status === '예약 취소';
 const isCompletedStatus = (status) => status === '완료' || status === '완료됨' || status === '방문 완료' || status === '방문완료' || status === '이용 완료' || status === '이용완료';
 
@@ -83,7 +80,6 @@ function formatReservedAt(isoString) {
   return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 • ${meridiem} ${hour12}:${minute}`;
 }
 
-// URL 경로에서 탭 결정
 const getTabFromPath = (pathname) => {
   if (pathname.includes('reservations')) return 'reservations';
   if (pathname.includes('collections')) return 'items';
@@ -98,19 +94,13 @@ export default function MyPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-<<<<<<< Updated upstream
-  // 현재 활성화된 탭 ('profile', 'reservations', 'items', 'ownerships', 'wishlist', 'settings')
   const [activeTab, setActiveTab] = useState(() => getTabFromPath(location.pathname));
-=======
-  const [activeTab, setActiveTab] = useState('profile');
->>>>>>> Stashed changes
 
   const [profile, setProfile] = useState(null);
   const [reservations, setReservations] = useState([]);
   const [items, setItems] = useState([]);
   const [ownerships, setOwnerships] = useState([]);
 
-<<<<<<< Updated upstream
   // 설정 탭: 프로필 수정
   const [nickname, setNickname] = useState('');
   const [savedNickname, setSavedNickname] = useState('');
@@ -133,6 +123,8 @@ export default function MyPage() {
   const [passwordError, setPasswordError] = useState('');
   const [isSavingPassword, setIsSavingPassword] = useState(false);
 
+  const [selectedItem, setSelectedItem] = useState(null);
+
   useEffect(() => {
     if (profile?.nickname) {
       setNickname(profile.nickname);
@@ -140,12 +132,10 @@ export default function MyPage() {
     }
   }, [profile]);
 
-  // URL 변경 시 activeTab 업데이트
   useEffect(() => {
     setActiveTab(getTabFromPath(location.pathname));
   }, [location.pathname]);
 
-  // activeTab 변경 시 URL 업데이트
   useEffect(() => {
     const pathMap = {
       profile: '/mypage',
@@ -160,11 +150,6 @@ export default function MyPage() {
       navigate(newPath, { replace: true });
     }
   }, [activeTab, navigate, location.pathname]);
-
-  // [수정점 1] 선택된 상세 노리개 아이템 상태 추가
-=======
->>>>>>> Stashed changes
-  const [selectedItem, setSelectedItem] = useState(null);
 
   const fetchOwnershipsData = async () => {
     try {
@@ -520,13 +505,6 @@ export default function MyPage() {
           />
         )}
 
-<<<<<<< Updated upstream
-        {/* TAB 5: 위시리스트 임시 뷰 */}
-        {activeTab === 'wishlist' && (
-          <div className="tab-page">
-            <div className="content-header">
-              <h2>위시리스트</h2>
-=======
         {activeTab === 'wishlist' && (
           <WishlistTab
             onSelectDetail={(item) => {
@@ -536,17 +514,6 @@ export default function MyPage() {
           />
         )}
 
-        {activeTab === 'settings' && (
-          <div className="tab-page">
-            <div className="content-header">
-              <h2>계정 설정</h2>
->>>>>>> Stashed changes
-              <p>해당 기능은 준비 중입니다.</p>
-            </div>
-          </div>
-        )}
-
-        {/* TAB 6: 설정 */}
         {activeTab === 'settings' && (
           <div className="tab-page">
             <div className="content-header">
