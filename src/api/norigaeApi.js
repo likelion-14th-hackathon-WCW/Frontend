@@ -1,26 +1,9 @@
-import axios from 'axios';
-
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
-
-const api = axios.create({
-  baseURL: BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+import { apiClient } from './client.js';
 
 // 1. AI 추천 요청
 export const getAiRecommendation = async (keyword, excludeCombinations = []) => {
   try {
-    const response = await api.post('/api/recommend/', {
+    const response = await apiClient.post('/api/recommend/', {
       keyword,
       exclude_combinations: excludeCombinations,
     });
@@ -41,7 +24,7 @@ export const getAiRecommendation = async (keyword, excludeCombinations = []) => 
 // 2. 노리개/아이템 디자인 저장
 export const saveNorigaeDesign = async (designData) => {
   try {
-    const response = await api.post('/api/items/', designData);
+    const response = await apiClient.post('/api/items/', designData);
     return { success: true, data: response.data };
   } catch (error) {
     if (error.response) {
@@ -62,7 +45,7 @@ export const saveNorigaeDesign = async (designData) => {
 // 3. 내 노리개 목록 조회
 export const getMyNorigaes = async () => {
   try {
-    const response = await api.get('/api/norigaes/');
+    const response = await apiClient.get('/api/norigaes/');
     return { success: true, data: response.data };
   } catch (error) {
     if (error.response && error.response.status === 401) {
@@ -75,7 +58,7 @@ export const getMyNorigaes = async () => {
 // 4. 노리개 상세 조회
 export const getNorigaeDetail = async (id) => {
   try {
-    const response = await api.get(`/api/norigaes/${id}/`);
+    const response = await apiClient.get(`/api/norigaes/${id}/`);
     return { success: true, data: response.data };
   } catch (error) {
     if (error.response && error.response.status === 404) {
@@ -88,7 +71,7 @@ export const getNorigaeDetail = async (id) => {
 // 5. 추천 상품 목록 조회
 export const getRecommendProducts = async (itemId) => {
   try {
-    const response = await api.get(`/api/items/${itemId}/recommend-products/`);
+    const response = await apiClient.get(`/api/items/${itemId}/recommend-products/`);
     return { success: true, data: response.data };
   } catch (error) {
     if (error.response && error.response.status === 503) {
@@ -101,9 +84,9 @@ export const getRecommendProducts = async (itemId) => {
 // 6. 상품 상세 조회
 export const getProductDetail = async (productId) => {
   try {
-    const response = await api.get(`/api/products/${productId}/`);
+    const response = await apiClient.get(`/api/products/${productId}/`);
     return { success: true, data: response.data };
-  } catch (error) {
+  } catch {
     return { success: false, message: '상품 정보를 가져오는 데 실패했습니다.' };
   }
 };
