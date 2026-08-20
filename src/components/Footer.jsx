@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+import logo from '../assets/logo-mcm-yeongyeol.png'
 import './Footer.css'
 
 const FOOTER_LINKS = [
@@ -10,13 +12,15 @@ const FOOTER_LINKS = [
 export default function Footer() {
   return (
     <footer className="footer">
-      <div className="footer__brand">로고영역</div>
+      <Link to="/" className="footer__brand" aria-label="MCM 연결 홈으로 이동">
+        <img src={logo} alt="MCM : Yeongyeol" className="footer__logo-image" />
+      </Link>
 
       <nav className="footer__nav">
         {FOOTER_LINKS.map(({ label, href }) => (
-          <a key={label} href={href} className="footer__link">
+          <Link key={label} to={href} className="footer__link">
             {label}
-          </a>
+          </Link>
         ))}
       </nav>
     </footer>
