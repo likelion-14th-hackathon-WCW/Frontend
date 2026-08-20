@@ -150,7 +150,7 @@ export default function Reservation() {
   }
 
   const confirmReservation = async () => {
-    const reservedAt = `${formatDateParam(selectedDate)}T${toTimeParam(selectedTime)}:00`
+    const reservedAt = `${formatDateParam(selectedDate)}T${toTimeParam(selectedTime)}:00+09:00`
     const draft = {
       storeId: selectedStore.id,
       reservedAt,
@@ -196,7 +196,7 @@ export default function Reservation() {
     }
 
     setIsSubmitting(false)
-    saveReservationDraft(draft)
+    saveReservationDraft({ ...draft, id: result.data?.id, reservation_number: result.data?.reservation_number })
     window.location.href = '/reservation/complete-member'
   }
 

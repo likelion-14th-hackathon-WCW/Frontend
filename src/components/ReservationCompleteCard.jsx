@@ -1,14 +1,13 @@
-import { useMemo } from 'react'
 import './ReservationCompleteCard.css'
 import successCheckIcon from '../assets/success-check-large.svg'
 import markerPinIcon from '../assets/marker-pin-icon.svg'
 import calendarIcon from '../assets/calendar-icon.svg'
 import alarmClockIcon from '../assets/alarm-clock-icon.svg'
 import infoIcon from '../assets/info-icon.svg'
-import { generateReservationNumber } from '../utils/reservationNumber.js'
+import { formatReservationNumber } from '../utils/reservationNumber.js'
 
 export default function ReservationCompleteCard({ subtitle, draft, ctaHref = '/mypage' }) {
-  const reservationNumber = useMemo(() => generateReservationNumber(new Date().getFullYear()), [])
+  const reservationNumber = formatReservationNumber(draft)
   const ctaLabel = ctaHref === '/mypage' ? '마이페이지' : '예약 확인 페이지'
   const notes = [
     '상담 시간은 약 1시간 정도 소요됩니다.',

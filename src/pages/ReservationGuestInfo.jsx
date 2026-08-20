@@ -5,7 +5,7 @@ import eyeOffIcon from '../assets/eye-toggle-icon.svg'
 import eyeOpenIcon from '../assets/eye-open-icon.svg'
 import hintCheckDefault from '../assets/hint-check-default.svg'
 import hintCheckValid from '../assets/hint-check-valid.svg'
-import { readReservationDraft } from '../utils/reservationDraft.js'
+import { readReservationDraft, saveReservationDraft } from '../utils/reservationDraft.js'
 import { createReservation } from '../api/reservations.js'
 import TermsModal from '../components/TermsModal.jsx'
 
@@ -46,6 +46,7 @@ export default function ReservationGuestInfo() {
       setSubmitError(result.message)
       return
     }
+    saveReservationDraft({ ...draft, id: result.data?.id, reservation_number: result.data?.reservation_number })
     window.location.href = '/reservation/complete-guest'
   }
 
