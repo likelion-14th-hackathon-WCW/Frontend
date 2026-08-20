@@ -4,11 +4,13 @@ import { buildNorigaeData } from '../utils/norigaeAssets.js';
 import { apiClient } from '../api/client.js';
 import './NorigaeDetailView.css';
 import pencilIcon from '../assets/icon-pencil.png';
-import tasselIcon from '../assets/icon-tassel.png';
-import dotIcon from '../assets/icon-dot.png';
-import solIcon from '../assets/icon-sol.png';
-import sparkelIcon from '../assets/icon-sparkel.png';
-import gemIcon from '../assets/icon-gem.png';
+import ornamentIcon from '../assets/component-ornament-icon.svg';
+import knotIcon from '../assets/component-knot-icon.svg';
+import tasselPartIcon from '../assets/component-tassel-icon.svg';
+import meaningSparkleIcon from '../assets/meaning-sparkle-icon.svg';
+import markerWhiteIcon from '../assets/icon-marker-white.svg';
+import awardIcon from '../assets/icon-award.svg';
+import trashIcon from '../assets/icon-trash.svg';
 
 
 
@@ -87,19 +89,19 @@ export default function NorigaeDetailView({ item, onBack, onDeleteSuccess, onGoT
             <ul className="parts-detail-list">
               <li>
                 <span className="part-type">
-                  <span className="icon-sm"><img src={gemIcon} alt="gem"/></span> 메인 장식
+                  <span className="icon-sm"><img src={ornamentIcon} alt="" /></span> 메인 장식
                 </span>
                 <span className="part-name">{item.main_ornament || item.parts?.ornament || '연꽃 옥'}</span>
               </li>
               <li>
                 <span className="part-type">
-                  <span className="icon-sm"><img src={tasselIcon} alt="tassel"/></span> 매듭
+                  <span className="icon-sm"><img src={knotIcon} alt="" /></span> 매듭
                 </span>
                 <span className="part-name">{item.knot || item.parts?.knot || '국화 매듭'}</span>
               </li>
               <li>
                 <span className="part-type">
-                  <span className="icon-sm"><img src={solIcon} alt="sol"/></span> 술
+                  <span className="icon-sm icon-rotate-180"><img src={tasselPartIcon} alt="" /></span> 술
                 </span>
                 <span className="part-name">{item.tassel || item.parts?.tassel || 'MCM 모노그램 술'}</span>
               </li>
@@ -108,7 +110,7 @@ export default function NorigaeDetailView({ item, onBack, onDeleteSuccess, onGoT
 
           <div className="info-box meaning-box">
             <h3 className="box-title meaning-title">
-              <span className="icon-sm">✨</span> 상징적 의미
+              <span className="icon-sm"><img src={meaningSparkleIcon} alt="" /></span> 상징적 의미
             </h3>
             <p className="meaning-description">
               {item.symbol_reason ||
@@ -119,17 +121,17 @@ export default function NorigaeDetailView({ item, onBack, onDeleteSuccess, onGoT
           </div>
 
           <button type="button" className="btn-store-reserve" onClick={onGoToReservation}>
-            <span className="btn-icon">📍</span> 매장 예약 하기
+            <span className="btn-icon"><img src={markerWhiteIcon} alt="" /></span> 매장 예약 하기
           </button>
         </div>
       </div>
 
       <footer className="detail-bottom-actions">
         <button type="button" className="btn-action-outline btn-ownership" onClick={onGoToOwnership}>
-          <span className="btn-icon">🎗️</span> 소유권 신청
+          <span className="btn-icon"><img src={awardIcon} alt="" /></span> 소유권 신청
         </button>
         <button type="button" className="btn-action-outline btn-delete" onClick={handleDelete} disabled={isDeleting}>
-          <span className="btn-icon">🗑️</span> 삭제하기
+          <span className="btn-icon"><img src={trashIcon} alt="" /></span> 삭제하기
         </button>
       </footer>
     </div>
