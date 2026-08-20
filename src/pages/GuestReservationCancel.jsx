@@ -25,10 +25,10 @@ export default function GuestReservationCancel() {
     setSelectedReason((prev) => (prev === reason ? null : reason))
   }
 
-  // ponytail: 비회원 예약 취소 API가 아직 없음(docs/reservation-lookup-api-todo.md) — 조회 페이지로 되돌아감
+  // ponytail: 비회원 예약 취소 API가 아직 없음(docs/reservation-lookup-api-todo.md) — 홈으로 되돌아감
   const handleCancel = () => {
     if (!selectedReason) return
-    navigate('/reservation/lookup', { replace: true })
+    navigate('/', { replace: true })
   }
 
   return (
