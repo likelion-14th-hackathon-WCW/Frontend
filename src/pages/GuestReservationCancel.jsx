@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import ReservationSummaryCard from '../components/ReservationSummaryCard.jsx'
 import NorigaePreview from '../components/NorigaePreview.jsx'
+import { resolveGuestNorigaePreview } from '../utils/guestNorigaePreview.js'
 import infoIcon from '../assets/info-icon.svg'
 import './GuestReservationCancel.css'
 
@@ -11,6 +12,7 @@ export default function GuestReservationCancel() {
   const navigate = useNavigate()
   const location = useLocation()
   const reservation = location.state?.reservation
+  const previewData = useMemo(() => resolveGuestNorigaePreview(reservation), [reservation])
   const [selectedReason, setSelectedReason] = useState(null)
 
   useEffect(() => {
@@ -37,7 +39,7 @@ export default function GuestReservationCancel() {
 
       <div className="guest-cancel__summary-row">
         <div className="guest-cancel__image-container">
-          <NorigaePreview imageSrc={reservation.imageSrc} norigaeData={reservation.norigaeData} />
+          <NorigaePreview imageSrc={reservation.imageSrc} norigaeData={previewData} />
         </div>
         <ReservationSummaryCard
           heading="예약 정보"

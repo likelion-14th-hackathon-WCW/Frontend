@@ -1,9 +1,10 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import ReservationSummaryCard from '../components/ReservationSummaryCard.jsx'
 import NorigaePreview from '../components/NorigaePreview.jsx'
 import StoreMap from '../components/StoreMap.jsx'
 import { STORE_INFO } from '../data/storeInfo.js'
+import { resolveGuestNorigaePreview } from '../utils/guestNorigaePreview.js'
 import chevronLeft from '../assets/chevron-left.svg'
 import './GuestReservationDetail.css'
 
@@ -11,6 +12,7 @@ export default function GuestReservationDetail() {
   const navigate = useNavigate()
   const location = useLocation()
   const reservation = location.state?.reservation
+  const previewData = useMemo(() => resolveGuestNorigaePreview(reservation), [reservation])
 
   useEffect(() => {
     if (!reservation) navigate('/reservation/lookup', { replace: true })
@@ -48,7 +50,7 @@ export default function GuestReservationDetail() {
 
       <div className="guest-reservation-detail__summary-row">
         <div className="guest-reservation-detail__image-container">
-          <NorigaePreview imageSrc={reservation.imageSrc} norigaeData={reservation.norigaeData} />
+          <NorigaePreview imageSrc={reservation.imageSrc} norigaeData={previewData} />
         </div>
         <ReservationSummaryCard
           heading="예약 정보"
