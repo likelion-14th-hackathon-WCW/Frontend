@@ -440,11 +440,31 @@
   border: 1px dashed rgba(17, 17, 17, 0.2);
   align-items: center;
   justify-content: center;
-  gap: 8px;
   text-align: center;
   cursor: pointer;
   text-decoration: none;
   color: inherit;
+}
+
+.wish-card--add .add-icon {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 16px;
+}
+
+.wish-card--add h4 {
+  margin: 0;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 18px;
+  color: var(--color-accent);
+}
+
+.wish-card--add p {
+  margin: 8px 0 0;
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--color-grey-300);
 }
 
 .two-column-grid {

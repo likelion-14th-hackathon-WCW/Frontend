@@ -61,6 +61,10 @@ function App() {
         <Route path="/mypage/reservations" element={<MyPageReservations />} />
         <Route path="/mypage/reservations/:id" element={<MyPageReservationDetail />} />
         <Route path="/mypage/reservations/:id/cancel" element={<MyPageReservationCancel />} />
+        <Route path="/mypage/collections" element={<MyPage />} />
+        <Route path="/mypage/ownership" element={<MyPage />} />
+        <Route path="/mypage/wishlist" element={<MyPage />} />
+        <Route path="/mypage/settings" element={<MyPage />} />
         <Route path="/digital-ownership" element={<DigitalOwnershipPage />} />
       </Routes>
       <Footer />
