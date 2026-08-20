@@ -5,6 +5,7 @@ import heartIconFilled from '../assets/heart-icon-filled.svg'
 import CombinationDetailModal from './CombinationDetailModal.jsx'
 import { getRankings } from '../api/rankings.js'
 import { getMyWishlist, addToWishlist, deleteWishlist } from '../api/wishlist.js'
+import { cacheWishSource, wishSourceKey } from '../utils/wishlistCache.js'
 
 import rank1Image from '../assets/rankings/rank-1-midnight-amber.png'
 import rank2Image from '../assets/rankings/rank-2-minimal-jade.png'
@@ -53,10 +54,22 @@ function withDemoImage(combination) {
   return { ...combination, image: combination.image || RANK_IMAGES[combination.rank] }
 }
 
+// 랭킹 카드를 위시리스트에 보낼 때 실제로 저장되는 필드로 정규화.
+// 백엔드는 이 knot/tassel/decoration 조합만 그대로 되돌려주므로(rank나 item_id는
+// 응답에 남아있지 않음), 하트 상태 매칭은 항상 이 필드 기준으로 해야 새로고침/재방문
+// 후에도 유지된다.
+function toWishParts(combination) {
+  return {
+    knot: combination.knot || combination.knot_id || 1,
+    tassel: combination.tassel || combination.tassel_id || 1,
+    decoration: combination.decoration || combination.decoration_id || 1,
+  }
+}
+
 export default function PopularCombinations() {
   const [rankings, setRankings] = useState([])
-  const [likedRanks, setLikedRanks] = useState([]) // 화면 표시용 (rank 또는 item_id 저장)
-  const [wishlistMap, setWishlistMap] = useState({}) // rank/id -> wishlist_id 매핑용
+  const [likedKeys, setLikedKeys] = useState([]) // knot_tassel_decoration 조합 키 목록
+  const [wishlistMap, setWishlistMap] = useState({}) // 조합 키 -> wishlist row id 매핑용
   const [selectedRank, setSelectedRank] = useState(null)
 
   useEffect(() => {
@@ -73,13 +86,11 @@ export default function PopularCombinations() {
       .then((res) => {
         const list = Array.isArray(res) ? res : res?.data || []
 
-        const likedIds = list.map((item) => item.item_id || item.rank || item.id)
-        setLikedRanks(likedIds)
+        setLikedKeys(list.map((item) => wishSourceKey(item)))
 
         const map = {}
         list.forEach((item) => {
-          const key = item.item_id || item.rank || item.id
-          map[key] = item.id
+          map[wishSourceKey(item)] = item.id
         })
         setWishlistMap(map)
       })
@@ -89,19 +100,19 @@ export default function PopularCombinations() {
   async function toggleLike(combination) {
     if (!combination) return
 
-    const itemId = combination.id || combination.item_id
-    const targetKey = itemId || combination.rank
-    const isLiked = likedRanks.includes(targetKey) || likedRanks.includes(combination.rank)
+    const parts = toWishParts(combination)
+    const targetKey = wishSourceKey(parts)
+    const isLiked = likedKeys.includes(targetKey)
 
     // UI 즉시 반영 (Optimistic Update)
-    setLikedRanks((current) =>
-      isLiked ? current.filter((liked) => liked !== targetKey && liked !== combination.rank) : [...current, targetKey]
+    setLikedKeys((current) =>
+      isLiked ? current.filter((key) => key !== targetKey) : [...current, targetKey]
     )
 
     try {
       if (isLiked) {
         // 위시리스트 삭제
-        const wishlistId = wishlistMap[targetKey] || targetKey
+        const wishlistId = wishlistMap[targetKey]
         await deleteWishlist(wishlistId)
 
         setWishlistMap((prev) => {
@@ -112,23 +123,24 @@ export default function PopularCombinations() {
       } else {
         // 위시리스트 추가
         const payload = {
-          ...(itemId && { item_id: itemId }),
-          knot: combination.knot || combination.knot_id || 1,
-          tassel: combination.tassel || combination.tassel_id || 1,
-          decoration: combination.decoration || combination.decoration_id || 1,
+          ...parts,
           title: combination.title || '인기 노리개 조합',
           description: combination.description || '',
         }
 
+        // 백엔드가 조회 시 title/image를 그대로 돌려주지 않으므로 홈 화면의
+        // 원본 제목/이미지를 로컬에 캐싱해 위시리스트 화면에서 재사용한다.
+        cacheWishSource(payload, { title: combination.title, image: combination.image, creator: combination.creator })
+
         const res = await addToWishlist(payload)
-        const newId = res?.id || res?.data?.id || targetKey
+        const newId = res?.id || res?.data?.id
         setWishlistMap((prev) => ({ ...prev, [targetKey]: newId }))
       }
     } catch (error) {
       console.error('위시리스트 토글 실패:', error)
       // 실패 시 상태 복구
-      setLikedRanks((current) =>
-        isLiked ? [...current, targetKey] : current.filter((liked) => liked !== targetKey)
+      setLikedKeys((current) =>
+        isLiked ? [...current, targetKey] : current.filter((key) => key !== targetKey)
       )
       alert('위시리스트 반영에 실패했습니다.')
     }
@@ -151,8 +163,7 @@ export default function PopularCombinations() {
         <div className="popular-combinations__list">
           {rankings.map((combination) => {
             const { rank, title, description, creator, image } = combination
-            const cardKey = combination.id || combination.item_id || rank
-            const liked = likedRanks.includes(cardKey) || likedRanks.includes(rank)
+            const liked = likedKeys.includes(wishSourceKey(toWishParts(combination)))
 
             return (
               <article
@@ -210,8 +221,7 @@ export default function PopularCombinations() {
       <CombinationDetailModal
         combination={selectedCombination}
         liked={
-          selectedRank !== null &&
-          (likedRanks.includes(selectedCombination?.id) || likedRanks.includes(selectedRank))
+          selectedCombination !== null && likedKeys.includes(wishSourceKey(toWishParts(selectedCombination)))
         }
         onToggleLike={() => toggleLike(selectedCombination)}
         onClose={() => setSelectedRank(null)}

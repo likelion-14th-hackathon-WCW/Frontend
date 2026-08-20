@@ -1,0 +1,186 @@
+.wg-page {
+  width: 100%;
+}
+
+.wg-header h2 {
+  font-size: 32px;
+  font-weight: 400;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.wg-header p {
+  font-size: 18px;
+  font-weight: 500;
+  color: #666;
+  margin: 12px 0 0 0;
+}
+
+.wg-loading,
+.wg-empty {
+  padding: 60px 0;
+  text-align: center;
+  color: #888;
+  font-size: 15px;
+}
+
+.wg-empty__hint {
+  font-size: 13px;
+  color: #aaa;
+  margin-top: 8px;
+}
+
+.wg-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 32px;
+  margin-top: 32px;
+}
+
+@media (max-width: 768px) {
+  .wg-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.wg-card {
+  border: 1px solid #e2b283;
+  background-color: #fff;
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: box-shadow 0.2s ease;
+}
+
+.wg-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.wg-card__image-area {
+  position: relative;
+  width: 100%;
+  padding: 32px;
+  box-sizing: border-box;
+}
+
+.wg-card__image-frame {
+  width: 100%;
+  height: 152px;
+  background-color: #fbf9f5;
+  border: 1px solid #f9e5b4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.wg-card__placeholder {
+  font-size: 40px;
+}
+
+.wg-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.wg-card__heart {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  width: 24px;
+  height: 24px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.wg-card__heart img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.wg-card__heart:hover {
+  transform: scale(1.15);
+}
+
+.wg-card__divider {
+  height: 1px;
+  background-color: #e2b283;
+}
+
+.wg-card__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 24px;
+  justify-content: space-between;
+}
+
+.wg-card__title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.wg-card__title {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 20px;
+  font-weight: 500;
+  color: #1d1b20;
+  margin: 0;
+}
+
+.wg-card__date {
+  font-size: 14px;
+  color: #666;
+  letter-spacing: -0.28px;
+  white-space: nowrap;
+}
+
+.wg-card__desc {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.5;
+  letter-spacing: -0.28px;
+  margin: 0;
+}
+
+.wg-card__actions {
+  display: flex;
+  gap: 12px;
+  padding-top: 16px;
+}
+
+.wg-btn {
+  flex: 1;
+  height: 40px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.28px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  text-align: center;
+}
+
+.wg-btn:hover {
+  opacity: 0.85;
+}
+
+.wg-btn--secondary {
+  background-color: #ebcaaa;
+  color: #484848;
+}
+
+.wg-btn--primary {
+  background-color: #d48c46;
+  color: #fbf9f5;
+}
