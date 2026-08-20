@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import './ReservationLookup.css'
 import mailIcon from '../assets/mail-icon.svg'
 import lockIcon from '../assets/lock-icon.svg'
@@ -6,6 +7,7 @@ import eyeOffIcon from '../assets/eye-toggle-icon.svg'
 import eyeOpenIcon from '../assets/eye-open-icon.svg'
 
 export default function ReservationLookup() {
+  const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -13,9 +15,20 @@ export default function ReservationLookup() {
 
   const canSubmit = email.trim().length > 0 && password.length > 0
 
-  // ponytail: 비회원 예약 조회 API가 아직 명세에 없음 — docs/reservation-lookup-api-todo.md 참고
+  // ponytail: 비회원 예약 조회 API가 아직 명세에 없음(docs/reservation-lookup-api-todo.md) — 실제 API가 생기면
+  // 여기서 예약 데이터를 받아와 GuestReservationDetail로 넘기면 됨. 지금은 조회 성공을 가정한 안내용 목업.
   const handleSubmit = () => {
-    setSubmitError('예약 조회 기능은 준비 중입니다.')
+    setSubmitError('')
+    navigate('/reservation/lookup/detail', {
+      state: {
+        reservation: {
+          email,
+          reservationNumber: 'MCM-2026-1010',
+          storeName: 'MCM 롯데백화점 본점',
+          dateLabel: '2026년 8월 13일 오후 4시 30분',
+        },
+      },
+    })
   }
 
   return (

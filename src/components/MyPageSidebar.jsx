@@ -31,19 +31,25 @@ const SIDEBAR_ITEMS = [
   { key: 'settings', label: '계정 설정', icon: iconSettings, activeIcon: iconSettingsActive },
 ];
 
+// MyPage.jsx의 pathMap과 동일한 탭↔경로 매핑 (onSelect 없이 다른 페이지에서 진입할 때 사용)
+const TAB_PATHS = {
+  profile: '/mypage',
+  reservations: '/mypage/reservations',
+  items: '/mypage/collections',
+  ownerships: '/mypage/ownership',
+  wishlist: '/mypage/wishlist',
+  settings: '/mypage/settings',
+};
+
 export default function MyPageSidebar({ active, onSelect }) {
   const navigate = useNavigate();
 
   const handleClick = (key) => {
-    if (key === 'reservations') {
-      navigate('/mypage/reservations');
-      return;
-    }
-    // 마이페이지 본체(MyPage.jsx)에서는 내부 탭 전환, 그 외(예약 상세/취소 등)에서는 마이페이지로 이동
+    // 마이페이지 본체(MyPage.jsx)에서는 내부 탭 전환, 그 외(예약 상세/취소 등)에서는 해당 탭 경로로 이동
     if (onSelect) {
       onSelect(key);
     } else {
-      navigate('/mypage');
+      navigate(TAB_PATHS[key] || '/mypage');
     }
   };
 

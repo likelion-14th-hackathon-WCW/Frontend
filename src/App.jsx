@@ -14,6 +14,8 @@ import ReservationGuestInfo from './pages/ReservationGuestInfo.jsx'
 import ReservationLookup from './pages/ReservationLookup.jsx'
 import ReservationCompleteGuest from './pages/ReservationCompleteGuest.jsx'
 import ReservationCompleteMember from './pages/ReservationCompleteMember.jsx'
+import GuestReservationDetail from './pages/GuestReservationDetail.jsx'
+import GuestReservationCancel from './pages/GuestReservationCancel.jsx'
 import SignUp from './pages/SignUp.jsx'
 import SignUpComplete from './pages/SignUpComplete.jsx'
 import Login from './pages/Login.jsx'
@@ -44,6 +46,8 @@ function App() {
         <Route path="/reservation" element={<Reservation />} />
         <Route path="/reservation/guest-info" element={<ReservationGuestInfo />} />
         <Route path="/reservation/lookup" element={<ReservationLookup />} />
+        <Route path="/reservation/lookup/detail" element={<GuestReservationDetail />} />
+        <Route path="/reservation/lookup/cancel" element={<GuestReservationCancel />} />
         <Route path="/reservation/complete-guest" element={<ReservationCompleteGuest />} />
         <Route path="/reservation/complete-member" element={<ReservationCompleteMember />} />
         <Route path="/signup" element={<SignUp />} />
@@ -57,6 +61,10 @@ function App() {
         <Route path="/mypage/reservations" element={<MyPageReservations />} />
         <Route path="/mypage/reservations/:id" element={<MyPageReservationDetail />} />
         <Route path="/mypage/reservations/:id/cancel" element={<MyPageReservationCancel />} />
+        <Route path="/mypage/collections" element={<MyPage />} />
+        <Route path="/mypage/ownership" element={<MyPage />} />
+        <Route path="/mypage/wishlist" element={<MyPage />} />
+        <Route path="/mypage/settings" element={<MyPage />} />
         <Route path="/digital-ownership" element={<DigitalOwnershipPage />} />
       </Routes>
       <Footer />

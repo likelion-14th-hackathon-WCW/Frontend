@@ -1,5 +1,5 @@
-// ponytail: mock reservation number — real issuance is backend/separate-repo's job
-export function generateReservationNumber(year) {
-  const code = String(Math.floor(1000 + Math.random() * 9000))
-  return `MCM-${year}-${code}`
+export function formatReservationNumber(reservation) {
+  if (!reservation) return ''
+  const id = reservation.id ?? reservation.reservation_id
+  return reservation.reservation_number || (id != null ? `MCM-${id}` : '')
 }

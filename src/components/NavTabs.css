@@ -3,6 +3,8 @@
   align-items: center;
   justify-content: center;
   gap: var(--nav-gap);
+  flex-wrap: wrap;
+  row-gap: 8px;
 }
 
 .nav-tabs__link {

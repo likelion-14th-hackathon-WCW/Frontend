@@ -1,0 +1,171 @@
+.guest-reservation-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-width: 872px;
+  margin: 0 auto;
+  padding: 48px 24px 120px;
+}
+
+.guest-reservation-detail__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.guest-reservation-detail__title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.guest-reservation-detail__back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.guest-reservation-detail__back:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.guest-reservation-detail__back img {
+  width: 10px;
+  height: 16px;
+  display: block;
+}
+
+.guest-reservation-detail__title {
+  margin: 0;
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 32px;
+  letter-spacing: -0.64px;
+  color: var(--color-heading-strong);
+}
+
+/* 하드코딩: point/green (common.css에 없는 톤) */
+.guest-reservation-detail__tag {
+  padding: 4px 12px;
+  font-family: var(--font-body);
+  font-size: 18px;
+  color: #0a4747;
+  background: #b6d8d8;
+  border: 1px solid transparent;
+  box-sizing: border-box;
+}
+
+.guest-reservation-detail__summary-row {
+  display: flex;
+  gap: 24px;
+  align-items: stretch;
+}
+
+.guest-reservation-detail__image-container {
+  flex: 1 0 0;
+  min-height: 290px;
+  display: flex;
+  align-items: stretch;
+  background: var(--color-background);
+  border: 1px solid var(--color-brown-200);
+  border-radius: 2px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.guest-reservation-detail__image-container .norigae-preview {
+  width: 100%;
+  height: 100%;
+  min-height: 290px;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+.guest-reservation-detail__summary-row > :nth-child(2) {
+  flex: 1 0 0;
+}
+
+.guest-reservation-detail__store-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-top: 8px;
+}
+
+.guest-reservation-detail__store-heading {
+  margin: 0;
+  padding: 0 4px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 18px;
+  color: var(--color-heading-strong);
+}
+
+.guest-reservation-detail__store-body {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+.guest-reservation-detail__store-body .store-map {
+  flex: 1 0 0;
+  height: 274px;
+}
+
+.guest-reservation-detail__store-info {
+  display: flex;
+  flex: 1 0 0;
+  flex-direction: column;
+  padding: 8px;
+  gap: 24px;
+}
+
+.guest-reservation-detail__info-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.guest-reservation-detail__info-label {
+  font-family: var(--font-body);
+  font-size: 14px;
+  letter-spacing: -0.28px;
+  color: var(--color-grey-300);
+}
+
+.guest-reservation-detail__info-value {
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--color-heading-strong);
+}
+
+.guest-reservation-detail__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.guest-reservation-detail__cancel-btn {
+  height: 56px;
+  padding: 0 24px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 16px;
+  color: #bf3341;
+  background: #fff;
+  border: 1px solid #88242e;
+  cursor: pointer;
+}
+
+.guest-reservation-detail__cancel-btn:hover {
+  background: #fdf2f3;
+}

@@ -7,6 +7,7 @@ import StoreMap from '../components/StoreMap.jsx'
 import { getMyReservations, getMyItems } from '../api/mypage.js'
 import { getCurrentSeason } from '../api/season.js'
 import { readReservationDraft } from '../utils/reservationDraft.js'
+import { formatReservationNumber } from '../utils/reservationNumber.js'
 import { buildNorigaeData } from '../utils/norigaeAssets.js'
 import { STORE_INFO } from '../data/storeInfo.js'
 import chevronLeft from '../assets/chevron-left.svg'
@@ -54,7 +55,7 @@ export default function MyPageReservationDetail() {
   const storeInfo = STORE_INFO[storeName]
   const isCancelled = reservation?.status === '취소' || reservation?.status === '취소됨' || reservation?.status === '예약 취소'
   const isCompleted = reservation?.status === '완료' || reservation?.status === '완료됨' || reservation?.status === '방문 완료' || reservation?.status === '방문완료' || reservation?.status === '이용 완료' || reservation?.status === '이용완료'
-  const reservationNumber = reservation?.reservation_number || (reservation ? `MCM-${reservation.id ?? reservation.reservation_id}` : '')
+  const reservationNumber = formatReservationNumber(reservation)
 
   const previewData = useMemo(() => {
     if (!reservation) return null

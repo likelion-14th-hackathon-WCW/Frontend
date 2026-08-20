@@ -1,10 +1,11 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './LoginModal.css';
 import loginmodalicon from '../assets/login-modal.svg'
 
 export default function LoginModal({ isOpen, onClose }) {
   const navigate = useNavigate();
+  const location = useLocation();
 
   if (!isOpen) return null;
 
@@ -28,13 +29,13 @@ export default function LoginModal({ isOpen, onClose }) {
         <div className="modal-button-group">
           <button
             className="btn-login"
-            onClick={() => navigate('/login')}
+            onClick={() => navigate('/login', { state: { from: location.pathname } })}
           >
             로그인하기
           </button>
           <button
             className="btn-signup"
-            onClick={() => navigate('/signup')}
+            onClick={() => navigate('/signup', { state: { from: location.pathname } })}
           >
             회원가입하기
           </button>

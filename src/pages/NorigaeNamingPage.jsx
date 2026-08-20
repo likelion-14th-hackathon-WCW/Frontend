@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { saveNorigaeDesign } from '../api/norigaeApi';
+import { saveNorigaeDesign, getRecommendProducts } from '../api/norigaeApi';
 import successCheckIcon from '../assets/success-check-large.svg';
 import './NorigaeNamingPage.css';
 
@@ -34,6 +34,15 @@ export default function NorigaeNamingPage() {
   const [title, setTitle] = useState('');
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [savedItemId, setSavedItemId] = useState(null);
+  const [recommendProducts, setRecommendProducts] = useState([]);
+
+  useEffect(() => {
+    if (!saved || !savedItemId) return;
+    getRecommendProducts(savedItemId).then((result) => {
+      if (result.success) setRecommendProducts(result.data);
+    });
+  }, [saved, savedItemId]);
 
   useEffect(() => {
     if (!norigaeData) {
@@ -78,6 +87,7 @@ export default function NorigaeNamingPage() {
         console.error('로컬 스토리지 캐시 실패:', err);
       }
       setTitle(finalTitle);
+      setSavedItemId(savedItem.id);
       setSaved(true);
     } else if (result.status === 401) {
       navigate('/login');
@@ -118,6 +128,27 @@ export default function NorigaeNamingPage() {
               readOnly
             />
           </div>
+
+          {recommendProducts.length > 0 && (
+            <div className="mcm-recommend-list">
+              <div className="mcm-recommend-title">함께 어울리는 MCM 상품</div>
+              <div className="mcm-recommend-cards">
+                {recommendProducts.map((product) => (
+                  <a
+                    key={product.id}
+                    href={product.mcm_link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mcm-product-card"
+                  >
+                    <img src={product.image_url} alt={product.name} className="mcm-product-img" />
+                    <span className="mcm-product-name">{product.name}</span>
+                    <span className="mcm-product-price">{product.price.toLocaleString()}원</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="naming-success-btn-group">
             <button className="naming-btn naming-btn--primary" onClick={() => navigate('/mypage')}>

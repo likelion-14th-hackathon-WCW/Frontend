@@ -1,6 +1,17 @@
 @import './styles/common.css';
 
 #root {
-  width: 1280px;
+  width: 100%;
+  max-width: 1280px;
   margin: 0 auto;
+}
+
+html,
+body {
+  overflow-x: hidden;
+}
+
+img,
+video {
+  max-width: 100%;
 }

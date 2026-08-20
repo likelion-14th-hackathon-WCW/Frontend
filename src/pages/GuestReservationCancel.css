@@ -1,80 +1,67 @@
-.mypage-wrapper {
-  display: flex;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 48px 64px;
-  gap: 80px;
-  box-sizing: border-box;
-}
-
-@media (max-width: 1024px) {
-  .mypage-wrapper {
-    padding: 40px 32px;
-    gap: 40px;
-  }
-}
-
-@media (max-width: 768px) {
-  .mypage-wrapper {
-    flex-direction: column;
-    padding: 32px 20px;
-  }
-
-  .mypage-sidebar {
-    width: 100%;
-  }
-
-  .sidebar-menu {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-}
-
-.mypage-content {
-  flex: 1;
-  min-width: 0;
+.guest-cancel {
   display: flex;
   flex-direction: column;
   gap: 32px;
+  max-width: 872px;
+  margin: 0 auto;
+  padding: 48px 24px 120px;
 }
 
-.content-header {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #f6d992;
-}
-
-.content-header h2 {
+.guest-cancel__title {
+  margin: 0;
   font-family: var(--font-body);
   font-weight: 400;
   font-size: 32px;
   letter-spacing: -0.64px;
   color: var(--color-heading-strong);
-  margin: 0;
 }
 
-.cancel-empty {
-  font-family: var(--font-body);
-  font-size: 14px;
-  color: var(--color-grey-300);
+.guest-cancel__summary-row {
+  display: flex;
+  gap: 24px;
+  align-items: stretch;
 }
 
-.cancel-reason-section {
+.guest-cancel__image-container {
+  flex: 1 0 0;
+  min-height: 290px;
+  display: flex;
+  align-items: stretch;
+  background: var(--color-background);
+  border: 1px solid var(--color-brown-200);
+  border-radius: 2px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.guest-cancel__image-container .norigae-preview {
+  width: 100%;
+  height: 100%;
+  min-height: 290px;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+.guest-cancel__summary-row > :nth-child(2) {
+  flex: 1 0 0;
+}
+
+.guest-cancel__reason-section {
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
 
-.cancel-reason-heading {
+.guest-cancel__reason-heading {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
   gap: 16px;
 }
 
-.cancel-reason-heading h3 {
+.guest-cancel__reason-heading h2 {
   margin: 0;
   font-family: var(--font-body);
   font-weight: 500;
@@ -82,7 +69,7 @@
   color: var(--color-heading-strong);
 }
 
-.cancel-reason-helper {
+.guest-cancel__reason-helper {
   margin: 0;
   font-family: var(--font-body);
   font-size: 14px;
@@ -91,13 +78,13 @@
   white-space: nowrap;
 }
 
-.cancel-reason-grid {
+.guest-cancel__reason-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
 }
 
-.cancel-reason-btn {
+.guest-cancel__reason-btn {
   padding: 16px;
   background-color: var(--color-brown-50);
   border: 1px solid transparent;
@@ -108,14 +95,13 @@
   cursor: pointer;
 }
 
-.cancel-reason-btn--active {
-  background-color: var(--color-brown-50);
-  border-color: var(--color-accent);
-  color: var(--color-accent-dark);
+.guest-cancel__reason-btn--active {
+  background-color: var(--color-accent);
+  color: var(--color-background);
   font-weight: 500;
 }
 
-.cancel-warning-box {
+.guest-cancel__warning-box {
   display: flex;
   align-items: center;
   gap: 16px;
@@ -125,19 +111,19 @@
   border-radius: 12px;
 }
 
-.cancel-warning-icon {
+.guest-cancel__warning-icon {
   flex-shrink: 0;
   width: 30px;
   height: 30px;
 }
 
-.cancel-warning-text {
+.guest-cancel__warning-text {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.cancel-warning-kr {
+.guest-cancel__warning-kr {
   margin: 0;
   font-family: var(--font-body);
   font-weight: 500;
@@ -146,7 +132,7 @@
   color: #691c24;
 }
 
-.cancel-warning-en {
+.guest-cancel__warning-en {
   margin: 0;
   font-family: var(--font-body);
   font-size: 12px;
@@ -154,21 +140,14 @@
   color: var(--color-grey-300);
 }
 
-.cancel-error {
-  margin: 0;
-  font-family: var(--font-body);
-  font-size: 14px;
-  color: #cc5c67;
-}
-
-.cancel-actions {
+.guest-cancel__actions {
   display: flex;
   justify-content: flex-end;
   gap: 16px;
 }
 
-.cancel-btn-keep,
-.cancel-btn-confirm {
+.guest-cancel__btn-keep,
+.guest-cancel__btn-confirm {
   min-width: 170px;
   padding: 17px 1px;
   font-family: var(--font-body);
@@ -178,20 +157,25 @@
   box-sizing: border-box;
 }
 
-.cancel-btn-keep {
+.guest-cancel__btn-keep {
   background-color: var(--color-page-bg);
   border: 1px solid var(--color-grey-400);
   color: var(--color-heading-strong);
 }
 
-.cancel-btn-confirm {
+.guest-cancel__btn-confirm {
   background-color: #fff;
   border: 1px solid #cc5c67;
   color: #d47680;
   font-weight: 500;
 }
 
-.cancel-btn-confirm:disabled {
+.guest-cancel__btn-confirm:not(:disabled) {
+  border-color: #88242e;
+  color: #bf3341;
+}
+
+.guest-cancel__btn-confirm:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }

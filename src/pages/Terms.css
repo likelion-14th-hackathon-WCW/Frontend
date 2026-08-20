@@ -7,6 +7,23 @@
   padding: 48px 64px;
 }
 
+@media (max-width: 1024px) {
+  .terms {
+    padding: 40px 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  .terms {
+    flex-direction: column;
+    padding: 32px 20px;
+  }
+
+  .terms__content {
+    align-items: flex-start;
+  }
+}
+
 .terms__content {
   display: flex;
   flex-direction: column;

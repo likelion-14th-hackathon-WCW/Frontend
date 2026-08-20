@@ -8,9 +8,16 @@ import eyeOffIcon from '../assets/eye-toggle-icon.svg'
 import eyeOpenIcon from '../assets/eye-open-icon.svg'
 import hintCheckDefault from '../assets/hint-check-default.svg'
 import hintCheckValid from '../assets/hint-check-valid.svg'
+import nicknameIcon from '../assets/nickname-icon.svg'
+import TermsModal from '../components/TermsModal.jsx'
 
 const ALLOWED_SPECIAL_CHARS = '!@#$%^&*'
 const DISALLOWED_PASSWORD_CHARS = /[^a-zA-Z0-9!@#$%^&*]/g
+
+const NICKNAME_RULE = {
+  label: '특수문자 제외 2~10자 이내',
+  test: (v) => /^[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]{2,10}$/.test(v),
+}
 
 const PASSWORD_RULES = [
   { key: 'length', label: '최소 8자 이상', test: (v) => v.length >= 8 },
@@ -28,8 +35,8 @@ const REQUIRED_AGREEMENTS = [
 ]
 
 const OPTIONAL_AGREEMENTS = [
-  { key: 'newsletter', label: '[선택 ] MCM 의 광고와 마케팅 메시지를 뉴스레터로 받습니다' },
-  { key: 'sms', label: '[선택] MCM 광고 및 마케팅 메시지를 문자 메시지로 받습니다' },
+  { key: 'newsletter', label: '[선택] MCM 광고 및 마케팅 메시지를 뉴스레터로 받습니다' },
+  { key: 'sms', label: '[선택] MCM 광고 및 마케팅/예약 알림 메시지를 문자 및 카카오톡으로 받습니다' },
   { key: 'marketing', label: '[선택] MCM 마케팅 활동(소식, 맞춤형 상품 제안 등)을 위한 개인정보 활용에 대하여 동의합니다' },
 ]
 
@@ -39,6 +46,7 @@ const ALL_AGREEMENT_KEYS = [...REQUIRED_AGREEMENTS, ...OPTIONAL_AGREEMENTS, AGE_
 
 export default function SignUp() {
   const [name, setName] = useState('')
+  const [nickname, setNickname] = useState('')
   const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -48,10 +56,12 @@ export default function SignUp() {
   const [agreements, setAgreements] = useState(() =>
     Object.fromEntries(ALL_AGREEMENT_KEYS.map((key) => [key, false]))
   )
+  const [activeTermsKey, setActiveTermsKey] = useState(null)
   const [submitError, setSubmitError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const isNameValid = name.trim().length > 0
+  const isNicknameValid = NICKNAME_RULE.test(nickname)
   const isEmailValid = email.trim().length > 0
   const passwordRuleStatus = PASSWORD_RULES.map((rule) => ({ ...rule, valid: rule.test(password) }))
   const isPasswordValid = passwordRuleStatus.every((rule) => rule.valid)
@@ -60,7 +70,8 @@ export default function SignUp() {
   const requiredAgreementKeys = [...REQUIRED_AGREEMENTS, AGE_AGREEMENT].map((a) => a.key)
   const isAgreementValid = requiredAgreementKeys.every((key) => agreements[key])
 
-  const canSubmit = isNameValid && isEmailValid && isPasswordValid && isConfirmValid && isAgreementValid
+  const canSubmit =
+    isNameValid && isNicknameValid && isEmailValid && isPasswordValid && isConfirmValid && isAgreementValid
 
   const toggleAgreement = (key) => {
     setAgreements((prev) => ({ ...prev, [key]: !prev[key] }))
@@ -74,7 +85,15 @@ export default function SignUp() {
   const handleSubmit = async () => {
     setSubmitError('')
     setIsSubmitting(true)
-    const result = await signup({ email, name, phone, password, passwordConfirm: confirmPassword })
+    const result = await signup({
+      email,
+      name,
+      nickname,
+      phone,
+      password,
+      passwordConfirm: confirmPassword,
+      agreements,
+    })
     setIsSubmitting(false)
     if (!result.success) {
       setSubmitError(result.message)
@@ -88,7 +107,9 @@ export default function SignUp() {
       <div className="signup__card">
         <div className="signup__intro">
           <h1 className="signup__title">회원가입</h1>
-          <p className="signup__subtitle">(서비스명) 와 함께해주셔서 감사합니다.</p>
+          <p className="signup__subtitle">
+            <span className="signup__subtitle-brand">Yeongyeol</span> 와 함께해주셔서 감사합니다.
+          </p>
         </div>
 
         <div className="signup__form">
@@ -111,6 +132,26 @@ export default function SignUp() {
                   onChange={(event) => setName(event.target.value)}
                 />
               </div>
+            </label>
+
+            <label className="text-box">
+              <span className="text-box__label">
+                닉네임 <span className="signup__asterisk">*</span>
+              </span>
+              <div className={`text-box__box${isNicknameValid ? ' text-box__box--valid' : ''}`}>
+                <img src={nicknameIcon} alt="" className="text-box__icon" />
+                <input
+                  type="text"
+                  className="text-box__input"
+                  placeholder="닉네임을 입력해주세요"
+                  value={nickname}
+                  onChange={(event) => setNickname(event.target.value)}
+                />
+              </div>
+              <span className={`text-box__hint${isNicknameValid ? ' text-box__hint--valid' : ''}`}>
+                <img src={isNicknameValid ? hintCheckValid : hintCheckDefault} alt="" />
+                {NICKNAME_RULE.label}
+              </span>
             </label>
 
             <label className="text-box">
@@ -210,33 +251,60 @@ export default function SignUp() {
 
             <div className="signup__agree-list">
               {REQUIRED_AGREEMENTS.map((agreement) => (
-                <label key={agreement.key} className="signup__agree">
-                  <input
-                    type="checkbox"
-                    checked={agreements[agreement.key]}
-                    onChange={() => toggleAgreement(agreement.key)}
-                  />
-                  <span>{agreement.label}</span>
-                </label>
+                <div key={agreement.key} className="signup__agree-row">
+                  <label className="signup__agree signup__agree--underline">
+                    <input
+                      type="checkbox"
+                      checked={agreements[agreement.key]}
+                      onChange={() => toggleAgreement(agreement.key)}
+                    />
+                    <span>{agreement.label}</span>
+                  </label>
+                  <button
+                    type="button"
+                    className="signup__agree-view-btn"
+                    onClick={() => setActiveTermsKey(agreement.key)}
+                  >
+                    보기
+                  </button>
+                </div>
               ))}
               {OPTIONAL_AGREEMENTS.map((agreement) => (
-                <label key={agreement.key} className="signup__agree signup__agree--underline">
+                <div key={agreement.key} className="signup__agree-row">
+                  <label className="signup__agree signup__agree--underline">
+                    <input
+                      type="checkbox"
+                      checked={agreements[agreement.key]}
+                      onChange={() => toggleAgreement(agreement.key)}
+                    />
+                    <span>{agreement.label}</span>
+                  </label>
+                  <button
+                    type="button"
+                    className="signup__agree-view-btn"
+                    onClick={() => setActiveTermsKey(agreement.key)}
+                  >
+                    보기
+                  </button>
+                </div>
+              ))}
+              <div className="signup__agree-row">
+                <label className="signup__agree signup__agree--underline">
                   <input
                     type="checkbox"
-                    checked={agreements[agreement.key]}
-                    onChange={() => toggleAgreement(agreement.key)}
+                    checked={agreements[AGE_AGREEMENT.key]}
+                    onChange={() => toggleAgreement(AGE_AGREEMENT.key)}
                   />
-                  <span>{agreement.label}</span>
+                  <span>{AGE_AGREEMENT.label}</span>
                 </label>
-              ))}
-              <label className="signup__agree">
-                <input
-                  type="checkbox"
-                  checked={agreements[AGE_AGREEMENT.key]}
-                  onChange={() => toggleAgreement(AGE_AGREEMENT.key)}
-                />
-                <span>{AGE_AGREEMENT.label}</span>
-              </label>
+                <button
+                  type="button"
+                  className="signup__agree-view-btn"
+                  onClick={() => setActiveTermsKey(AGE_AGREEMENT.key)}
+                >
+                  보기
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -247,6 +315,13 @@ export default function SignUp() {
           {isSubmitting ? '가입 중...' : '회원가입 하기'}
         </button>
       </div>
+
+      <TermsModal
+        isOpen={!!activeTermsKey}
+        termsKey={activeTermsKey}
+        onClose={() => setActiveTermsKey(null)}
+        onAgree={(key) => setAgreements((prev) => ({ ...prev, [key]: true }))}
+      />
     </main>
   )
 }

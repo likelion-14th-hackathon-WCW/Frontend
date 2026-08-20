@@ -7,6 +7,7 @@ import tasselIcon from '../assets/component-tassel-icon.svg'
 import heartIcon from '../assets/heart-icon.svg'
 import heartIconFilled from '../assets/heart-icon-filled.svg'
 import optionPlaceholderIcon from '../assets/option-placeholder-icon.svg'
+import { getNorigaeComponentNames } from '../utils/norigaeAssets.js'
 
 export default function CombinationDetailModal({ combination, liked, onToggleLike, onClose }) {
   useEffect(() => {
@@ -19,8 +20,9 @@ export default function CombinationDetailModal({ combination, liked, onToggleLik
 
   if (!combination) return null
 
-  const { title, creator, description, decoration_name: decorationName, knot_name: knotName, tassel_name: tasselName } =
-    combination
+  const { title, creator, description, image, decoration_name: decorationName, knot_name: knotName } = combination
+  // 백엔드는 술 이름 문자열이 아니라 tassel_count(개수)만 내려줌
+  const { tasselName } = getNorigaeComponentNames(combination)
 
   return (
     <div className="combination-modal-overlay" onClick={onClose}>
@@ -30,10 +32,17 @@ export default function CombinationDetailModal({ combination, liked, onToggleLik
         </button>
 
         <div className="combination-modal__image">
-          {/* 제작 사진 자리 표시자: 실제 조합 이미지는 아직 붙이지 않음, 추후 이미지 데이터 연동 시 이 박스를 <img>로 교체 */}
-          <div className="combination-modal__image-placeholder">
-            <img src={optionPlaceholderIcon} alt="" className="combination-modal__image-icon" />
-          </div>
+          {image ? (
+            <img
+              src={image}
+              alt={title}
+              className={`combination-modal__image-photo combination-modal__image-photo--rank-${combination.rank}`}
+            />
+          ) : (
+            <div className="combination-modal__image-placeholder">
+              <img src={optionPlaceholderIcon} alt="" className="combination-modal__image-icon" />
+            </div>
+          )}
         </div>
 
         <div className="combination-modal__details">

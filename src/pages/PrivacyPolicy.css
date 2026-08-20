@@ -7,6 +7,19 @@
   padding: 48px 64px;
 }
 
+@media (max-width: 1024px) {
+  .privacy {
+    padding: 40px 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  .privacy {
+    flex-direction: column;
+    padding: 32px 20px;
+  }
+}
+
 .privacy__content {
   display: flex;
   flex-direction: column;

@@ -43,6 +43,10 @@
   margin: 0;
 }
 
+.signup__subtitle-brand {
+  font-family: 'Noto Serif KR', serif;
+}
+
 .signup__form {
   display: flex;
   flex-direction: column;
@@ -206,6 +210,36 @@
   flex-direction: column;
   gap: 12px;
   width: 100%;
+}
+
+.signup__agree-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 12px;
+}
+
+.signup__agree-row .signup__agree {
+  flex: 1;
+}
+
+.signup__agree-view-btn {
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-accent);
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 4px 6px;
+  white-space: nowrap;
+  transition: opacity var(--transition-fast);
+}
+
+.signup__agree-view-btn:hover {
+  opacity: 0.7;
 }
 
 .signup__submit {

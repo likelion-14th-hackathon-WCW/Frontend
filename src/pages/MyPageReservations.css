@@ -7,6 +7,29 @@
   box-sizing: border-box;
 }
 
+@media (max-width: 1024px) {
+  .mypage-wrapper {
+    padding: 40px 32px;
+    gap: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .mypage-wrapper {
+    flex-direction: column;
+    padding: 32px 20px;
+  }
+
+  .mypage-sidebar {
+    width: 100%;
+  }
+
+  .sidebar-menu {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
 .mypage-content {
   flex: 1;
   min-width: 0;

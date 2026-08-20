@@ -5,8 +5,9 @@ import eyeOffIcon from '../assets/eye-toggle-icon.svg'
 import eyeOpenIcon from '../assets/eye-open-icon.svg'
 import hintCheckDefault from '../assets/hint-check-default.svg'
 import hintCheckValid from '../assets/hint-check-valid.svg'
-import { readReservationDraft } from '../utils/reservationDraft.js'
+import { readReservationDraft, saveReservationDraft } from '../utils/reservationDraft.js'
 import { createReservation } from '../api/reservations.js'
+import TermsModal from '../components/TermsModal.jsx'
 
 const PASSWORD_RULE = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/
 
@@ -18,6 +19,7 @@ export default function ReservationGuestInfo() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [agreed, setAgreed] = useState(false)
+  const [activeTermsKey, setActiveTermsKey] = useState(null)
   const [submitError, setSubmitError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -28,7 +30,7 @@ export default function ReservationGuestInfo() {
   const isEmailValid = email.trim().length > 0
   const isPasswordValid = PASSWORD_RULE.test(password)
   const isConfirmValid = confirmPassword.length > 0 && confirmPassword === password
-  const canSubmit = isEmailValid && isPasswordValid && isConfirmValid
+  const canSubmit = isEmailValid && isPasswordValid && isConfirmValid && agreed
 
   const handleComplete = async () => {
     setSubmitError('')
@@ -44,6 +46,7 @@ export default function ReservationGuestInfo() {
       setSubmitError(result.message)
       return
     }
+    saveReservationDraft({ ...draft, id: result.data?.id, reservation_number: result.data?.reservation_number })
     window.location.href = '/reservation/complete-guest'
   }
 
@@ -128,10 +131,19 @@ export default function ReservationGuestInfo() {
             </label>
           </div>
 
-          <label className="guest-info__agree">
-            <input type="checkbox" checked={agreed} onChange={(event) => setAgreed(event.target.checked)} />
-            <span className="guest-info__agree-text">노리개 디자인 활용 및 권리 귀속 동의</span>
-          </label>
+          <div className="guest-info__agree-row">
+            <label className="guest-info__agree">
+              <input type="checkbox" checked={agreed} onChange={(event) => setAgreed(event.target.checked)} />
+              <span className="guest-info__agree-text">노리개 디자인 활용 및 권리 귀속 동의</span>
+            </label>
+            <button
+              type="button"
+              className="guest-info__agree-view-btn"
+              onClick={() => setActiveTermsKey('norigae_design_rights')}
+            >
+              보기
+            </button>
+          </div>
 
           {submitError && <p className="guest-info__error">{submitError}</p>}
 
@@ -150,6 +162,13 @@ export default function ReservationGuestInfo() {
           </div>
         </div>
       </div>
+
+      <TermsModal
+        isOpen={!!activeTermsKey}
+        termsKey={activeTermsKey}
+        onClose={() => setActiveTermsKey(null)}
+        onAgree={() => setAgreed(true)}
+      />
     </main>
   )
 }
