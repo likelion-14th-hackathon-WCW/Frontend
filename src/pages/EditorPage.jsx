@@ -252,21 +252,18 @@ export default function EditorPage() {
     });
   };
 
-  const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: title || '나만의 노리개',
-          text: `${keyword} 소망을 담은 나만의 노리개 디자인입니다.`,
-          url: window.location.href,
-        });
-      } catch (err) {
-        // 공유 취소
-      }
-    } else {
-      await navigator.clipboard.writeText(window.location.href);
-      alert('공유 링크가 클립보드에 복사되었습니다.');
-    }
+  const handleShare = () => {
+    navigate('/editor/share', {
+      state: {
+        norigaeData: {
+          title: title || `${activeKnotObj?.name || '커스텀'} 노리개`,
+          knotImage: KNOT_COMBO_ASSETS[`knot-${activeKnotObj.comboKey}-${colorKey}`],
+          decorationImage: activeDecoObj.image,
+          tasselImage: TASSEL_COMBO_ASSETS[`tassel-${activeTasselObj.count}-${colorKey}`],
+          tasselCount: activeTasselObj.count,
+        },
+      },
+    });
   };
 
   const handleGoToReservation = () => {
