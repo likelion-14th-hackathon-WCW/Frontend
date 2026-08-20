@@ -273,6 +273,54 @@
   letter-spacing: -0.28px;
 }
 
+.mcm-recommend-list {
+  width: 100%;
+}
+
+.mcm-recommend-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #222222;
+  margin-bottom: 12px;
+}
+
+.mcm-recommend-cards {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+}
+
+.mcm-product-card {
+  flex: 0 0 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.mcm-product-img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.mcm-product-name {
+  font-size: 12px;
+  color: #222222;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mcm-product-price {
+  font-size: 12px;
+  font-weight: 700;
+  color: #d48c46;
+}
+
 @media (max-width: 480px) {
   .naming-desc {
     white-space: normal;

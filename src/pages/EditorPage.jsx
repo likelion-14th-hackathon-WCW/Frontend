@@ -75,8 +75,19 @@ function useHorizontalScrollThumb() {
   return { ref, thumb, onScroll: update };
 }
 
+const DRAFT_STORAGE_KEY = 'wcw_editor_draft';
+
+function loadDraft() {
+  try {
+    return JSON.parse(sessionStorage.getItem(DRAFT_STORAGE_KEY) || 'null') || {};
+  } catch {
+    return {};
+  }
+}
+
 export default function EditorPage() {
   const navigate = useNavigate();
+  const draft = loadDraft();
 
   // 부품 목록 상태 (기본 더미 데이터 지정 & 중복 선언 제거)
   const [components] = useState([
@@ -97,17 +108,34 @@ export default function EditorPage() {
     { pk: 15, type: 'tassel', name: '3개', season: false, image: tassel3, count: 3 },
   ]);
 
-  const [keyword, setKeyword] = useState('');
-  const [title, setTitle] = useState('');
+  const [keyword, setKeyword] = useState(draft.keyword ?? '');
+  const [title, setTitle] = useState(draft.title ?? '');
 
-  const [recommendation, setRecommendation] = useState(null);
-  const [excludeCombinations, setExcludeCombinations] = useState([]);
+  const [recommendation, setRecommendation] = useState(draft.recommendation ?? null);
+  const [excludeCombinations, setExcludeCombinations] = useState(draft.excludeCombinations ?? []);
 
   // 선택된 Component PK (초기 상태: 아무것도 선택되지 않음)
-  const [selectedKnot, setSelectedKnot] = useState(null);
-  const [selectedDecoration, setSelectedDecoration] = useState(null);
-  const [selectedTassel, setSelectedTassel] = useState(null);
-  const [selectedColor, setSelectedColor] = useState(null);
+  const [selectedKnot, setSelectedKnot] = useState(draft.selectedKnot ?? null);
+  const [selectedDecoration, setSelectedDecoration] = useState(draft.selectedDecoration ?? null);
+  const [selectedTassel, setSelectedTassel] = useState(draft.selectedTassel ?? null);
+  const [selectedColor, setSelectedColor] = useState(draft.selectedColor ?? null);
+
+  // 저장하기/공유하기/매장 예약하기로 이동했다가 돌아와도 작업 중이던 디자인이 유지되도록 세션에 보관
+  useEffect(() => {
+    sessionStorage.setItem(
+      DRAFT_STORAGE_KEY,
+      JSON.stringify({
+        keyword,
+        title,
+        recommendation,
+        excludeCombinations,
+        selectedKnot,
+        selectedDecoration,
+        selectedTassel,
+        selectedColor,
+      })
+    );
+  }, [keyword, title, recommendation, excludeCombinations, selectedKnot, selectedDecoration, selectedTassel, selectedColor]);
 
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');

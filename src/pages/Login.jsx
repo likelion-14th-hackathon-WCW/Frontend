@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { login } from '../api/auth.js'
 import './Login.css'
 import mailIcon from '../assets/mail-icon.svg'
@@ -9,6 +10,7 @@ import kakaoIcon from '../assets/kakao-icon.png'
 import naverIcon from '../assets/naver-icon.png'
 
 export default function Login() {
+  const location = useLocation()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -27,7 +29,7 @@ export default function Login() {
       setSubmitError(result.message)
       return
     }
-    window.location.href = '/'
+    window.location.href = location.state?.from || '/'
   }
 
   return (
