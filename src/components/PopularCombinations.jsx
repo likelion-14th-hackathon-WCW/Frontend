@@ -3,9 +3,11 @@ import './PopularCombinations.css'
 import heartIcon from '../assets/heart-icon.svg'
 import heartIconFilled from '../assets/heart-icon-filled.svg'
 import CombinationDetailModal from './CombinationDetailModal.jsx'
+import LoginModal from './LoginModal.jsx'
 import { getRankings } from '../api/rankings.js'
 import { getMyWishlist, addToWishlist, deleteWishlist } from '../api/wishlist.js'
 import { cacheWishSource, wishSourceKey } from '../utils/wishlistCache.js'
+import { useAuth } from '../hooks/useAuth.js'
 
 import rank1Image from '../assets/rankings/rank-1-midnight-amber.png'
 import rank2Image from '../assets/rankings/rank-2-minimal-jade.png'
@@ -67,10 +69,12 @@ function toWishParts(combination) {
 }
 
 export default function PopularCombinations() {
+  const { user } = useAuth()
   const [rankings, setRankings] = useState([])
   const [likedKeys, setLikedKeys] = useState([]) // knot_tassel_decoration 조합 키 목록
   const [wishlistMap, setWishlistMap] = useState({}) // 조합 키 -> wishlist row id 매핑용
   const [selectedRank, setSelectedRank] = useState(null)
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
 
   useEffect(() => {
     // 1. Ranking 목록 불러오기 (이미지 바인딩 포함)
@@ -99,6 +103,11 @@ export default function PopularCombinations() {
 
   async function toggleLike(combination) {
     if (!combination) return
+
+    if (!user) {
+      setIsLoginModalOpen(true)
+      return
+    }
 
     const parts = toWishParts(combination)
     const targetKey = wishSourceKey(parts)
@@ -225,6 +234,17 @@ export default function PopularCombinations() {
         }
         onToggleLike={() => toggleLike(selectedCombination)}
         onClose={() => setSelectedRank(null)}
+      />
+
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+        description={
+          <>
+            위시리스트에 상품을 저장하려면<br />
+            로그인 또는 회원가입을 진행해주세요.
+          </>
+        }
       />
     </section>
   )
