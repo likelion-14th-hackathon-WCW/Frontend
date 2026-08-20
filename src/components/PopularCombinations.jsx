@@ -4,18 +4,20 @@ import heartIcon from '../assets/heart-icon.svg'
 import heartIconFilled from '../assets/heart-icon-filled.svg'
 import CombinationDetailModal from './CombinationDetailModal.jsx'
 import { getRankings } from '../api/rankings.js'
+import { getMyWishlist, addToWishlist, deleteWishlist } from '../api/wishlist.js'
+
 import rank1Image from '../assets/rankings/rank-1-midnight-amber.png'
 import rank2Image from '../assets/rankings/rank-2-minimal-jade.png'
 import rank3Image from '../assets/rankings/rank-3-pink-lover.png'
 
-// 백엔드가 이미지를 내려주지 않으므로 순위별로 매칭할 데모 이미지 (Figma 255:13846~255:13848)
+// 백엔드가 이미지를 내려주지 않을 경우 대비 순위별 매칭 이미지
 const RANK_IMAGES = {
   1: rank1Image,
   2: rank2Image,
   3: rank3Image,
 }
 
-// 백엔드 랭킹 데이터가 비어있을 때 노출할 데모 조합
+// 백엔드 데이터가 비어있을 때 사용할 데모 데이터
 const FALLBACK_RANKINGS = [
   {
     rank: 1,
@@ -53,19 +55,83 @@ function withDemoImage(combination) {
 
 export default function PopularCombinations() {
   const [rankings, setRankings] = useState([])
-  const [likedRanks, setLikedRanks] = useState([])
+  const [likedRanks, setLikedRanks] = useState([]) // 화면 표시용 (rank 또는 item_id 저장)
+  const [wishlistMap, setWishlistMap] = useState({}) // rank/id -> wishlist_id 매핑용
   const [selectedRank, setSelectedRank] = useState(null)
 
   useEffect(() => {
+    // 1. Ranking 목록 불러오기 (이미지 바인딩 포함)
     getRankings()
-      .then((data) => setRankings((data && data.length > 0 ? data : FALLBACK_RANKINGS).map(withDemoImage)))
+      .then((data) => {
+        const list = data && data.length > 0 ? data : FALLBACK_RANKINGS
+        setRankings(list.map(withDemoImage))
+      })
       .catch(() => setRankings(FALLBACK_RANKINGS.map(withDemoImage)))
+
+    // 2. 위시리스트 불러와 하트 상태 및 wishlist_id 매핑 동기화
+    getMyWishlist()
+      .then((res) => {
+        const list = Array.isArray(res) ? res : res?.data || []
+
+        const likedIds = list.map((item) => item.item_id || item.rank || item.id)
+        setLikedRanks(likedIds)
+
+        const map = {}
+        list.forEach((item) => {
+          const key = item.item_id || item.rank || item.id
+          map[key] = item.id
+        })
+        setWishlistMap(map)
+      })
+      .catch((err) => console.error('위시리스트 조회 실패:', err))
   }, [])
 
-  function toggleLike(rank) {
+  async function toggleLike(combination) {
+    if (!combination) return
+
+    const itemId = combination.id || combination.item_id
+    const targetKey = itemId || combination.rank
+    const isLiked = likedRanks.includes(targetKey) || likedRanks.includes(combination.rank)
+
+    // UI 즉시 반영 (Optimistic Update)
     setLikedRanks((current) =>
-      current.includes(rank) ? current.filter((liked) => liked !== rank) : [...current, rank],
+      isLiked ? current.filter((liked) => liked !== targetKey && liked !== combination.rank) : [...current, targetKey]
     )
+
+    try {
+      if (isLiked) {
+        // 위시리스트 삭제
+        const wishlistId = wishlistMap[targetKey] || targetKey
+        await deleteWishlist(wishlistId)
+
+        setWishlistMap((prev) => {
+          const next = { ...prev }
+          delete next[targetKey]
+          return next
+        })
+      } else {
+        // 위시리스트 추가
+        const payload = {
+          ...(itemId && { item_id: itemId }),
+          knot: combination.knot || combination.knot_id || 1,
+          tassel: combination.tassel || combination.tassel_id || 1,
+          decoration: combination.decoration || combination.decoration_id || 1,
+          title: combination.title || '인기 노리개 조합',
+          description: combination.description || '',
+        }
+
+        const res = await addToWishlist(payload)
+        const newId = res?.id || res?.data?.id || targetKey
+        setWishlistMap((prev) => ({ ...prev, [targetKey]: newId }))
+      }
+    } catch (error) {
+      console.error('위시리스트 토글 실패:', error)
+      // 실패 시 상태 복구
+      setLikedRanks((current) =>
+        isLiked ? [...current, targetKey] : current.filter((liked) => liked !== targetKey)
+      )
+      alert('위시리스트 반영에 실패했습니다.')
+    }
   }
 
   const selectedCombination = rankings.find((combination) => combination.rank === selectedRank) ?? null
@@ -78,12 +144,16 @@ export default function PopularCombinations() {
           우리 커뮤니티가 제작한 가장 인기 있는 노리개 디자인을 발견하고 한정 생산을 고려해보세요.
         </p>
       </div>
+
       {rankings.length === 0 ? (
         <p className="popular-combinations__description">아직 저장된 조합이 없습니다.</p>
       ) : (
         <div className="popular-combinations__list">
-          {rankings.map(({ rank, title, description, creator, image }) => {
-            const liked = likedRanks.includes(rank)
+          {rankings.map((combination) => {
+            const { rank, title, description, creator, image } = combination
+            const cardKey = combination.id || combination.item_id || rank
+            const liked = likedRanks.includes(cardKey) || likedRanks.includes(rank)
+
             return (
               <article
                 className="combination-card"
@@ -124,7 +194,7 @@ export default function PopularCombinations() {
                       aria-pressed={liked}
                       onClick={(event) => {
                         event.stopPropagation()
-                        toggleLike(rank)
+                        toggleLike(combination)
                       }}
                     >
                       <img src={liked ? heartIconFilled : heartIcon} alt="" />
@@ -139,8 +209,11 @@ export default function PopularCombinations() {
 
       <CombinationDetailModal
         combination={selectedCombination}
-        liked={selectedRank !== null && likedRanks.includes(selectedRank)}
-        onToggleLike={() => toggleLike(selectedRank)}
+        liked={
+          selectedRank !== null &&
+          (likedRanks.includes(selectedCombination?.id) || likedRanks.includes(selectedRank))
+        }
+        onToggleLike={() => toggleLike(selectedCombination)}
         onClose={() => setSelectedRank(null)}
       />
     </section>

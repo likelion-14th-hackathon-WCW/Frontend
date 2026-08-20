@@ -20,6 +20,7 @@ import iconAvatarPlaceholder from '../assets/mypage/icon-avatar-placeholder.svg'
 import iconPlusSmall from '../assets/mypage/icon-plus-small.svg';
 import iconPlusCircle from '../assets/mypage/icon-plus-circle.svg';
 import iconLink from '../assets/mypage/icon-link.svg';
+<<<<<<< Updated upstream
 import iconCamera from '../assets/mypage/icon-camera.svg';
 import iconBell from '../assets/mypage/icon-bell.svg';
 import iconUserX from '../assets/mypage/icon-user-x.svg';
@@ -29,6 +30,10 @@ import eyeOpenIcon from '../assets/eye-open-icon.svg';
 import hintCheckDefault from '../assets/hint-check-default.svg';
 import hintCheckValid from '../assets/hint-check-valid.svg';
 import DigitalOwnership from './DigitalOwnershipPage';
+=======
+import DigitalOwnershipPage from './DigitalOwnershipPage.jsx';
+import WishlistTab from '../components/WishlistTab.jsx';
+>>>>>>> Stashed changes
 import './MyPage.css';
 
 const NICKNAME_RULE = {
@@ -63,7 +68,6 @@ async function handleShareItem(item) {
     await navigator.clipboard.writeText(shareUrl);
     alert('공유 링크가 클립보드에 복사되었습니다.');
   } catch {
-    // 클립보드 접근 실패 시 무시
   }
 }
 
@@ -94,14 +98,19 @@ export default function MyPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
+<<<<<<< Updated upstream
   // 현재 활성화된 탭 ('profile', 'reservations', 'items', 'ownerships', 'wishlist', 'settings')
   const [activeTab, setActiveTab] = useState(() => getTabFromPath(location.pathname));
+=======
+  const [activeTab, setActiveTab] = useState('profile');
+>>>>>>> Stashed changes
 
   const [profile, setProfile] = useState(null);
   const [reservations, setReservations] = useState([]);
   const [items, setItems] = useState([]);
   const [ownerships, setOwnerships] = useState([]);
 
+<<<<<<< Updated upstream
   // 설정 탭: 프로필 수정
   const [nickname, setNickname] = useState('');
   const [savedNickname, setSavedNickname] = useState('');
@@ -153,6 +162,8 @@ export default function MyPage() {
   }, [activeTab, navigate, location.pathname]);
 
   // [수정점 1] 선택된 상세 노리개 아이템 상태 추가
+=======
+>>>>>>> Stashed changes
   const [selectedItem, setSelectedItem] = useState(null);
 
   const fetchOwnershipsData = async () => {
@@ -166,7 +177,6 @@ export default function MyPage() {
     }
   };
 
-  // [수정점 2] 삭제 완료 시 아이템 목록 갱신 함수
   const handleDeleteSuccess = (deletedId) => {
     setItems((prev) => prev.filter((item) => (item.id || item.item_id) !== deletedId));
   };
@@ -290,14 +300,12 @@ export default function MyPage() {
       <MyPageSidebar 
         active={activeTab} 
         onSelect={(tab) => {
-          setSelectedItem(null); // 탭 이동 시 상세보기 상태 초기화
+          setSelectedItem(null); 
           setActiveTab(tab);
         }} 
       />
 
-      {/* 메인 컨텐츠 영역 (activeTab에 따라 다른 뷰 출력) */}
       <main className="mypage-content">
-        {/* TAB 1: 프로필 개요 (기존 마이페이지 메인) */}
         {activeTab === 'profile' && (
           <>
             <div className="content-header">
@@ -432,10 +440,8 @@ export default function MyPage() {
           </>
         )}
 
-        {/* TAB 3: 저장된 노리개 디자인 전체 페이지 */}
         {activeTab === 'items' && (
           selectedItem ? (
-            /* [수정점 3] 상세보기 클릭 시 보여지는 인라인 상세 뷰 화면 */
             <NorigaeDetailView
               item={selectedItem}
               onBack={() => setSelectedItem(null)}
@@ -447,7 +453,6 @@ export default function MyPage() {
               }}
             />
           ) : (
-            /* 기존 카드 그리드 목록 화면 */
             <div className="tab-page">
               <div className="content-header">
                 <h2>저장된 노리개 디자인</h2>
@@ -480,7 +485,6 @@ export default function MyPage() {
                           <p className="wish-card__desc">{item.symbol_reason || item.wish_keyword || ''}</p>
                         </div>
                         <div className="wish-card__actions">
-                          {/* [수정점 4] 상세보기 버튼에 setSelectedItem 클릭 이벤트만 추가 */}
                           <button 
                             type="button" 
                             className="wish-card__btn wish-card__btn--primary"
@@ -509,19 +513,34 @@ export default function MyPage() {
           )
         )}
 
-        {/* TAB 4: 소유권 및 관리 전체 페이지 (독립된 컴포넌트 출력) */}
         {activeTab === 'ownerships' && (
-          <DigitalOwnership 
+          <DigitalOwnershipPage 
             ownerships={ownerships} 
             onRegisterSuccess={fetchOwnershipsData} 
           />
         )}
 
+<<<<<<< Updated upstream
         {/* TAB 5: 위시리스트 임시 뷰 */}
         {activeTab === 'wishlist' && (
           <div className="tab-page">
             <div className="content-header">
               <h2>위시리스트</h2>
+=======
+        {activeTab === 'wishlist' && (
+          <WishlistTab
+            onSelectDetail={(item) => {
+              setSelectedItem(item);
+              setActiveTab('items');
+            }}
+          />
+        )}
+
+        {activeTab === 'settings' && (
+          <div className="tab-page">
+            <div className="content-header">
+              <h2>계정 설정</h2>
+>>>>>>> Stashed changes
               <p>해당 기능은 준비 중입니다.</p>
             </div>
           </div>
