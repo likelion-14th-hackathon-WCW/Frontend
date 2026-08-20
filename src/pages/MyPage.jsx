@@ -8,11 +8,32 @@ import { buildNorigaeData } from '../utils/norigaeAssets.js';
 import iconAvatarPlaceholder from '../assets/mypage/icon-avatar-placeholder.svg';
 import iconPlusSmall from '../assets/mypage/icon-plus-small.svg';
 import iconPlusCircle from '../assets/mypage/icon-plus-circle.svg';
+import iconLink from '../assets/mypage/icon-link.svg';
 import './MyPage.css';
 
 // 완료/취소된 예약 상태 판별
 const isCancelledStatus = (status) => status === '취소' || status === '취소됨' || status === '예약 취소'
 const isCompletedStatus = (status) => status === '완료' || status === '완료됨' || status === '방문 완료' || status === '방문완료' || status === '이용 완료' || status === '이용완료'
+
+function formatItemDate(item) {
+  const raw = item.created_at || item.created_at_date || item.updated_at
+  if (!raw) return ''
+  const date = new Date(raw)
+  if (isNaN(date.getTime())) return String(raw)
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${date.getFullYear()}.${month}.${day}`
+}
+
+async function handleShareItem(item) {
+  const shareUrl = `${window.location.origin}/norigae/${item.id || item.item_id || ''}`
+  try {
+    await navigator.clipboard.writeText(shareUrl)
+    alert('공유 링크가 클립보드에 복사되었습니다.')
+  } catch {
+    // 클립보드 접근 실패 시 무시
+  }
+}
 
 function formatReservedAt(isoString) {
   if (!isoString) return '';
@@ -213,23 +234,49 @@ export default function MyPage() {
               <h2>저장된 노리개 디자인</h2>
               <p>에디터에서 커스텀 및 저장한 나의 노리개 컬렉션입니다.</p>
             </div>
-            <div className="timeline-grid">
+            <div className="wish-card-grid">
               {items.map((item) => {
                 const preview = buildNorigaeData(item);
                 return (
-                  <div className="timeline-card" key={item.id || item.item_id}>
-                    {item.image_url || item.thumbnail ? (
-                      <img src={item.image_url || item.thumbnail} alt={item.title || ''} className="timeline-image" />
-                    ) : preview?.knotImage ? (
-                      <NorigaePreview norigaeData={preview} />
-                    ) : (
-                      <div className="img-placeholder">🖼️</div>
-                    )}
-                    <h4 style={{ marginTop: '10px' }}>{item.title || '나의 노리개'}</h4>
+                  <div className="wish-card" key={item.id || item.item_id}>
+                    <div className="wish-card__image-area">
+                      <div className="wish-card__image-frame">
+                        {item.image_url || item.thumbnail ? (
+                          <img src={item.image_url || item.thumbnail} alt={item.title || ''} className="timeline-image" />
+                        ) : preview?.knotImage ? (
+                          <NorigaePreview norigaeData={preview} />
+                        ) : (
+                          <div className="img-placeholder">🖼️</div>
+                        )}
+                      </div>
+                      {preview?.isSeasonal && <span className="wish-card__tag">{preview.seasonTag}</span>}
+                    </div>
+                    <div className="wish-card__divider" />
+                    <div className="wish-card__body">
+                      <div className="wish-card__meta">
+                        <div className="wish-card__title-row">
+                          <h3 className="wish-card__title">{item.title || '나의 노리개'}</h3>
+                          <span className="wish-card__date">{formatItemDate(item)}</span>
+                        </div>
+                        <p className="wish-card__desc">{item.symbol_reason || item.wish_keyword || ''}</p>
+                      </div>
+                      <div className="wish-card__actions">
+                        <button type="button" className="wish-card__btn wish-card__btn--primary">
+                          상세보기
+                        </button>
+                        <button
+                          type="button"
+                          className="wish-card__btn wish-card__btn--outline"
+                          onClick={() => handleShareItem(item)}
+                        >
+                          <img src={iconLink} alt="" /> 공유하기
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 );
               })}
-              <Link to="/editor" className="timeline-card add-card">
+              <Link to="/editor" className="wish-card wish-card--add">
                 <div className="add-icon">+</div>
                 <h4>새로 만들기</h4>
               </Link>

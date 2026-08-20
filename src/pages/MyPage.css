@@ -278,6 +278,175 @@
   color: var(--color-grey-300);
 }
 
+.wish-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 32px;
+}
+
+.wish-card {
+  background: #fff;
+  border: 1px solid var(--color-brown-200);
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.wish-card__image-area {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+}
+
+.wish-card__image-frame {
+  width: 273px;
+  height: 152px;
+  background: var(--color-background);
+  border: 1px solid #f9e5b4;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.wish-card__image-frame .norigae-preview {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+
+.wish-card__image-frame .norigae-preview__render {
+  transform: scale(0.72);
+  transform-origin: center center;
+}
+
+.wish-card__tag {
+  position: absolute;
+  top: 44px;
+  right: 86px;
+  background: #dda36b;
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: -0.24px;
+  padding: 4px 8px;
+}
+
+.wish-card__divider {
+  height: 1px;
+  margin: 0 24px;
+  background: var(--color-brown-200);
+}
+
+.wish-card__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px;
+}
+
+.wish-card__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wish-card__title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.wish-card__title {
+  margin: 0;
+  font-family: 'Noto Serif KR', serif;
+  font-weight: 500;
+  font-size: 20px;
+  color: #1d1b20;
+}
+
+.wish-card__date {
+  flex-shrink: 0;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--color-grey-300);
+  letter-spacing: -0.28px;
+}
+
+.wish-card__desc {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--color-grey-300);
+  letter-spacing: -0.28px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.wish-card__actions {
+  display: flex;
+  gap: 12px;
+}
+
+.wish-card__btn {
+  flex: 1;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-radius: 8px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  letter-spacing: -0.28px;
+  cursor: pointer;
+}
+
+.wish-card__btn--primary {
+  background: var(--color-accent);
+  color: var(--color-background);
+  font-weight: 500;
+  border: none;
+}
+
+.wish-card__btn--outline {
+  background: #fff;
+  color: var(--color-heading-strong);
+  font-weight: 400;
+  border: 1px solid var(--color-heading-strong);
+}
+
+.wish-card__btn--outline img {
+  width: 17px;
+  height: 17px;
+}
+
+.wish-card--add {
+  min-height: 409px;
+  background-color: #f5f5f5;
+  border: 1px dashed rgba(17, 17, 17, 0.2);
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
 .two-column-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;

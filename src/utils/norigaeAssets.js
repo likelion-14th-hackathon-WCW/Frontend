@@ -85,6 +85,63 @@ const COLOR_MAP = {
   '코랄': 'coral',
 }
 
+const KNOT_NAME_MAP = {
+  1: '매미 매듭',
+  2: '삼정자 매듭',
+  3: '동심결 매듭',
+  4: '장구 매듭',
+  5: '생쪽 매듭',
+  6: '귀도래 매듭',
+  maemi: '매미 매듭',
+  samjeongja: '삼정자 매듭',
+  dongsimgyeol: '동심결 매듭',
+  janggu: '장구 매듭',
+  saengjjok: '생쪽 매듭',
+  guidorae: '귀도래 매듭',
+}
+
+const DECO_NAME_MAP = {
+  7: '무궁화',
+  8: '학',
+  9: '호박보석',
+  10: '고래',
+  11: '나비',
+  12: '연꽃',
+  mugunghwa: '무궁화',
+  crane: '학',
+  amber: '호박보석',
+  whale: '고래',
+  butterfly: '나비',
+  lotus: '연꽃',
+}
+
+const TASSEL_NAME_MAP = {
+  13: '1개 (단봉)',
+  14: '2개 (쌍봉)',
+  15: '3개 (삼봉)',
+  1: '1개 (단봉)',
+  2: '2개 (쌍봉)',
+  3: '3개 (삼봉)',
+}
+
+const COLOR_NAME_MAP = {
+  '#17216E': '네이비',
+  '#FEB9E3': '핑크',
+  '#FFC95F': '옐로우',
+  '#369F39': '그린',
+  '#F37E7E': '코랄',
+  '#1E293B': '네이비',
+  '#EC4899': '핑크',
+  '#EAB308': '옐로우',
+  '#22C55E': '그린',
+  '#F97316': '코랄',
+  navy: '네이비',
+  pink: '핑크',
+  yellow: '옐로우',
+  green: '그린',
+  coral: '코랄',
+}
+
 const COMBO_MODULES = import.meta.glob('../assets/editor-combo/*.svg', { eager: true, import: 'default' })
 const DECO_MODULES = import.meta.glob('../assets/editor-items/deco-*.svg', { eager: true, import: 'default' })
 
@@ -100,13 +157,67 @@ for (const path in DECO_MODULES) {
   DECO_ASSETS[name] = DECO_MODULES[path]
 }
 
+export function isSeasonalNorigae(itemOrReservation) {
+  if (!itemOrReservation) return false
+  if (itemOrReservation.is_seasonal || itemOrReservation.isSeasonal || itemOrReservation.season) return true
+
+  const rawKnot = itemOrReservation.knot_id ?? itemOrReservation.knot ?? itemOrReservation.knot_name
+  const knotVal = typeof rawKnot === 'object' && rawKnot !== null ? (rawKnot.id ?? rawKnot.name ?? rawKnot.pk) : rawKnot
+  if (knotVal === 1 || knotVal === '1' || knotVal === 'maemi' || knotVal === '매미 매듭' || knotVal === '매미') return true
+
+  const rawDeco = itemOrReservation.decoration_id ?? itemOrReservation.decoration ?? itemOrReservation.decoration_name
+  const decoVal = typeof rawDeco === 'object' && rawDeco !== null ? (rawDeco.id ?? rawDeco.name ?? rawDeco.pk) : rawDeco
+  if (
+    decoVal === 7 ||
+    decoVal === '7' ||
+    decoVal === 'mugunghwa' ||
+    decoVal === '무궁화' ||
+    decoVal === 8 ||
+    decoVal === '8' ||
+    decoVal === 'crane' ||
+    decoVal === '학'
+  )
+    return true
+
+  const rawColor = itemOrReservation.color
+  const colorVal = typeof rawColor === 'object' && rawColor !== null ? (rawColor.hex ?? rawColor.name ?? rawColor.code) : rawColor
+  if (colorVal === '#F37E7E' || colorVal === 'coral' || colorVal === '코랄') return true
+
+  return false
+}
+
+export function getNorigaeComponentNames(item) {
+  if (!item) return { knotName: '', decoName: '', tasselName: '', colorName: '' }
+
+  const rawKnot = item.knot_id ?? item.knot ?? item.knot_name
+  const knotVal = typeof rawKnot === 'object' && rawKnot !== null ? (rawKnot.id ?? rawKnot.name ?? rawKnot.pk) : rawKnot
+  const knotName = typeof knotVal === 'string' && isNaN(Number(knotVal)) ? knotVal : (KNOT_NAME_MAP[knotVal] || '매미 매듭')
+
+  const rawDeco = item.decoration_id ?? item.decoration ?? item.decoration_name
+  const decoVal = typeof rawDeco === 'object' && rawDeco !== null ? (rawDeco.id ?? rawDeco.name ?? rawDeco.pk) : rawDeco
+  const decoName = typeof decoVal === 'string' && isNaN(Number(decoVal)) ? decoVal : (DECO_NAME_MAP[decoVal] || '무궁화')
+
+  const rawTassel = item.tassel_id ?? item.tassel ?? item.tassel_count ?? item.tassel_name
+  const tasselVal = typeof rawTassel === 'object' && rawTassel !== null ? (rawTassel.id ?? rawTassel.count ?? rawTassel.name ?? rawTassel.pk) : rawTassel
+  const tasselName = typeof tasselVal === 'string' && isNaN(Number(tasselVal)) ? tasselVal : (TASSEL_NAME_MAP[tasselVal] || '1개')
+
+  const rawColor = item.color
+  const colorVal = typeof rawColor === 'object' && rawColor !== null ? (rawColor.hex ?? rawColor.name ?? rawColor.code) : rawColor
+  const colorName = COLOR_NAME_MAP[colorVal] || (typeof colorVal === 'string' ? colorVal : '네이비')
+
+  return { knotName, decoName, tasselName, colorName }
+}
+
 export function buildNorigaeData(itemOrReservation) {
   if (!itemOrReservation) return null
+
+  const isSeasonal = isSeasonalNorigae(itemOrReservation)
 
   if (itemOrReservation.knotImage && itemOrReservation.decorationImage && itemOrReservation.tasselImage) {
     return {
       ...itemOrReservation,
       tasselCount: itemOrReservation.tasselCount ?? 1,
+      isSeasonal: itemOrReservation.isSeasonal ?? isSeasonal,
     }
   }
 
@@ -137,6 +248,8 @@ export function buildNorigaeData(itemOrReservation) {
       tasselImage,
       tasselCount,
       title: itemOrReservation.title,
+      isSeasonal,
+      seasonTag: itemOrReservation.seasonTag || itemOrReservation.season_tag || '여름 시즌',
     }
   }
 

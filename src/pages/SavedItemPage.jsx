@@ -1,21 +1,35 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import NorigaePreview from '../components/NorigaePreview.jsx';
+import { buildNorigaeData, getNorigaeComponentNames } from '../utils/norigaeAssets.js';
 import shareIcon from '../assets/editor-share.svg';
+import iconPlusSmall from '../assets/mypage/icon-plus-small.svg';
+import './SavedItemPage.css';
 
-export default function SavedItemsPage({ items = [] }) {
+function formatDate(isoString) {
+  if (!isoString) return '';
+  const date = new Date(isoString);
+  if (isNaN(date.getTime())) return isoString;
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}.${m}.${d}`;
+}
+
+export default function SavedItemPage({ items = [] }) {
   const navigate = useNavigate();
 
-  const handleShare = async (item) => {
-    const shareUrl = `${window.location.origin}/share/${item.id}`;
+  const handleShare = async (item, e) => {
+    e?.stopPropagation();
+    const shareUrl = `${window.location.origin}/editor/share`;
     if (navigator.share) {
       try {
         await navigator.share({
-          title: item.title,
-          text: item.symbol_reason,
+          title: item.title || '나만의 노리개',
+          text: item.symbol_reason || 'MCM Heritage 노리개 컬렉션',
           url: shareUrl,
         });
       } catch {
-        // 공유 취소 시 무시
+        // 무시
       }
     } else {
       await navigator.clipboard.writeText(shareUrl);
@@ -23,70 +37,103 @@ export default function SavedItemsPage({ items = [] }) {
     }
   };
 
-  const handleDetail = (id) => {
-    navigate(`/norigae/${id}`);
+  const handleReserve = (item, e) => {
+    e?.stopPropagation();
+    const norigaeData = buildNorigaeData(item);
+    navigate('/reservation', { state: { norigaeData: { ...norigaeData, title: item.title } } });
   };
 
   return (
-    <div className="tab-page">
-      <div className="content-header">
-        <h2>저장 작품 & 타임라인</h2>
-        <p>나만의 MCM Heritage 노리개 컬렉션을 확인하고 공유하세요.</p>
+    <div className="saved-items-container">
+      <div className="saved-items__header">
+        <h2 className="saved-items__title">저장된 노리개 디자인</h2>
+        <p className="saved-items__desc">에디터에서 직접 커스텀하고 저장한 나만의 노리개 컬렉션입니다.</p>
       </div>
 
       {items.length === 0 ? (
-        <div className="mypage-empty">저장된 노리개 작품이 없습니다.</div>
+        <div className="saved-items__empty">
+          <p className="saved-items__empty-text">저장된 노리개 디자인이 없습니다.</p>
+          <button
+            type="button"
+            className="saved-items__btn-create"
+            onClick={() => navigate('/editor')}
+          >
+            새 노리개 만들기
+            <img src={iconPlusSmall} alt="" />
+          </button>
+        </div>
       ) : (
-        <div className="saved-card-grid">
-          {items.map((item) => (
-            <div key={item.id} className="saved-card">
-              {/* 이미지 및 미리보기 영역 */}
-              <div className="card-preview-box">
-                {item.image_url ? (
-                  <img src={item.image_url} alt={item.title} className="timeline-image" />
-                ) : (
-                  <div className="norigae-preview">
-                    <img
-                      src={item.knot_image || `/assets/knots/knot_${item.knot || 1}.svg`}
-                      alt="매듭"
-                      className="preview-knot"
-                      style={{ color: item.color }}
-                    />
-                    <img
-                      src={item.decoration_image || `/assets/decorations/deco_${item.decoration || 7}.svg`}
-                      alt="장식"
-                      className="preview-deco"
-                    />
-                    <img
-                      src={item.tassel_image || `/assets/tassels/tassel_${item.tassel || 13}.svg`}
-                      alt="술"
-                      className="preview-tassel"
-                      style={{ color: item.color }}
-                    />
+        <div className="saved-items__list">
+          {items.map((item) => {
+            const norigaeData = buildNorigaeData(item);
+            const { knotName, decoName, tasselName, colorName } = getNorigaeComponentNames(item);
+            const itemId = item.id || item.item_id || 'norigae-saved';
+
+            return (
+              <article key={itemId} className="saved-item-card">
+                <div className="saved-item-card__preview-box">
+                  <NorigaePreview norigaeData={norigaeData} imageSrc={item.image_url} />
+                </div>
+
+                <div className="saved-item-card__info-box">
+                  <div className="saved-item-card__info-top">
+                    <div className="saved-item-card__title-row">
+                      <h3 className="saved-item-card__title">{item.title || '나만의 노리개'}</h3>
+                      <span className="saved-item-card__date">{formatDate(item.created_at)}</span>
+                    </div>
+
+                    {item.wish_keyword && (
+                      <div className="saved-item-card__keyword-row">
+                        <span className="saved-item-card__keyword-label">소망 키워드</span>
+                        <span className="saved-item-card__keyword-value">{item.wish_keyword}</span>
+                      </div>
+                    )}
+
+                    <p className="saved-item-card__meaning">
+                      {item.symbol_reason || '전통 매듭과 현대적 감각이 조화를 이룬 맞춤형 노리개 디자인입니다.'}
+                    </p>
+
+                    <div className="saved-item-card__specs">
+                      <div className="saved-item-card__spec-item">
+                        <span className="saved-item-card__spec-key">매듭</span>
+                        <span className="saved-item-card__spec-val">{knotName}</span>
+                      </div>
+                      <div className="saved-item-card__spec-item">
+                        <span className="saved-item-card__spec-key">메인 장식</span>
+                        <span className="saved-item-card__spec-val">{decoName}</span>
+                      </div>
+                      <div className="saved-item-card__spec-item">
+                        <span className="saved-item-card__spec-key">술</span>
+                        <span className="saved-item-card__spec-val">{tasselName}</span>
+                      </div>
+                      <div className="saved-item-card__spec-item">
+                        <span className="saved-item-card__spec-key">실 색상</span>
+                        <span className="saved-item-card__spec-val">{colorName}</span>
+                      </div>
+                    </div>
                   </div>
-                )}
-              </div>
 
-              {/* 작품 정보 영역 */}
-              <div className="card-content">
-                <div className="card-title-row">
-                  <h3 className="card-title">{item.title}</h3>
-                  <span className="card-date">{item.created_at || item.created_at_date}</span>
+                  <div className="saved-item-card__actions">
+                    <button
+                      type="button"
+                      className="saved-item-card__btn saved-item-card__btn--reserve"
+                      onClick={(e) => handleReserve(item, e)}
+                    >
+                      매장 예약하기
+                    </button>
+                    <button
+                      type="button"
+                      className="saved-item-card__btn saved-item-card__btn--share"
+                      onClick={(e) => handleShare(item, e)}
+                    >
+                      <img src={shareIcon} alt="" className="saved-item-card__btn-icon" />
+                      공유하기
+                    </button>
+                  </div>
                 </div>
-                <p className="card-desc">{item.symbol_reason}</p>
-
-                {/* 하단 버튼 그룹 */}
-                <div className="card-btn-group">
-                  <button className="btn-detail" onClick={() => handleDetail(item.id)}>
-                    상세보기
-                  </button>
-                  <button className="btn-card-share" onClick={() => handleShare(item)}>
-                    <img src={shareIcon} alt="" className="btn-icon" /> 공유하기
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
+              </article>
+            );
+          })}
         </div>
       )}
     </div>
