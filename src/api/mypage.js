@@ -53,13 +53,38 @@ export const cancelReservation = async (id) => {
   return { success: true, data: response.data };
 };
 
+// ponytail: 백엔드가 /auth/me/items/ 응답에 symbol_reason(AI 추천 문구) 등 일부
+// 필드를 안 내려줄 때가 있어, 저장 시점에 로컬에 캐싱해둔 값(wcw_saved_items)으로
+// 빠진 필드만 보완한다. id가 일치하는 항목만 병합하고 백엔드 값은 덮어쓰지 않는다.
+function mergeLocalNorigaeCache(list) {
+  let cached;
+  try {
+    cached = JSON.parse(localStorage.getItem('wcw_saved_items') || '[]');
+  } catch {
+    return list;
+  }
+  if (!Array.isArray(cached) || cached.length === 0) return list;
+
+  const cacheById = new Map(cached.map((entry) => [String(entry.id ?? entry.item_id), entry]));
+
+  return list.map((item) => {
+    const cachedItem = cacheById.get(String(item.id ?? item.item_id));
+    if (!cachedItem) return item;
+    const merged = { ...item };
+    for (const key of ['symbol_reason', 'wish_keyword', 'knot', 'decoration', 'tassel', 'color']) {
+      if (!merged[key] && cachedItem[key]) merged[key] = cachedItem[key];
+    }
+    return merged;
+  });
+}
+
 export const getMyItems = async () => {
   try {
     const response = await apiClient.get('/auth/me/items/');
     const raw = response.data;
     const list = Array.isArray(raw) ? raw : Array.isArray(raw?.results) ? raw.results : Array.isArray(raw?.data) ? raw.data : [];
     if (list.length > 0) {
-      return { success: true, data: list };
+      return { success: true, data: mergeLocalNorigaeCache(list) };
     }
     // 서버가 빈 배열을 반환했을 때 /api/items/ 경로도 확인
     try {
@@ -67,7 +92,7 @@ export const getMyItems = async () => {
       const fbRaw = fb.data;
       const fbList = Array.isArray(fbRaw) ? fbRaw : Array.isArray(fbRaw?.results) ? fbRaw.results : Array.isArray(fbRaw?.data) ? fbRaw.data : [];
       if (fbList.length > 0) {
-        return { success: true, data: fbList };
+        return { success: true, data: mergeLocalNorigaeCache(fbList) };
       }
     } catch {
       // fallback 무시
@@ -88,7 +113,7 @@ export const getMyItems = async () => {
       const fbRaw = fb.data;
       const fbList = Array.isArray(fbRaw) ? fbRaw : Array.isArray(fbRaw?.results) ? fbRaw.results : Array.isArray(fbRaw?.data) ? fbRaw.data : [];
       if (fbList.length > 0) {
-        return { success: true, data: fbList };
+        return { success: true, data: mergeLocalNorigaeCache(fbList) };
       }
     } catch {
       // fallback 무시
