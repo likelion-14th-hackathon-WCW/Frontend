@@ -489,10 +489,13 @@ export default function MyPage() {
                     </div>
                   );
                 })}
-                <Link to="/editor" className="wish-card wish-card--add">
-                  <div className="add-icon">+</div>
-                  <h4>새로 만들기</h4>
-                </Link>
+                {items.length === 0 && (
+                  <Link to="/editor" className="wish-card wish-card--add">
+                    <img src={iconPlusCircle} alt="" className="add-icon" />
+                    <h4>새로 만들기</h4>
+                    <p>나만의 노리개를 디자인하세요.</p>
+                  </Link>
+                )}
               </div>
             </div>
           )

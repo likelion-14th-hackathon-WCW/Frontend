@@ -503,6 +503,7 @@
   color: var(--color-grey-300);
   margin: 8px 0 16px;
   line-height: 1.4;
+  white-space: nowrap;
 }
 
 /* 예약 내역 */
