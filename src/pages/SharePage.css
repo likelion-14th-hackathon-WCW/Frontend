@@ -213,11 +213,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all var(--transition-fast, 0.2s ease);
+}
+
+.share-social-icon-btn:hover {
+  background-color: #f7f5f0;
+  border-color: rgba(26, 26, 26, 0.4);
 }
 
 .share-social-icon-btn img {
-  width: 20px;
-  height: 20px;
+  max-width: 20px;
+  max-height: 20px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
 }
 
 @media (max-width: 900px) {

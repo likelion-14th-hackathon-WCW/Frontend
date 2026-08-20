@@ -56,6 +56,7 @@ export default function NorigaeNamingPage() {
   const isFilled = title.trim().length > 0;
 
   const handleSave = async () => {
+    if (saving || saved) return; // 멱등: 저장 진행 중이거나 이미 저장됐으면 재요청하지 않음
     const finalTitle = title.trim() || norigaeData.defaultTitle || '나만의 노리개';
     const { defaultTitle: _defaultTitle, knotImage: _knotImage, decorationImage: _decorationImage, tasselImage: _tasselImage, tasselCount: _tasselCount, ...payload } = norigaeData;
 
@@ -64,22 +65,22 @@ export default function NorigaeNamingPage() {
     setSaving(false);
 
     if (result.success) {
+      const savedItem = {
+        ...result.data,
+        id: result.data?.id ?? Date.now(),
+        title: finalTitle,
+        knot: norigaeData.knot,
+        decoration: norigaeData.decoration,
+        tassel: norigaeData.tassel,
+        color: norigaeData.color,
+        wish_keyword: norigaeData.wish_keyword || norigaeData.keyword || '',
+        symbol_reason: norigaeData.symbol_reason || '',
+        knotImage: norigaeData.knotImage,
+        decorationImage: norigaeData.decorationImage,
+        tasselImage: norigaeData.tasselImage,
+        tasselCount: norigaeData.tasselCount,
+      };
       try {
-        const savedItem = {
-          ...result.data,
-          id: result.data?.id ?? Date.now(),
-          title: finalTitle,
-          knot: norigaeData.knot,
-          decoration: norigaeData.decoration,
-          tassel: norigaeData.tassel,
-          color: norigaeData.color,
-          wish_keyword: norigaeData.wish_keyword || norigaeData.keyword || '',
-          symbol_reason: norigaeData.symbol_reason || '',
-          knotImage: norigaeData.knotImage,
-          decorationImage: norigaeData.decorationImage,
-          tasselImage: norigaeData.tasselImage,
-          tasselCount: norigaeData.tasselCount,
-        };
         const prev = JSON.parse(localStorage.getItem('wcw_saved_items') || '[]');
         const updated = [savedItem, ...prev.filter((i) => (i.id ?? i.item_id) !== savedItem.id)];
         localStorage.setItem('wcw_saved_items', JSON.stringify(updated));
