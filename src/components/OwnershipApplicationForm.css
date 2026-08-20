@@ -1,7 +1,5 @@
 .ownership-application-container {
   width: 100%;
-  max-width: 900px;
-  margin: 0 auto;
 }
 
 .btn-back {
@@ -21,75 +19,85 @@
   margin-bottom: 24px;
 }
 
+.ownership-application-layout {
+  display: flex;
+  gap: 32px;
+  align-items: stretch;
+}
+
 .ownership-application-form {
-  background-color: #ffffff;
-  border: 1px solid #f0e4d3;
-  border-radius: 12px;
-  padding: 32px;
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(6px);
+  border: 1px solid #ebcaaa;
+  box-shadow: 0px 4px 30px 0px rgba(0, 0, 0, 0.03);
+  padding: 33px;
+  flex: 1;
+  max-width: 570px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .ownership-application-form .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 0;
 }
 
 .ownership-application-form label {
   display: block;
   font-size: 14px;
-  font-weight: 700;
-  color: #333333;
+  font-weight: 500;
+  letter-spacing: -0.28px;
+  color: #1a1a1a;
   margin-bottom: 8px;
-}
-
-.ownership-application-form input[type='text'] {
-  width: 100%;
-  padding: 12px 14px;
-  border: 1px solid #dddddd;
-  border-radius: 6px;
-  font-size: 14px;
-  box-sizing: border-box;
 }
 
 .ownership-application-form .hint {
   font-size: 12px;
-  color: #999999;
-  margin-top: 6px;
+  letter-spacing: -0.24px;
+  color: #666666;
+  margin-top: 4px;
 }
 
 .form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  display: flex;
+  gap: 24px;
+}
+
+.form-row .form-group {
+  flex: 1;
+  min-width: 0;
 }
 
 .readonly-field {
-  padding: 12px 14px;
-  background-color: #f7f7f7;
-  border: 1px solid #eeeeee;
-  border-radius: 6px;
+  height: 49px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  background-color: #ffffff;
+  border: 1px solid #e8e8e8;
   font-size: 14px;
-  color: #444444;
+  letter-spacing: -0.28px;
+  color: #666666;
+  box-sizing: border-box;
 }
 
-.image-upload-box {
+.image-preview-box {
+  width: 100%;
+  height: 287px;
+  background-color: #fbf9f5;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  height: 220px;
-  background-color: #f7f7f7;
-  border: 1px dashed #dddddd;
-  border-radius: 8px;
-  cursor: pointer;
   overflow: hidden;
 }
 
-.image-upload-box img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.image-preview-box img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
 }
 
-.image-upload-box .img-placeholder {
+.image-preview-box .img-placeholder {
   font-size: 32px;
   color: #bbbbbb;
 }
@@ -97,26 +105,103 @@
 .form-error {
   font-size: 13px;
   color: #dc2626;
-  margin-bottom: 12px;
+  margin: 0;
 }
 
 .btn-submit-application {
   width: 100%;
-  padding: 14px;
-  background-color: #d98842;
+  padding: 16px;
+  background-color: #d48c46;
   color: #ffffff;
   border: none;
-  border-radius: 6px;
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 500;
   cursor: pointer;
+}
+
+.btn-submit-application:hover {
+  background-color: #b8783a;
 }
 
 .btn-submit-application:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
-.image-upload-box .norigae-preview {
-  transform: scale(0.12);
-  transform-origin: center center;
+
+.ownership-benefits-sidebar {
+  width: 269px;
+  flex-shrink: 0;
+  background-color: #fef9ef;
+  border: 1px solid #f1c75c;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.benefits-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 500;
+  color: #754d27;
+  margin: 0;
+}
+
+.benefits-heading img {
+  width: 24px;
+  height: 24px;
+}
+
+.benefits-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.benefits-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.benefits-list li img {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.benefit-title {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.28px;
+  color: #1a1a1a;
+  margin: 0 0 4px 0;
+}
+
+.benefit-desc {
+  font-size: 14px;
+  letter-spacing: -0.28px;
+  color: #666666;
+  line-height: 20px;
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .ownership-application-layout {
+    flex-direction: column;
+  }
+
+  .ownership-application-form {
+    max-width: none;
+  }
+
+  .ownership-benefits-sidebar {
+    width: 100%;
+  }
 }

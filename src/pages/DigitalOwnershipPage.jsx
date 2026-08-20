@@ -3,8 +3,11 @@ import './DigitalOwnershipPage.css';
 import diaIcon from '../assets/ownership-1.png';
 import checkIcon from '../assets/ownership-check.png';
 import InfoIcon from '../assets/ownership-info.png';
+import NorigaePreview from '../components/NorigaePreview.jsx';
+import { buildNorigaeData } from '../utils/norigaeAssets.js';
+import { findDesignForOwnership } from '../utils/ownership.js';
 
-const DigitalOwnership = ({ ownerships = [], onRegisterSuccess, onViewApplication }) => {
+const DigitalOwnership = ({ ownerships = [], items = [], onRegisterSuccess, onViewApplication }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [productId, setProductId] = useState('');
   const [serialNo, setSerialNo] = useState('');
@@ -110,33 +113,32 @@ const DigitalOwnership = ({ ownerships = [], onRegisterSuccess, onViewApplicatio
         ) : (
           ownerships.map((item) => {
             const isCertified = item.has_production_right;
+            const designItem = findDesignForOwnership(items, item);
+            const preview = designItem ? buildNorigaeData(designItem) : null;
+            const title = designItem?.title || item.product_name || '노리개 커스텀';
+
             return (
               <div className="ownership-item-card" key={item.id || item.serial_no}>
                 <div className="ownership-thumb-box">
-                  {item.image_url ? (
-                    <img src={item.image_url} alt={item.product_name} />
+                  {preview?.knotImage ? (
+                    <NorigaePreview norigaeData={preview} showSeasonBadge={false} />
                   ) : (
-                    <div className="img-placeholder">🖼️</div>
+                    <div className="img-placeholder" />
                   )}
                 </div>
 
                 <div className="ownership-details">
                   <div className="ownership-title-row">
-                    <h3 className="ownership-item-title">
-                      {item.product_name || item.title || '노리개 커스텀'}
-                    </h3>
-                    <span
-                      className={`ownership-badge ${
-                        isCertified ? 'badge-completed' : 'badge-pending'
-                      }`}
-                    >
-                      {isCertified ? '✓ 인증 완료' : '진행중'}
+                    <div className="ownership-title-col">
+                      <h3 className="ownership-item-title">{title}</h3>
+                      <p className="ownership-date">
+                        {isCertified ? '등록일' : '신청일'}: {formatDate(item.created_at)}
+                      </p>
+                    </div>
+                    <span className={`ownership-badge ${isCertified ? 'badge-completed' : 'badge-pending'}`}>
+                      {isCertified ? '인증 완료' : '심사 중'}
                     </span>
                   </div>
-
-                  <p className="ownership-date">
-                    {isCertified ? '등록일' : '신청일'}: {formatDate(item.created_at)}
-                  </p>
 
                   <div className="ownership-info-box">
                     <div className="info-grid">
@@ -161,26 +163,12 @@ const DigitalOwnership = ({ ownerships = [], onRegisterSuccess, onViewApplicatio
                   </div>
 
                   <div className="ownership-actions">
-                    {isCertified ? (
-                      <>
-                        <button 
-                          className="btn-cert-view"
-                          onClick={() => onViewApplication && onViewApplication(item)}
-                        >
-                          증명서 보기
-                        </button>
-                        <button className="btn-cert-download" title="다운로드">
-                          📥
-                        </button>
-                      </>
-                    ) : (
-                      <button 
-                        className="btn-application-view"
-                        onClick={() => onViewApplication && onViewApplication(item)}
-                      >
-                        신청서 보기
-                      </button>
-                    )}
+                    <button
+                      className="btn-application-view"
+                      onClick={() => onViewApplication && onViewApplication(item)}
+                    >
+                      {isCertified ? '증명서 보기' : '신청서 보기'}
+                    </button>
                   </div>
                 </div>
               </div>

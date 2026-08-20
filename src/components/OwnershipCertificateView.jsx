@@ -1,9 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
+import NorigaePreview from './NorigaePreview.jsx';
+import { buildNorigaeData } from '../utils/norigaeAssets.js';
+import { findDesignForOwnership } from '../utils/ownership.js';
 import './OwnershipCertificationView.css';
 
-export default function OwnershipCertificateView({ item, onBack }) {
+export default function OwnershipCertificateView({ item, items = [], onBack }) {
   const [certData, setCertData] = useState(item || null);
   const [loading, setLoading] = useState(!item);
+
+  // 소유권(product PK)에 연결된 저장된 노리개 디자인을 찾아 실제 이름/프리뷰를 가져온다.
+  const designItem = useMemo(() => findDesignForOwnership(items, certData ?? item), [certData, item, items]);
+  const designPreview = designItem ? buildNorigaeData(designItem) : null;
 
   // API 연동: item 객체만 넘어온 경우 상세 데이터 API Fetching (필요시)
   useEffect(() => {
@@ -58,6 +65,7 @@ export default function OwnershipCertificateView({ item, onBack }) {
   }
 
   const data = certData || item || {};
+  const title = designItem?.title || data.product_name || data.title || '노리개 커스텀';
 
   return (
     <div className="cert-view-wrapper">
@@ -68,9 +76,7 @@ export default function OwnershipCertificateView({ item, onBack }) {
             ‹
           </button>
           <div>
-            <h1 className="cert-main-title">
-              {data.product_name || data.title || '클래식 비세토스 매듭'}
-            </h1>
+            <h1 className="cert-main-title">{title}</h1>
             <p className="cert-sub-title">디지털 소유권 증명서</p>
           </div>
         </div>
@@ -99,7 +105,9 @@ export default function OwnershipCertificateView({ item, onBack }) {
           {/* 좌측 이미지 */}
           <div className="cert-image-container">
             {data.image_url ? (
-              <img src={data.image_url} alt={data.product_name} />
+              <img src={data.image_url} alt={title} />
+            ) : designPreview?.knotImage ? (
+              <NorigaePreview norigaeData={designPreview} showSeasonBadge={false} />
             ) : (
               <div className="image-placeholder">
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="1.5">
@@ -113,9 +121,7 @@ export default function OwnershipCertificateView({ item, onBack }) {
 
           {/* 우측 정보 리스트 */}
           <div className="cert-info-list">
-            <h3 className="item-name">
-              {data.product_name || data.title || '클래식 비세토스 매듭'}
-            </h3>
+            <h3 className="item-name">{title}</h3>
 
             <div className="info-row">
               <span className="info-label">에디션 번호</span>

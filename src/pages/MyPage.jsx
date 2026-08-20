@@ -530,6 +530,7 @@ export default function MyPage() {
           selectedCertificate ? (
             <OwnershipCertificateView
               item={selectedCertificate}
+              items={items}
               onBack={() => setSelectedCertificate(null)}
             />
           ) : ownershipTarget ? (
@@ -542,9 +543,10 @@ export default function MyPage() {
               }}
             />
           ) : (
-            <DigitalOwnershipPage 
-              ownerships={ownerships} 
-              onRegisterSuccess={fetchOwnershipsData} 
+            <DigitalOwnershipPage
+              ownerships={ownerships}
+              items={items}
+              onRegisterSuccess={fetchOwnershipsData}
               onViewApplication={(certItem) => setSelectedCertificate(certItem)}
             />
           )

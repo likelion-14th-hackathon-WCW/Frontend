@@ -136,8 +136,15 @@ export const getMyOwnerships = async () => {
 };
 
 export const registerOwnership = async (data) => {
-  const response = await apiClient.post('/auth/me/ownerships/', data);
-  return { success: true, data: response.data };
+  try {
+    const response = await apiClient.post('/auth/me/ownerships/', data);
+    return { success: true, data: response.data };
+  } catch (error) {
+    const fieldErrors = error.response?.data;
+    const message =
+      fieldErrors?.serial_no?.[0] || fieldErrors?.product?.[0] || fieldErrors?.detail || '소유권 신청에 실패했습니다.';
+    return { success: false, message };
+  }
 };
 
 export const getMyWishlist = async () => {
