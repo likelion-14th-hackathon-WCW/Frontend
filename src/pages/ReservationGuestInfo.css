@@ -145,11 +145,20 @@
   height: 16px;
 }
 
+.guest-info__agree-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 12px;
+}
+
 .guest-info__agree {
   display: flex;
   align-items: center;
   gap: 8px;
   cursor: pointer;
+  flex: 1;
 }
 
 .guest-info__agree input {
@@ -165,7 +174,24 @@
   font-size: 12px;
   letter-spacing: -0.24px;
   color: var(--color-grey-300);
+}
+
+.guest-info__agree-view-btn {
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-accent);
   text-decoration: underline;
+  cursor: pointer;
+  padding: 4px 6px;
+  white-space: nowrap;
+  transition: opacity var(--transition-fast);
+}
+
+.guest-info__agree-view-btn:hover {
+  opacity: 0.7;
 }
 
 .guest-info__actions {
