@@ -34,7 +34,14 @@ export default function MyPageReservations() {
     const fetchReservations = async () => {
       try {
         const res = await getMyReservations();
-        if (res?.success) setReservations(res.data || []);
+        if (res?.success) {
+          const sorted = [...(res.data || [])].sort((a, b) => {
+            const dateA = new Date(a.created_at || a.reserved_at || a.reservation_date || 0);
+            const dateB = new Date(b.created_at || b.reserved_at || b.reservation_date || 0);
+            return dateB - dateA;
+          });
+          setReservations(sorted);
+        }
       } catch (error) {
         console.error('예약 내역 조회 실패:', error);
       }
