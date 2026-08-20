@@ -1,4 +1,5 @@
 import { apiClient } from './client.js'
+import { syncNotificationSettingsOnSignup } from '../utils/notificationSettings.js'
 
 const storeSession = ({ user, token }) => {
   localStorage.setItem('token', token.access)
@@ -13,17 +14,35 @@ const extractErrorMessage = (error, fallback) => {
   return Array.isArray(firstValue) ? firstValue[0] : data.detail || fallback
 }
 
-export const signup = async ({ email, name, phone, password, passwordConfirm }) => {
+export const signup = async ({
+  email,
+  name,
+  nickname,
+  phone,
+  password,
+  passwordConfirm,
+  agreements = {},
+}) => {
   try {
     const response = await apiClient.post('/auth/signup/', {
       email,
       name,
+      nickname,
       phone,
       password,
       password_confirm: passwordConfirm,
       agreed_terms: true,
+      agreed_email_marketing: Boolean(agreements.newsletter),
+      agreed_sms_notification: Boolean(agreements.sms),
+      agreed_marketing: Boolean(agreements.marketing),
+      notifications: {
+        email: Boolean(agreements.newsletter),
+        sms: Boolean(agreements.sms),
+        marketing: Boolean(agreements.marketing),
+      },
     })
     storeSession(response.data)
+    syncNotificationSettingsOnSignup(agreements)
     return { success: true, data: response.data }
   } catch (error) {
     return { success: false, message: extractErrorMessage(error, '회원가입 중 오류가 발생했습니다.') }
