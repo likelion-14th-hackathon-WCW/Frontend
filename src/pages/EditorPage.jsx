@@ -5,6 +5,7 @@ import { useAuth } from '../hooks/useAuth.js';
 import LoginModal from '../components/LoginModal';
 import './EditorPage.css';
 import shareIcon from '../assets/editor-share.svg';
+import loadingSparkleIcon from '../assets/loading-sparkle-icon.svg';
 import checkIcon from '../assets/calendar-check-02.svg';
 import checkIcon2 from '../assets/calendar-check-03.svg';
 import downloadIcon from '../assets/editor-download.svg';
@@ -467,7 +468,7 @@ export default function EditorPage() {
         <div className="panel-center">
           {loading ? (
             <div className="canvas-state-box">
-              <div className="loading-spinner">🔆</div>
+              <img className="loading-spinner" src={loadingSparkleIcon} alt="" />
               <p className="canvas-loading-text">
                 AI가 입력한 소망과 어울리는 노리개 조합을 생각하고 있어요.
               </p>
@@ -536,7 +537,7 @@ export default function EditorPage() {
             <div className="mcm-recommend-box">
               <div className="mcm-title">함께 어울리는 MCM 상품</div>
               <div className="mcm-desc">
-                노리개를 만들어 보고 MCM 상품을 추천받아 보세요.
+                노리개 디자인을 저장하면 함께 어울리는 MCM 상품을 추천받을 수 있어요.
               </div>
             </div>
           </div>
