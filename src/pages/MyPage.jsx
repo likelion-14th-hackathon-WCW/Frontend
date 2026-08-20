@@ -335,7 +335,7 @@ export default function MyPage() {
                 {items.slice(0, 2).map((item) => {
                   const preview = buildNorigaeData(item);
                   return (
-                    <div className="timeline-card" key={item.id || item.item_id}>
+                    <div className="timeline-card" key={item.id || item.item_id} onClick={() => setActiveTab('items')} style={{ cursor: 'pointer' }}>
                       {item.image_url || item.thumbnail ? (
                         <img src={item.image_url || item.thumbnail} alt={item.title || ''} className="timeline-image" />
                       ) : preview?.knotImage ? (
@@ -386,6 +386,8 @@ export default function MyPage() {
                       <li
                         className={`reservation-item${itemClass}`}
                         key={res.id || res.reservation_id}
+                        onClick={() => navigate('/mypage/reservations')}
+                        style={{ cursor: 'pointer' }}
                       >
                         <div>
                           <strong>{res.store_name || res.store}</strong>
