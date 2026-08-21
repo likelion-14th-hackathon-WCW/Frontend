@@ -1,4 +1,4 @@
-import { apiClient } from './client.js';
+import { apiClient, clearAuthSession } from './client.js';
 
 export const getMe = async () => {
   const response = await apiClient.get('/auth/me/');
@@ -33,9 +33,7 @@ export const changePassword = async ({ currentPassword, newPassword }) => {
 export const deleteAccount = async () => {
   try {
     await apiClient.post('/auth/withdraw/');
-    localStorage.removeItem('token');
-    localStorage.removeItem('refresh_token');
-    localStorage.removeItem('wcw_user');
+    clearAuthSession();
     return { success: true };
   } catch (error) {
     const message = error.response?.data?.detail || '회원 탈퇴에 실패했습니다.';

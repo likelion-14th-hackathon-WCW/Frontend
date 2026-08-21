@@ -31,6 +31,10 @@ export const clearAuthSession = () => {
   localStorage.removeItem('refresh_token')
   localStorage.removeItem('wcw_user')
   localStorage.removeItem('wcw_saved_items')
+
+  sessionStorage.removeItem('wcw_editor_draft')
+  sessionStorage.removeItem('wcw_pending_norigae')
+  sessionStorage.removeItem('wcw_reservation_draft')
 }
 
 apiClient.interceptors.response.use(
