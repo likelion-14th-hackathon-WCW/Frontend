@@ -26,10 +26,11 @@ const processQueue = (error, token = null) => {
   failedQueue = []
 }
 
-const clearAuthSession = () => {
+export const clearAuthSession = () => {
   localStorage.removeItem('token')
   localStorage.removeItem('refresh_token')
   localStorage.removeItem('wcw_user')
+  localStorage.removeItem('wcw_saved_items')
 }
 
 apiClient.interceptors.response.use(

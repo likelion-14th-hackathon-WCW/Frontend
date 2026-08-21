@@ -1,7 +1,9 @@
-import { apiClient } from './client.js'
+import { apiClient, clearAuthSession } from './client.js'
 import { syncNotificationSettingsOnSignup } from '../utils/notificationSettings.js'
 
 const storeSession = ({ user, token }) => {
+  // 계정 전환 시 이전 계정의 로컬 캐시가 새 계정에 노출되지 않도록 먼저 비운다.
+  localStorage.removeItem('wcw_saved_items')
   localStorage.setItem('token', token.access)
   localStorage.setItem('refresh_token', token.refresh)
   localStorage.setItem('wcw_user', JSON.stringify(user))
@@ -69,8 +71,6 @@ export const logout = async () => {
       await apiClient.post('/auth/logout/', { refresh })
     }
   } finally {
-    localStorage.removeItem('token')
-    localStorage.removeItem('refresh_token')
-    localStorage.removeItem('wcw_user')
+    clearAuthSession()
   }
 }
